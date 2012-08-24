@@ -1,0 +1,6 @@
+Revision history for Perl extension LCP.
+
+0.00_01  Mon Dec 12 03:15:57 2011
+	- original version; created by h2xs 1.23 with options
+		-A -B -X -n LCP
+

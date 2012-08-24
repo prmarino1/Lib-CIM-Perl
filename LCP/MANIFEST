@@ -1,0 +1,12 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/LCP.t
+lib/LCP.pm
+lib/LCP/Agent.pm
+lib/LCP/Post.pm
+lib/LCP/Query.pm
+lib/LCP/Session.pm
+lib/LCP/SimpleParser.pm
+lib/LCP/XMLWriter.pm

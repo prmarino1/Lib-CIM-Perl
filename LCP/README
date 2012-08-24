@@ -1,0 +1,36 @@
+LCP version 0.00_01
+===================
+
+Lib CIM Perl is a pure Perl API for CIM (Common Information Model) operatinos over HTTP(S) as defined in DTMF DSP0200
+Currently the focus for development upto version 1.0 will be on creating a complete Client API Implementation.
+Latter versions will also allow for working with Model Object Format and possibly a WBEM server emulation.
+
+CIM is the basis of a lot of other protocols for managing a wide variaty of software and hardware. just to name a few SMI-S (Storage Managment Initiative Standard), WMI, VMWare vSphere API, SBLIM, Dell OpenManage, and  HP Insight Managment are all built on CIM.
+
+One of the most powerfull thing CIM can be used for is monitoring this is due to the fact that unlike SNMP standard parts like fans and power supplies all derive thier basic monitoring syntax and data structure from base CIM classes that are part of the standard. What this meens is regaurdless of if they are a desktop, server, storage array, or a switch, and regardless of the manufactruer the method to check a fan is relatively the same and the query to discover all of the fans in a device is identical except for the manufacturer specific namespace path. 
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+  LWP - Lib WWW Perl
+  XML::Twig - XML tree based manipulator
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2011 by Paul Robert Marino
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.14.2 or,
+at your option, any later version of Perl 5 you may have available.
+
+
