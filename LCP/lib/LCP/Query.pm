@@ -504,11 +504,11 @@ Each intrisic method is a Perl style version of a method spesified in DTMF DSP02
 
 =over 4
 
-$query->GetClass('name/space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},\@['property1','property2']);
+$query->GetClass('name/space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},['property1','property2']);
 
 $query->GetClass('name/space','ClassName',{ 'LocalOnly'=>0, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0});
 
-$query->GetClass('name/space','ClassName',{},\@['property1','property2']);
+$query->GetClass('name/space','ClassName',{},['property1','property2']);
 
 $query->GetClass('name/space','ClassName');
 
@@ -520,11 +520,11 @@ See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
 =over 4
 
-$query->GetInstance ('name/space','ClassName','InstanceID',{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},\@['property1','property2']);
+$query->GetInstance ('name/space','ClassName','InstanceID',{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},['property1','property2']);
 
 $query->GetInstance ('name/space','ClassName','InstanceID',{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0});
 
-$query->GetInstance ('name/space','ClassName','InstanceID',{},\@['property1','property2']);
+$query->GetInstance ('name/space','ClassName','InstanceID',{},['property1','property2']);
 
 $query->GetInstance ('name/space','ClassName','InstanceID');
 
@@ -624,9 +624,9 @@ See DSP0200 Version 1.3.1 section 5.3.2.10 for details
 
 =over 4
 
-$query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInheritance' = 1, 'IncludeQualifiers' = 0, 'IncludeClassOrigin' = 0 }, \@['property1','property2']);
+$query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInheritance' = 1, 'IncludeQualifiers' = 0, 'IncludeClassOrigin' = 0 }, ['property1','property2']);
 
-$query->EnumerateInstances('name/space','ClassName',{ }, \@['property1','property2']);
+$query->EnumerateInstances('name/space','ClassName',{ }, ['property1','property2']);
 
 $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInheritance' = 1, 'IncludeQualifiers' = 0, 'IncludeClassOrigin' = 0 });
 
@@ -658,23 +658,23 @@ Not implemented yet
 
 =over 4
 
-$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, \@['property1','property2'] );
+$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
 $query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
 
-$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole',{ }, \@['property1','property2'] );
+$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole',{ }, ['property1','property2'] );
 
 $query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole');
 
 $query->Associators ('name/space','ClassName','ObjectName','AssocClass',);
 
-$query->Associators ('name/space','ClassName','ObjectName','NULL','NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, \@['property1','property2'] );
+$query->Associators ('name/space','ClassName','ObjectName','NULL','NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->Associators ('name/space','ClassName','ObjectName','','','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, \@['property1','property2'] );
+$query->Associators ('name/space','ClassName','ObjectName','','','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, \@['property1','property2']);
+$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
 
-$query->Associators ('name/space','ClassName','ObjectName','NULL','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, \@['property1','property2'] );
+$query->Associators ('name/space','ClassName','ObjectName','NULL','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
 See DSP0200 Version 1.3.1 section 5.3.2.14 for details
 
