@@ -87,6 +87,12 @@ sub new{
     else {
 	$self->{'Method'}='AUTO';
     }
+    if (defined $options->{'Timeout'} and $options->{'Timeout'}=~/^\d+$/){
+	$self->{'Timeout'}=$options->{'Timeout'};
+    }
+    else{
+	$self->{'Timeout'}='60';
+    }
     bless ($self, $class);
     return $self;
 }

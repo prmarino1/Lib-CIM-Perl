@@ -57,6 +57,9 @@ sub new {
 		$self->{'Request'}->authorization_basic($self->{'Session'}->{'agent'}->{'username'}, $self->{'Session'}->{'agent'}->{'password'});
     }
     $self->{'Session'}->{'messageid'}++;
+    if (defined $self->{'Session'}->{'Timeout'} and $self->{'Session'}->{'Timeout'}=~/^\d+$/){
+	$self->{'Session'}->{'agent'}->{'agent'}->timeout($self->{'Session'}->{'Timeout'});
+    }
     $self->{'Result'}=$self->{'Session'}->{'agent'}->{'agent'}->request($self->{'Request'});
     unless($self->{'Result'}->is_success){
         carp "The Query Faild\n";

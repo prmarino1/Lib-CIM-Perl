@@ -35,7 +35,12 @@ sub new{
     else{
         $self->{'Method'}=$self->{'agent'}->{'Method'};
     }
-    
+    if (defined $options->{'Timeout'} and $options->{'Timeout'}=~/^\d+$/){
+	$self->{'Timeout'}=$options->{'Timeout'};
+    }
+    else{
+	$self->{'Timeout'}=$self->{'agent'}->{'Timeout'};
+    }
     #setting a random message id number to start with;
     $self->{'messageid'}=int(rand(65535));
     bless ($self, $class);
