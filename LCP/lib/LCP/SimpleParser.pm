@@ -229,13 +229,19 @@ sub get_cim_keybinding_value{
     my $self=shift;
     my $property=shift;
     my $property_value=$property->{'first_child'};
+    my $valuetype=$property_value->local_name;
     $property_value= $property_value->{'first_child'};
     my $value;
-    if ($property_value->is_text){
+    if($valuetype=~/VALUE.REFERENCE/){
+	$value=$self->buildtree($property_value);
+	return $value;
+    }
+    elsif($property_value->is_text){
         $value=$property_value->text;
         $self->{'twig'}->purge_up_to($property);
         return $value;
     }
+    
     else{carp $property->local_name .' '.  $self->get_field_name($property) .' '. $property_value->local_name. " does not apear to have a value\n";}
 }
 
