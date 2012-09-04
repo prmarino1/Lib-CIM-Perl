@@ -183,11 +183,13 @@ This is an OO Class and as such exports nothing
 
 $post=LCP::Post->new($session,$query);
 
+
 The new method creates and executes a POST or M-POST of a query against the WBEM server. It requiers 2 paramiters and returns a accessor uppon successful execution of the query.
 The first requierd paramiter is the accessor for a instance of LCP::Session
 The second required paramiter is the accessor to the instance of LCP::Query with the query you want to execute.
 
 You may reuse the same query to repeatedly agianst multiple instances of LCP::Post, and each time it will execute the query identicaly except the message id number will increment each time.
+
 Uppon successful posting of the query and reception of a responce this method returns an accessor to the results, but its important for the user to know that this class does not validate the content of the responce at this time only if a responce was recived.
 
 =back
@@ -202,9 +204,15 @@ get_raw_xml returns the unparsed XML responce from the WBEM server
 
 =back
 
+=head1 Advanced Tuning Notes
+
+    LCP::Post utilizes HTTP::Request to execute the POST or M-POST operation. The accessor handle for the instance of HTTP::Request may be used for the time via the 
+
 =head1 SEE ALSO
 
 LWP - Lib WWW Perl
+
+HTTP::Request
 
 DMTF DSP0200 
 

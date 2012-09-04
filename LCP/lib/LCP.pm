@@ -58,15 +58,14 @@ LCP - Lib CIM (Common Information Model) Perl
   a full DSP0200 compliant implemtation of CIM over http(s) by version 1.0 of the suite. As of now most read
   operations are impemented and have been tested against openPegasus but the api is still in an early
   development stage as such the syntax for the LCP::SimpleParser class is expected to change, however most
-  of the other classes should not change much if at all with the exeption of new features untill the
-  release of version 1.0. and the syntax of the LCP::Query will never change aside form implmentation of
+  of the other classes should not change much if at all with the exeption of new features until the
+  release of version 1.0. and the syntax of the LCP::Query will never change aside from implmentation of
   previously unimplemented methods CIM, this is due to the fact that most of the methods are based strictly on a Perl
   style interpretation of DSP0200 from the DMTF.
 
 =head2 EXPORT
 
 None by default.
-
 
 
 =head1 SEE ALSO

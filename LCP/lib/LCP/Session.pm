@@ -105,26 +105,29 @@ This is an OO Class and as such exports nothing.
 
 =item new
 
-$session=LCP::Session->new($agent,%{ 'Method' => 'M-POST'});
+$session=LCP::Session->new($agent,%{ 'Method' => 'M-POST', 'Timeout'=> '180'});
 
 $session=LCP::Session->new($agent);
 
 The new method requires one paramiter the accessor to the instance of the LCP::Agent class
-One optional paramiter can also be addes a hash containing the options to be used for this session only
-Currently you can only set the post menthod to POST, M-POST, or AUTO via the 'Method' key; however the functionality will be expanded in the future.
+One optional paramiter can also be added a hash containing the options to be used for this session only
+The options that ca be specified in the hash are as follows
 
+1) Method
+Sets the post method for the session to POST, M-POST, or AUTO. currently AUTO only attempts M-Post; however the functionality will be expanded in the future so that if the WBEM server doesnt support M-POST it will attempt to execute the query via a POST.
+Default Method=>'AUTO'
 
+2) Timeout
+Sets how long to wait in seconds for querys posted via the session to return results befor timing out. this option overrides the equivelent option in the Agent instance.
+Default Timeout=>180
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
+LCP::Agent
+LCP::Query
+LCP::Post
+LCP::SimpleParser
 
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
 
 =head1 AUTHOR
 

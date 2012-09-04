@@ -150,11 +150,13 @@ This is an OO Class and as such exports nothing.
 
 =item new
 
-$agent=LCP::Agent->new('hostname',%{ 'protocol' =>'https', 'port' => 5989, 'Method'=>'M-POST', username=>'someuser', 'password'=>'somepassword'  });
+=over 4
+
+$agent=LCP::Agent->new('hostname',%{ 'protocol' =>'https', 'port' => 5989, 'Method'=>'M-POST', username=>'someuser', 'password'=>'somepassword', 'Timeout'=>180  });
 
 This class only has one method however its important to set the default information for several of the other classes.
 There is one required paramiter the hostname or IP address of the WBEM server.
-there are 5 optional peramiters defined in a hash that war as follows
+there are 5 optional peramiters defined in a hash that are as follows
 
 1) protocol
 Protocol is defined as http or https the default if not specified is https
@@ -171,18 +173,29 @@ AUTO attempts to utilizes M-POST first then fails back to POST if the WBEM serve
 Unfortunatly the fail back for AUTO has not been implemented yet; however it will be in the future so users are encuraged to use it in the mean time for future API compatibliity.
 The safest choice is POST. Currently not every WBEM server supports M-POST and even some of the ones that do ocasionally malfunction and as a result cause the AIP to hang for a few seconds befor returning an error or more often a null responce.
 
+4) username
+The username to use for authenticarion to the wbem server
 
+5) password
+The password to use for authenticarion to the wbem server
+
+6) Timeout
+How long to wait in seconds for a query to return results befor timing out.
+
+=back
+
+=head1 Advanced Tuning Notes
+
+LCP::Agent uses LWP::UserAgent for a large part of its non CIM specific functionality. The LWP::UserAgent instance can be accessed via the Agent hashref key of the accessor created by the new method.
+Advanced developers who are familiar with LWP may utilize this to further tune their settings however this is not advisable for most, and eventually may go away as this module evolves.
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
+LCP::Session
+LCP::Query
+LCP::Post
+LCP::SimpleParser
+LWP::UserAgent
 
 =head1 AUTHOR
 

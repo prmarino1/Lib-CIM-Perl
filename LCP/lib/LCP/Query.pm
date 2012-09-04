@@ -467,7 +467,7 @@ LCP::Query - Lib CIM (Common Information Model) Perl Query Costructor
     print "post executed\n";
     #Parsing the query
     my $parser=LCP::SimpleParser->new($post->get_raw_xml);
-    # returning a multi dimentional hash of the results
+    # returning a multi dimentional hash reference of the results
     my $tree=$parser->buildtree;
   }
   
