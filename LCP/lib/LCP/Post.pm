@@ -126,6 +126,15 @@ sub get_raw_xml{
     return $self->{'Result'}->decoded_content
 }
 
+sub success($){
+    my $self=shift;
+    if ($self->{'Result'}->is_success){
+	return 1
+    }
+    else{
+	return 0;
+    }
+}
 
 1;
 
@@ -203,6 +212,15 @@ $xml=$post->get_raw_xml
 get_raw_xml returns the unparsed XML responce from the WBEM server
 
 =back
+
+=item success
+
+=over 4
+
+$post->success
+
+returns a boolian result of a query
+Note: at this time this method only returns true it the WBEM server respods with a 200 or 207 code it does not parse the XML for error messages embeded in the responce.
 
 =head1 Advanced Tuning Notes
 
