@@ -463,7 +463,7 @@ LCP::Query - Lib CIM (Common Information Model) Perl Query Costructor
   my $post=LCP::Post->new($session,$query);
   my $tree;
   # Parse if the query executed properly
-  if (defined $post){
+  if (defined $post and $post->success){
     print "post executed\n";
     #Parsing the query
     my $parser=LCP::SimpleParser->new($post->get_raw_xml);

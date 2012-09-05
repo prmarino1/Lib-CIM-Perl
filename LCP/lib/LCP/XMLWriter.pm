@@ -284,7 +284,6 @@ This is a helper class to create XML messages to query an WBEM
 provider. This class is not meant to be used by the LCP::Post class
 after a query has been created by the LCP::Query class. 
 
-Blah blah blah.
 
 =head2 EXPORT
 

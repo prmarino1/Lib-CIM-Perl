@@ -42,7 +42,7 @@ LCP - Lib CIM (Common Information Model) Perl
   $test->EnumerateClasses('root/cimv2');
   print "posting the query\n";
   my $post=LCP::Post->new($session,$test);
-  if (defined $post and $post->{'Result'}->is_success){
+  if (defined $post and $post->success){
         print "post executed\n";
         print "@{[$post->{'Result'}->decoded_content]}\n";
         my $parser=LCP::SimpleParser->new($post->get_raw_xml);
