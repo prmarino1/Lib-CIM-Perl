@@ -387,7 +387,7 @@ sub ReferenceNames{
     return 0;
 }
 
-sub GetProperty($$$$$){
+sub GetProperty($$$\%$){
     my $self=shift;
     my $namespace=shift;
     my $cimclass=shift;
@@ -409,9 +409,28 @@ sub GetProperty($$$$$){
 }
 
 #not implemented yet
-sub SetProperty{
-	carp "SetProperty not implemented yet\n";
-    return 0;
+sub SetProperty($$$\%$$){
+    my $self=shift;
+    my $namespace=shift;
+    my $cimclass=shift;
+    my $instance=shift;
+    my $properety=shift;
+    my $value=shift;
+    $self->{'last_method'}='SetProperty';
+    $self->{'last_namespace'}=$namespace;
+    my $method=$self->{'writer'}->mkmethodcall('SetProperty');
+    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    $namespacetwig->paste( 'first_child' => $method);
+    my $propname=$self->{'writer'}->mkpropertyname($properety);
+    $propname->paste('last_child' => $method);
+    my $propvalue=$self->{'writer'}->mkpropertyvalue($value);
+    $propvalue->paste('last_child' => $method);
+    my $instancename=$self->{'writer'}->mkinstancename($cimclass,$self->{'writer'}->mkkeybinding($instance));
+    $instancename->paste('last_child' => $method);
+    #for my $instance ($self->{'writer'}->mkkeybinding($instance)){
+    #    $instance->paste('last_child' => $instancename);
+    #}
+    push(@{$self->{'writer'}->{'query'}},$method);
 }
 
 #not implemented yet
@@ -722,7 +741,7 @@ Not implemented yet
 
 =over 4
 
-$query->GetProperty ( 'name/space','ClassName', 'InstanceName', 'PropertyName');
+$query->GetProperty ( 'name/space','ClassName', {key1=val1,key2=val2}, 'PropertyName');
 
 See DSP0200 Version 1.3.1 section 5.3.2.18 for details
 
@@ -732,7 +751,9 @@ See DSP0200 Version 1.3.1 section 5.3.2.18 for details
 
 =over 4
 
-Not implemented yet
+$query->SetProperty('name/space','ClassName',{key1=val1,key2=val2},'PropertyName','VALUE')
+
+See DSP0200 Version 1.3.1 section 5.3.2.19 for details
 
 =back
 

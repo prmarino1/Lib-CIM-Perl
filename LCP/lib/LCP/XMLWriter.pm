@@ -157,7 +157,14 @@ sub mkinstancename{
     my $classname=XML::Twig::Elt->new('INSTANCENAME'=>{'CLASSNAME'=>$rawclassname});
     $classname->paste('last_child'=>$param);
     if ($value){
-        $value->paste('last_child'=>$classname);
+        if (ref($value) eq 'ARRAY'){
+            for my $val (@{$value}){
+                $val->paste('last_child'=>$classname);
+            }
+        }
+        else{
+            $value->paste('last_child'=>$classname);
+        }
     }
     return $param;
 }
@@ -202,6 +209,15 @@ sub mkpropertyname{
     my $self=shift;
     my $value=shift;
     my $param=$self->mkiparam('PropertyName');
+    my $classname=XML::Twig::Elt->new('VALUE'=>$value);
+    $classname->paste($param);
+    return $param;
+}
+
+sub mkpropertyvalue{
+    my $self=shift;
+    my $value=shift;
+    my $param=$self->mkiparam('NewValue');
     my $classname=XML::Twig::Elt->new('VALUE'=>$value);
     $classname->paste($param);
     return $param;
@@ -263,6 +279,8 @@ sub extractxml{
     $self->generatetree;
     my $xml=$self->{'twig'}->sprint;
 }
+
+
 
 1;
 
