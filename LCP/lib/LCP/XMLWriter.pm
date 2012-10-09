@@ -117,7 +117,17 @@ sub mkbool{
     return @params;
 }
 
-# replaced mkpropertylistxml
+sub mkproperty($$;$){
+    my $self=shift;
+    my $name=shift;
+    my $value=shift;
+    my $param=XML::Twig::Elt->new('PROPERTY'=>{'NAME'=>$name});
+    if (defined $value){
+        my $val=XML::Twig::Elt->new('VALUE'=>$value);
+        $val->paste($param);
+    }
+    return $param;
+}
 
 sub mkpropertylist{
     my $self=shift;
