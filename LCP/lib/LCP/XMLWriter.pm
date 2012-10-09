@@ -38,10 +38,15 @@ sub addquery{
     push(@{$self->{'query'}},$query);
 }
 
-sub mkiparam($$){
+sub mkiparam($$;$){
     my $self=shift;
     my $name=shift;
+    my $value=shift;
     my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$name});
+    if (defined $value){
+        my $val=XML::Twig::Elt->new('VALUE'=>$value);
+        $val->paste($param);
+    }
     return $param;
 }
 
