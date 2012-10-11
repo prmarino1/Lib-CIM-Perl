@@ -118,7 +118,6 @@ sub DeleteClass($$$){
     my $classname=$self->{'writer'}->mkclassname($cimclass);
     $classname->paste('last_child' => $method);
     push(@{$self->{'writer'}->{'query'}},$method);
-    return 0;
 }
 
 sub DeleteInstance{
@@ -140,9 +139,19 @@ sub CreateClass{
 }
 
 # not implemented yet
-sub CreateInstance{
-	carp "CreateInstance not implemented yet\n";
-	return 0;
+sub CreateInstance($$$\%){
+    my $self=shift;
+    my $namespace=shift;
+    my $cimclass=shift;
+    my $properties=shift;
+    $self->{'last_method'}='CreateInstance';
+    $self->{'last_namespace'}=$namespace;
+    my $method=$self->{'writer'}->mkmethodcall('CreateInstance');
+    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    $namespacetwig->paste('last_child' => $method);
+    my $newinstance=$self->{'writer'}->mknewinstance($cimclass,$properties);
+    $newinstance->paste('last_child' => $method);
+    push(@{$self->{'writer'}->{'query'}},$method);
 }
 
 #not implemented yet

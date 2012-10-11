@@ -77,9 +77,6 @@ sub mknamespace{
     return $namespace;
 }
 
-
-
-# replaced mkkeybindingxml
 sub mkkeybinding{
     my $self=shift;
     my $hash=shift;
@@ -95,7 +92,6 @@ sub mkkeybinding{
 }
 
 
-# replaced mkparamxml
 sub mkbool{
     my $self=shift;
     my $hash=shift;
@@ -117,11 +113,15 @@ sub mkbool{
     return @params;
 }
 
-sub mkproperty($$;$){
+sub mkproperty($$;$$){
     my $self=shift;
     my $name=shift;
     my $value=shift;
-    my $param=XML::Twig::Elt->new('PROPERTY'=>{'NAME'=>$name});
+    my $type=shift;
+    unless(defined $type){
+        $type='string';
+    }
+    my $param=XML::Twig::Elt->new('PROPERTY'=>{'NAME'=>$name,'TYPE'=>$type});
     if (defined $value){
         my $val=XML::Twig::Elt->new('VALUE'=>$value);
         $val->paste($param);
@@ -236,6 +236,20 @@ sub mkpropertyvalue{
     my $classname=XML::Twig::Elt->new('VALUE'=>$value);
     $classname->paste($param);
     return $param;
+}
+
+sub mknewinstance($$\%){
+    my $self=shift;
+    my $class=shift;
+    my $params=shift;
+    my $newinstance=$self->mkiparam('NewInstance');
+    my $classname=XML::Twig::Elt->new('INSTANCE',{'CLASSNAME' => $class});
+    $classname->paste('last_child' => $newinstance);
+    for my $propname (keys %{$params}){
+        my $prop=$self->mkproperty($propname,$params->{$propname},'string');
+        $prop->paste('last_child' => $classname);
+    }
+    return $newinstance;
 }
 
 sub generatetree{
