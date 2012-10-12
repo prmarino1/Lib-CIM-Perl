@@ -138,7 +138,6 @@ sub CreateClass{
     return 0;
 }
 
-# not implemented yet
 sub CreateInstance($$$\%){
     my $self=shift;
     my $namespace=shift;
@@ -592,7 +591,9 @@ Not implemented yet
 
 =over 4
 
-Not implemented yet
+$query->CreateInstance ('name/space','ClassName',{property1=val1,property2=val2});
+
+See DSP0200 Version 1.3.1 section 5.3.2.6 for details
 
 =back
 
