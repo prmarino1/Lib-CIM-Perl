@@ -21,3 +21,4 @@ This is Todo list that needs to be completed before version 1.0 can be released
 9) a test harnes needs to be written for CPAN acceptance
 10) pulled enumerations need to be added
 11) version specific CIM protocol handleing needs to be added.
+12) Implement the Pulled Enumeration Operation methods from DSP0200
