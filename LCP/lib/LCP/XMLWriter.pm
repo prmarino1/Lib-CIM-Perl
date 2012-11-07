@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Carp;
 use XML::Twig;
+use Data::Dumper;
 
 
 our $VERSION = '0.00_01';
@@ -88,7 +89,12 @@ sub mkkeybinding{
         $keyvalue->paste( last_child => $keybinding);
         push(@keybindings,$keybinding);
     }
-    return @keybindings;
+    if (wantarray){
+        return @keybindings;
+    }
+    else{
+        return \@keybindings;
+    }
 }
 
 
@@ -251,6 +257,32 @@ sub mknewinstance($$\%){
     }
     return $newinstance;
 }
+
+sub mkdelinstance($$\%){
+    my $self=shift;
+    my $class=shift;
+    my $params=shift;
+    my $delinstance=$self->mkiparam('InstanceName');
+    my $instancename=XML::Twig::Elt->new('INSTANCENAME',{'CLASSNAME' => $class});
+    $instancename->paste('last_child' => $delinstance);
+    my $keybindings=$self->mkkeybinding($params);
+    if ($keybindings){
+        if (ref($keybindings) eq 'ARRAY'){
+            for my $val (@{$keybindings}){
+                $val->paste('last_child'=>$instancename);
+            }
+        }
+        else{
+            print Dumper($keybindings) ."\n"; 
+            $keybindings->paste('last_child'=>$instancename);
+        }
+    }
+    #for my $keybinding (@{[$keybindings]}){
+    #    $keybinding->paste('last_child' => $instancename);
+    #}
+    return $delinstance;
+}
+
 
 sub generatetree{
     my $self=shift;
