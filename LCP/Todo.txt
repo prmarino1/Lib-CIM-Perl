@@ -3,16 +3,15 @@ This is Todo list that needs to be completed before version 1.0 can be released
 1) M-POST to post method auto fail over
 2) More work needs to be done with digest vs basic auth
 3) CIM create, modify, and delete methods from DSP0200 need to be added to the LCP::Query and XMLWriter Classes
-    3.1) DeleteInstance
-    3.2) CreateClass
-    3.3) ModifyClass
-    3.4) ModifyInstance
-    3.5) ExecQuery
-    3.6) References
-    3.7) ReferenceNames
-    3.8) GetQualifier
-    3.9) SetQualifier
-    3.10) DeleteQualifier
+    3.1) CreateClass
+    3.2) ModifyClass
+    3.3) ModifyInstance
+    3.4) ExecQuery
+    3.5) References
+    3.6) ReferenceNames
+    3.7) GetQualifier
+    3.8) SetQualifier
+    3.9) DeleteQualifier
 4) More testing neads to be done onthe LCP::SimpleParser Class Im still finding Places where it doesnt always know how to parse portions correctly.
 5) XPATH support needs to be added to the LCP::SimpleParser
 6) WBEM server capabilities detection
