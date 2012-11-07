@@ -585,7 +585,9 @@ See DSP0200 Version 1.3.1 section 5.3.2.3 for details
 
 =over 4
 
-Not implemented yet
+$query->CreateInstance ('name/space','ClassName',{property1=val1,property2=val2});
+
+See DSP0200 Version 1.3.1 section 5.3.2.4 for details
 
 =back
 
