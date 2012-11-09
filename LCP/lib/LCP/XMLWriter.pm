@@ -165,7 +165,14 @@ sub mkobjectname{
     my $classname=XML::Twig::Elt->new('INSTANCENAME'=>{'CLASSNAME'=>$rawclassname});
     $classname->paste('last_child'=>$param);
     if ($value){
-        $value->paste('last_child'=>$classname);
+        if (ref($value) eq 'ARRAY'){
+            for my $val (@{$value}){
+                $val->paste('last_child'=>$classname);
+            }
+        }
+        else{
+            $value->paste('last_child'=>$classname);
+        }
     }
     return $param;
 }
