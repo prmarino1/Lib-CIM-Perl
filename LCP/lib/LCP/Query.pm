@@ -386,7 +386,6 @@ sub AssociatorNames($$$$;$$$$){
 }
 
 
-#not implemented yet
 sub References($$$\%;$$\%\@){
     my $self=shift;
     my $namespace=shift;
@@ -433,9 +432,30 @@ sub References($$$\%;$$\%\@){
 }
 
 #not implemented yet
-sub ReferenceNames{
-    carp "ReferenceNames not implemented yet\n";
-    return 0;
+sub ReferenceNames($$$\%;$$){
+    my $self=shift;
+    my $namespace=shift;
+    my $cimclass=shift;
+    my $rawobjectname=shift;
+    my $resultclass=shift;
+    my $role=shift;
+        $self->{'last_method'}='ReferenceNames';
+    $self->{'last_namespace'}=$namespace;
+    my $method=$self->{'writer'}->mkmethodcall('ReferenceNames');
+    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    $namespacetwig->paste( 'first_child' => $method);
+    my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
+    my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
+    $objectname->paste('last_child' => $method);
+        if (defined $resultclass and $resultclass !~ /^NULL$/i){
+        my $resclass=$self->{'writer'}->mkresultclass($resultclass);
+        $resclass->paste('last_child' => $method);
+    }
+	if(defined $role and $role !~ /^NULL$/i){
+        my $rolevalue=$self->{'writer'}->mkrole($role);
+        $rolevalue->paste('last_child' => $method);
+    }
+    push(@{$self->{'writer'}->{'query'}},$method);
 }
 
 sub GetProperty($$$\%$){
