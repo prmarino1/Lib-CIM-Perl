@@ -371,7 +371,7 @@ sub AssociatorNames($$$$;$$$$){
         $assocclass->paste('last_child' => $method);
     }
     if (defined $resultclass and $resultclass !~ /^NULL$/i){
-        my $resclass=$self->{'writer'}->mkresultclass($associatedclass);
+        my $resclass=$self->{'writer'}->mkresultclass($resultclass);
         $resclass->paste('last_child' => $method);
     }
     if(defined $role and $role !~ /^NULL$/i){
@@ -389,14 +389,47 @@ sub AssociatorNames($$$$;$$$$){
 #not implemented yet
 sub References{
     my $self=shift;
-    my $objectname=shift;
-    my $ResultClass;
-    my $Role;
-    my $IncludeQualifiers;
-    my $IncludeClassOrigin;
-    my $PropertyList;
-    carp "References not implemented yet\n";
-    return 0;
+    my $namespace=shift;
+    my $cimclass=shift;
+    my $rawobjectname=shift;
+    my $resultclass=shift;
+    my $role=shift;
+    my $options=shift;
+    my $propertylist=shift;
+    my $defaultoptions={
+        'IncludeQualifiers'=>0,
+        'IncludeClassOrigin'=>0,
+    };
+    for my $key (keys %{$defaultoptions}){
+            unless (defined $options->{$key}){
+                $options->{$key}=$defaultoptions->{$key};
+            }
+        
+    }
+    $self->{'last_method'}='References';
+    $self->{'last_namespace'}=$namespace;
+    my $method=$self->{'writer'}->mkmethodcall('References');
+    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    $namespacetwig->paste( 'first_child' => $method);
+    my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
+    my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
+    $objectname->paste('last_child' => $method);
+        if (defined $resultclass and $resultclass !~ /^NULL$/i){
+        my $resclass=$self->{'writer'}->mkresultclass($resultclass);
+        $resclass->paste('last_child' => $method);
+    }
+	if(defined $role and $role !~ /^NULL$/i){
+        my $rolevalue=$self->{'writer'}->mkrole($role);
+        $rolevalue->paste('last_child' => $method);
+    }
+    for my $option ($self->{'writer'}->mkbool($options)){
+        $option->paste('last_child' => $method);
+    }
+    if (defined $propertylist){
+        my $proplist=$self->{'writer'}->mkpropertylist($propertylist);
+        $proplist->paste('last_child' => $method);
+    }
+    push(@{$self->{'writer'}->{'query'}},$method);
 }
 
 #not implemented yet
