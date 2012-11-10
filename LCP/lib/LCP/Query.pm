@@ -387,7 +387,7 @@ sub AssociatorNames($$$$;$$$$){
 
 
 #not implemented yet
-sub References{
+sub References($$$\%;$$\%\@){
     my $self=shift;
     my $namespace=shift;
     my $cimclass=shift;
