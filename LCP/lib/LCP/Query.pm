@@ -295,7 +295,7 @@ sub ExecQuery{
     return 0;
 }
    
-sub Associators($$$$;$$$$\%\@){
+sub Associators($$$;\%$$$$\%\@){
     my $self=shift;
     my $namespace=shift;
     my $cimclass=shift;
@@ -323,9 +323,15 @@ sub Associators($$$$;$$$$\%\@){
     for my $option ($self->{'writer'}->mkbool($options)){
         $option->paste('last_child' => $method);
     }
-    my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
-    my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
-    $objectname->paste('last_child' => $method);
+    if ($rawobjectname){
+	my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
+	my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
+	$objectname->paste('last_child' => $method);
+    }
+    else{
+	my $objectname=$self->{'writer'}->mkobjectname($cimclass);
+	$objectname->paste('last_child' => $method);
+    }
     if (defined $associatedclass and $associatedclass !~ /^NULL$/i){
         my $assocclass=$self->{'writer'}->mkassocclass($associatedclass);
         $assocclass->paste('last_child' => $method);
@@ -349,7 +355,7 @@ sub Associators($$$$;$$$$\%\@){
     push(@{$self->{'writer'}->{'query'}},$method);
 }
 
-sub AssociatorNames($$$$;$$$$){
+sub AssociatorNames($$$;\%$$$$){
     my $self=shift;
     my $namespace=shift;
     my $cimclass=shift;
@@ -363,9 +369,15 @@ sub AssociatorNames($$$$;$$$$){
     my $method=$self->{'writer'}->mkmethodcall('AssociatorNames');
     my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
-    my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
-    my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
-    $objectname->paste('last_child' => $method);
+    if ($rawobjectname){
+	my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
+	my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
+	$objectname->paste('last_child' => $method);
+    }
+    else{
+	my $objectname=$self->{'writer'}->mkobjectname($cimclass);
+	$objectname->paste('last_child' => $method);
+    }
     if (defined $associatedclass and $associatedclass !~ /^NULL$/i){
         my $assocclass=$self->{'writer'}->mkassocclass($associatedclass);
         $assocclass->paste('last_child' => $method);
@@ -386,7 +398,7 @@ sub AssociatorNames($$$$;$$$$){
 }
 
 
-sub References($$$\%;$$\%\@){
+sub References($$$;\%$$\%\@){
     my $self=shift;
     my $namespace=shift;
     my $cimclass=shift;
@@ -410,14 +422,20 @@ sub References($$$\%;$$\%\@){
     my $method=$self->{'writer'}->mkmethodcall('References');
     my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
-    my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
-    my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
-    $objectname->paste('last_child' => $method);
-        if (defined $resultclass and $resultclass !~ /^NULL$/i){
+    if ($rawobjectname){
+	my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
+	my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
+	$objectname->paste('last_child' => $method);
+    }
+    else{
+	my $objectname=$self->{'writer'}->mkobjectname($cimclass);
+	$objectname->paste('last_child' => $method);
+    }
+    if (defined $resultclass and $resultclass !~ /^NULL$/i){
         my $resclass=$self->{'writer'}->mkresultclass($resultclass);
         $resclass->paste('last_child' => $method);
     }
-	if(defined $role and $role !~ /^NULL$/i){
+    if(defined $role and $role !~ /^NULL$/i){
         my $rolevalue=$self->{'writer'}->mkrole($role);
         $rolevalue->paste('last_child' => $method);
     }
@@ -431,7 +449,6 @@ sub References($$$\%;$$\%\@){
     push(@{$self->{'writer'}->{'query'}},$method);
 }
 
-#not implemented yet
 sub ReferenceNames($$$\%;$$){
     my $self=shift;
     my $namespace=shift;
@@ -444,9 +461,14 @@ sub ReferenceNames($$$\%;$$){
     my $method=$self->{'writer'}->mkmethodcall('ReferenceNames');
     my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
-    my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
-    my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
-    $objectname->paste('last_child' => $method);
+    if ($rawobjectname){
+	my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
+	my $objectname=$self->{'writer'}->mkobjectname($cimclass,$keybindings);
+	$objectname->paste('last_child' => $method);
+    }
+    else{
+	my $objectname=$self->{'writer'}->mkobjectname($cimclass);
+	$objectname->paste('last_child' => $method);
         if (defined $resultclass and $resultclass !~ /^NULL$/i){
         my $resclass=$self->{'writer'}->mkresultclass($resultclass);
         $resclass->paste('last_child' => $method);
@@ -479,7 +501,7 @@ sub GetProperty($$$\%$){
     push(@{$self->{'writer'}->{'query'}},$method);
 }
 
-#not implemented yet
+
 sub SetProperty($$$\%$$){
     my $self=shift;
     my $namespace=shift;
@@ -498,9 +520,6 @@ sub SetProperty($$$\%$$){
     $propvalue->paste('last_child' => $method);
     my $instancename=$self->{'writer'}->mkinstancename($cimclass,$self->{'writer'}->mkkeybinding($instance));
     $instancename->paste('last_child' => $method);
-    #for my $instance ($self->{'writer'}->mkkeybinding($instance)){
-    #    $instance->paste('last_child' => $instancename);
-    #}
     push(@{$self->{'writer'}->{'query'}},$method);
 }
 
@@ -800,7 +819,23 @@ See DSP0200 Version 1.3.1 section 5.3.2.15 for details
 
 =over 4
 
-Not implemented yet
+$query->References ('name/space','ClassName','{key1=val1,key2=val2}','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+
+$query->References ('name/space','ClassName','ObjectName','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
+
+$query->References ('name/space','ClassName','ObjectName','ResultClass','Role','ResultRole',{ }, ['property1','property2'] );
+
+$query->References ('name/space','ClassName','ObjectName','ResultClass','Role','ResultRole');
+
+$query->References ('name/space','ClassName','ObjectName');
+
+$query->References ('name/space','ClassName','ObjectName','NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+
+$query->References ('name/space','ClassName','ObjectName','','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+
+$query->References ('name/space','ClassName','ObjectName','ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
+
+$query->References ('name/space','ClassName','ObjectName','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
 =back
 

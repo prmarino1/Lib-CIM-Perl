@@ -9,7 +9,7 @@ NOTE: This list is not complete yet
     3.3) ModifyInstance
     3.4) ExecQuery
     3.5) References (workng but not documented yet)
-    3.6) ReferenceNames
+    3.6) ReferenceNames (workng but not documented yet)
     3.7) GetQualifier
     3.8) SetQualifier
     3.9) DeleteQualifier
