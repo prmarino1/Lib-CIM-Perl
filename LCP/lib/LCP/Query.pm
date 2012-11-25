@@ -797,7 +797,7 @@ See DSP0200 Version 1.3.1 section 5.3.2.14 for details
 
 =over 4
 
-$query->AssociatorNames('name/space','ClassName', 'ObjectName', 'AssocClass', 'ResultClass', 'Role','ResultRole');
+$query->AssociatorNames('name/space','ClassName', {} , 'AssocClass', 'ResultClass', 'Role','ResultRole');
 
 $query->AssociatorNames('name/space','ClassName', 'ObjectName', 'NULL', 'NULL', 'NULL','NULL');
 
