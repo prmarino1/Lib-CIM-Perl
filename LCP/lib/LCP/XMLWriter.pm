@@ -60,13 +60,13 @@ sub mkmethodcall($$){
 
 
 
-# replaced mknamespacexml
+# replaced mklocalnamespacexml
 # requieres 1 argument the CIM name space for example root/lsiarray13
 # returns an xml twig element for the formated namespace
 # example
-# my $namespace=mknamespace('root/lsiarray13');
+# my $namespace=mklocalnamespace('root/lsiarray13');
 
-sub mknamespace{
+sub mklocalnamespace{
     my $self=shift;
     my $namespaceraw=shift;
     my @namearray=split('/',$namespaceraw);

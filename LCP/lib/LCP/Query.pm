@@ -46,7 +46,7 @@ sub GetClass($$$;\%\@){
         $rawquery->{'propertylist'}=$propertylist
     };
     my $method=$self->{'writer'}->mkmethodcall('GetClass');
-    my $namespacetwig=$self->{'writer'}->mknamespace($rawquery->{'namespace'});
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($rawquery->{'namespace'});
     $namespacetwig->paste( 'first_child' => $method);
     for my $option ($self->{'writer'}->mkbool($rawquery->{'options'})){
         $option->paste('last_child' => $method);
@@ -83,7 +83,7 @@ sub GetInstance($$$$;\%\@){
         
     }
     my $method=$self->{'writer'}->mkmethodcall('GetInstance');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     for my $option ($self->{'writer'}->mkbool($options)){
         $option->paste('last_child' => $method);
@@ -114,7 +114,7 @@ sub DeleteClass($$$){
     $self->{'last_method'}='DeleteClass';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('DeleteClass');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     my $classname=$self->{'writer'}->mkclassname($cimclass);
     $classname->paste('last_child' => $method);
     push(@{$self->{'writer'}->{'query'}},$method);
@@ -128,7 +128,7 @@ sub DeleteInstance{
     $self->{'last_method'}='DeleteInstance';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('DeleteInstance');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste('last_child' => $method);
     my $instance=$self->{'writer'}->mkdelinstance($cimclass,$properties);
     $instance->paste('last_child' => $method);
@@ -156,7 +156,7 @@ sub CreateInstance($$$\%){
     $self->{'last_method'}='CreateInstance';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('CreateInstance');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste('last_child' => $method);
     my $newinstance=$self->{'writer'}->mknewinstance($cimclass,$properties);
     $newinstance->paste('last_child' => $method);
@@ -195,7 +195,7 @@ sub EnumerateClasses($$;$\%){
         
     }
     my $method=$self->{'writer'}->mkmethodcall('EnumerateClasses');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     for my $option ($self->{'writer'}->mkbool($options)){
         $option->paste('last_child' => $method);
@@ -227,7 +227,7 @@ sub EnumerateClassNames($$;$\%){
         
     }
     my $method=$self->{'writer'}->mkmethodcall('EnumerateClassNames');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     for my $option ($self->{'writer'}->mkbool($options)){
         $option->paste('last_child' => $method);
@@ -260,7 +260,7 @@ sub EnumerateInstances($$$;\%\@){
         
     }
     my $method=$self->{'writer'}->mkmethodcall('EnumerateInstances');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     my $classname=$self->{'writer'}->mkclassname($cimclass);
     $classname->paste('last_child' => $method);
@@ -283,7 +283,7 @@ sub EnumerateInstanceNames($$$){
     $self->{'last_method'}='EnumerateInstanceNames';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('EnumerateInstanceNames');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     my $classname=$self->{'writer'}->mkclassname($cimclass);
     $classname->paste('last_child' => $method);
@@ -318,7 +318,7 @@ sub Associators($$$;\%$$$$\%\@){
 	}
     }
     my $method=$self->{'writer'}->mkmethodcall('Associators');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     for my $option ($self->{'writer'}->mkbool($options)){
         $option->paste('last_child' => $method);
@@ -367,7 +367,7 @@ sub AssociatorNames($$$;\%$$$$){
     $self->{'last_method'}='AssociatorNames';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('AssociatorNames');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     if ($rawobjectname){
 	my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
@@ -420,7 +420,7 @@ sub References($$$;\%$$\%\@){
     $self->{'last_method'}='References';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('References');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     if ($rawobjectname){
 	my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
@@ -459,7 +459,7 @@ sub ReferenceNames($$$\%;$$){
         $self->{'last_method'}='ReferenceNames';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('ReferenceNames');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     if ($rawobjectname){
 	my $keybindings=$self->{'writer'}->mkkeybinding($rawobjectname);
@@ -489,7 +489,7 @@ sub GetProperty($$$\%$){
     $self->{'last_method'}='GetProperty';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('GetProperty');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     my $keybindings=$self->{'writer'}->mkkeybinding($filter);
     my $instancename=$self->{'writer'}->mkinstancename($cimclass,$keybindings);
@@ -512,7 +512,7 @@ sub SetProperty($$$\%$$){
     $self->{'last_method'}='SetProperty';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('SetProperty');
-    my $namespacetwig=$self->{'writer'}->mknamespace($namespace);
+    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
     my $propname=$self->{'writer'}->mkpropertyname($properety);
     $propname->paste('last_child' => $method);
