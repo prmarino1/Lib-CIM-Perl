@@ -287,12 +287,8 @@ sub mkpropertylist{
     my $self=shift;
     my $array=shift;
     my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>'PropertyList'});
-    my $valuearray=XML::Twig::Elt->new('VALUE.ARRAY');
+    my $valuearray=$self->mkvaluearray($array);
     $valuearray->paste( last_child => $param);
-    for my $item (@{$array}){
-        my $value=XML::Twig::Elt->new('VALUE'=> $item);
-        $value->paste( 'last_child'=>$valuearray)
-    }
     return $param;
 }
 
