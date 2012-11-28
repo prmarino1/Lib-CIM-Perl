@@ -23,3 +23,4 @@ NOTE: This list is not complete yet
 11) Implement the Pulled Enumeration Operation methods from DSP0200
 12) Support for defining TYPE as values other than string needs to be added to the mkkeybingngs method in the LCP::XMLWtiter class (cuurently avalible for keybindings)
 13) helper methods to create CLASSPATH, LOCALCLASSPATH, CLASSNAME, INSTANCEPATH, LOCALINSTANCEPATH, INSTANCENAME object for VALUE.REFERENCE's needs to be added to LCP::Query
+14) Need to better document the new complex keybinding formats
