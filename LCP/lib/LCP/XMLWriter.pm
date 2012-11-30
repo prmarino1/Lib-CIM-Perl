@@ -38,7 +38,7 @@ sub addquery{
     my $query=shift;
     push(@{$self->{'query'}},$query);
 }
-
+#depricated use mkiparamnew
 sub mkiparam($$;$){
     my $self=shift;
     my $name=shift;
@@ -48,6 +48,15 @@ sub mkiparam($$;$){
         my $val=XML::Twig::Elt->new('VALUE'=>$value);
         $val->paste($param);
     }
+    return $param;
+}
+# 
+
+sub mkiparamnew($$;$){
+    my $self=shift;
+    my $name=shift;
+    my $value=shift;
+    my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$name});
     return $param;
 }
 
@@ -132,57 +141,74 @@ sub mkkeybinding{
         KEYBINDING: for my $key (keys %{$keys}){
             if (ref($keys->{$key})){
                 if (ref($keys->{$key}) eq 'HASH'){
-                    if (defined $keys->{$key}->{'VALUE'} or $keys->{$key}->{'VALUE.REFERENCE'}){
+                    if (defined $keys->{$key}->{'VALUE'} or defined $keys->{$key}->{'VALUE.REFERENCE'}){
                         my $keybinding=XML::Twig::Elt->new('KEYBINDING'=>{'NAME'=>$key});
+                        my $valueref;
                         if (exists $keys->{$key}->{'VALUE'}){
-                            my $keyvalue=XML::Twig::Elt->new('KEYVALUE'=>$keys->{$key}->{'VALUE'});
+                            if(ref($keys->{$key}->{'VALUE'})){
+                                carp "ERROR: The value of a keybinding can not be a @{[ref($keys->{$key}->{'VALUE'})]} reference it must be a STRING\n";
+                                carp "WARNING: Skipping keybinding $key because it has an invalid value\n";
+                                next KEYBINDING;
+                            }
+                            # this else isnt realy neaded but I put it in so people reading the code wouldnt be confused.
+                            else{
+                                my $valueref=XML::Twig::Elt->new('KEYVALUE'=>$keys->{$key}->{'VALUE'});
+                            }
                             if(defined $keys->{$key}->{'VALUETYPE'} and $keys->{$key}->{'VALUETYPE'}=~/^(string|boolean|numeric)$/){
-                                $keyvalue->set_att('VALUETYPE'=>$keys->{$key}->{'VALUETYPE'});
+                                $valueref->set_att('VALUETYPE'=>$keys->{$key}->{'VALUETYPE'});
                             }
                             elsif(defined $keys->{$key}->{'VALUETYPE'}){
                                 carp "WARNING: \"$keys->{$key}->{'VALUETYPE'})\" is not a valid VALUETYPE\n";
                                 carp "WARNING: setting the VALUETYPE to string for key $key because its contents are invalid\n";
-                                 $keyvalue->set_att('VALUETYPE'=>'string');
+                                $valueref->set_att('VALUETYPE'=>'string');
                             }
                             else{
-                                $keyvalue->set_att('VALUETYPE'=>'string');
+                                $valueref->set_att('VALUETYPE'=>'string');
                             }
                             if (defined $keys->{$key}->{'TYPE'} and $self->checktypeconstraints('CIMType',$keys->{$key}->{'TYPE'})){
-                                $keyvalue->set_att('TYPE'=>$keys->{$key}->{'TYPE'});
+                                $valueref->set_att('TYPE'=>$keys->{$key}->{'TYPE'});
                             }
                             elsif(defined $keys->{$key}->{'TYPE'}){
-                                carp("WARNING: \"$keys->{$key}->{'TYPE'}\" is not a valid choice for a TYPE attribute");
+                                carp("ERROR: \"$keys->{$key}->{'TYPE'}\" is not a valid choice for a TYPE attribute");
                                 carp ("WARNING: not including the TYPE field for keybinding $key because its contents are invalid\n");
                             }
-                            $keyvalue->paste( last_child => $keybinding);
                         }
-                        elsif(ref($keys->{$key}->{'VALUE'})){
-                            carp "ERROR: The value of a keybinding can not be a @{[ref($keys->{$key}->{'VALUE'})]} reference it must be a STRING\n";
-                            carp "WARNING: Skipping keybinding $key because it has an invalid value\n";
-                            next KEYBINDING;
-                        }
-                        elsif(defined $keys->{$key}->{'VALUE.REFERENCE'} and ref($keys->{$key}->{'VALUE.REFERENCE'}) and ($keys->{$key}->{'VALUE.REFERENCE'}->gi =~/^(CLASSPATH|LOCALCLASSPATH|CLASSNAME|INSTANCEPATH|LOCALINSTANCEPATH|INSTANCENAME)$/)){
+                        elsif(defined $keys->{$key}->{'VALUE.REFERENCE'} and ref($keys->{$key}->{'VALUE.REFERENCE'})=~/^XML::Twig::Elt$/ and ($keys->{$key}->{'VALUE.REFERENCE'}->gi =~/^(CLASSPATH|LOCALCLASSPATH|CLASSNAME|INSTANCEPATH|LOCALINSTANCEPATH|INSTANCENAME)$/)){
                             my $keyref=XML::Twig::Elt->new('VALUE.REFERENCE');
                             $keys->{$key}->{'VALUE.REFERENCE'}->paste(ast_child => $keyref);
-                            $keyref->paste( last_child => $keybinding);
+                            $valueref->paste( last_child => $keybinding);
                         }
+                        elsif(defined $$keys->{$key}->{'VALUE.REFERENCE'} and ref($keys->{$key}->{'VALUE.REFERENCE'})=~/^XML::Twig::Elt$/){
+                            carp "WARNING: \"@{[$keys->{$key}->{'VALUE.REFERENCE'}->gi]}\" is not a valid reference type for keybinding\n";
+                            carp "WARNING skipping kebinding $keys->{$key}->{'NAME'} because it has an invalid VALUE.REFERENCE\n";
+                            next KEYBINDING;
+                        }
+                        $valueref->paste( last_child => $keybinding);
                         push(@keybindings,$keybinding);
                     }
+                    else {
+                            carp "ERROR: skipping keybinding $key because it has no VALUE or VALUE.REFERENCE defined.\n";
+                            next KEYBINDING;
+                    }
+                }
+                elsif(defined $keys->{$key} and ref($keys->{$key})=~/^XML::Twig::Elt$/ and $keys->{$key}->gi =~/^(CLASSPATH|LOCALCLASSPATH|CLASSNAME|INSTANCEPATH|LOCALINSTANCEPATH|INSTANCENAME)$/ ){
+                    my $keybinding=XML::Twig::Elt->new('KEYBINDING'=>{'NAME'=>$key});
+                    my $keyref=XML::Twig::Elt->new('VALUE.REFERENCE');
+                    $keys->{$key}->paste(ast_child => $keyref);
+                    $keyref->paste( last_child => $keybinding);
+                    push(@keybindings,$keybinding);
+                }
+                elsif (ref($keys->{$key})=~/^XML::Twig::Elt$/){
+                        carp "ERROR: \"@{[$keys->{$key}->gi]}\" is not a valid VALUE.REFERENCE type for keybinding\n";
+                    }
+                else{
+                    carp "ERROR:skipping keybinding $key because \"@{[ref($keys->{$key})]}\"is not a valid reference type in this context\n";
                 }
             }
             else{
                 my $keybinding=XML::Twig::Elt->new('KEYBINDING'=>{'NAME'=>$key});
                 #$newkey->set_att('NAME'=>$key);
-                if(defined $keys->{$key} and ref($keys->{$key}) and ($keys->{$key}->gi =~/^(CLASSPATH|LOCALCLASSPATH|CLASSNAME|INSTANCEPATH|LOCALINSTANCEPATH|INSTANCENAME)$/)){
-                    my $keyref=XML::Twig::Elt->new('VALUE.REFERENCE');
-                    $keys->{$key}->paste(ast_child => $keyref);
-                    $keyref->paste( last_child => $keybinding);
-                }
-                elsif(defined $keys->{$key} and ref($keys->{$key})){
-                    carp "WARNING: invalid reference defined for the value of keybinding $key skipping the keybinding\n";
-                    next KEYBINDING;
-                }
-                elsif(defined $keys->{$key}){
+                if(exists $keys->{$key}){
                     my $keyvalue=XML::Twig::Elt->new('KEYVALUE'=>{'VALUETYPE'=>'string'},$keys->{$key});
                     $keyvalue->paste( last_child => $keybinding);
                 }
@@ -197,42 +223,58 @@ sub mkkeybinding{
     elsif(ref($keys)  eq 'ARRAY'){
         KEYBINDINGARRAY: for my $key (@{$keys}){
             if (ref($key) eq 'HASH'){
-                if (defined $key->{'NAME'} and (defined $key->{'VALUE'} or defined $key->{'VALUE.REFERENCE'} )){
+                if (defined $key->{'NAME'} and (exists $key->{'VALUE'} or exists $key->{'VALUE.REFERENCE'} )){
                     my $keybinding=XML::Twig::Elt->new('KEYBINDING'=>{'NAME'=>$key->{'NAME'}});
-                    if (exists $keys->{$key}->{'VALUE'}){
-                        my $keyvalue=XML::Twig::Elt->new('KEYVALUE'=>$key->{'VALUE'});
-                        if(defined $key->{'VALUETYPE'} and $key->{'VALUETYPE'}=~/^(string|boolean|numeric)$/){
-                            $keyvalue->set_att('VALUETYPE'=>$key->{'VALUETYPE'});
-                        }
-                        elsif(defined $key->{'VALUETYPE'}){
-                            carp "WARNING: \"$key->{'VALUETYPE'})\" is not a valid VALUETYPE\n";
-                            carp "WARNING: setting the VALUETYPE to string for key $key->{'NAME'} because its contents are invalid\n";
-                            $keyvalue->set_att('VALUETYPE'=>'string');
+                    my $valueref;
+                    if (exists $key->{'VALUE'}){
+                        if(ref($key->{'VALUE'})){
+                            carp "ERROR: The VALUE of a keybinding can not be a @{[ref($key->{'VALUE'})]} reference it must be a STRING\n";
+                            carp "WARNING: Skipping keybinding $key->{'NAME'} because it has an invalid VALUE\n";
+                            next KEYBINDINGARRAY;
                         }
                         else{
-                            $keyvalue->set_att('VALUETYPE'=>'string');
+                            $valueref=XML::Twig::Elt->new('KEYVALUE'=>$key->{'VALUE'});
+                            if(defined $key->{'VALUETYPE'} and $key->{'VALUETYPE'}=~/^(string|boolean|numeric)$/){
+                                $valueref->set_att('VALUETYPE'=>$key->{'VALUETYPE'});
+                            }
+                            elsif(defined $key->{'VALUETYPE'}){
+                                carp "WARNING: \"$key->{'VALUETYPE'})\" is not a valid VALUETYPE\n";
+                                carp "WARNING: setting the VALUETYPE to string for key $key->{'NAME'} because its contents are invalid\n";
+                                $valueref->set_att('VALUETYPE'=>'string');
+                            }
+                            else{
+                                $valueref->set_att('VALUETYPE'=>'string');
+                            }
+                            if (defined $key->{'TYPE'} and $self->checktypeconstraints('CIMType',$key->{'TYPE'})){
+                                $valueref->set_att('TYPE'=>$key->{'TYPE'});
+                            }
+                            elsif(defined $key->{'TYPE'}){
+                                carp("WARNING: \"$key->{'TYPE'}\" is not a valid choice for a TYPE attribute");
+                                carp ("WARNING: not including the TYPE field for keybinding $key->{'NAME'} because its contents are invalid\n");
+                            }
                         }
-                        if (defined $key->{'TYPE'} and $self->checktypeconstraints('CIMType',$key->{'TYPE'})){
-                            $keyvalue->set_att('TYPE'=>$key->{'TYPE'});
-                        }
-                        elsif(defined $key->{'TYPE'}){
-                            carp("WARNING: \"$key->{'TYPE'}\" is not a valid choice for a TYPE attribute");
-                            carp ("WARNING: not including the TYPE field for keybinding $key->{'NAME'} because its contents are invalid\n");
-                        }
-                        $keyvalue->paste( last_child => $keybinding);
                     }
-                    elsif(ref($key->{'VALUE'})){
-                        carp "ERROR: The value of a keybinding can not be a @{[ref($key->{'VALUE'})]} reference it must be a STRING\n";
-                        carp "WARNING: Skipping keybinding $key->{'NAME'} because it has an invalid value\n";
-                        next KEYBINDING;
+                    elsif(defined $key->{'VALUE.REFERENCE'} and ref($key->{'VALUE.REFERENCE'})=~/^XML::Twig::Elt$/ and ($key->{'VALUE.REFERENCE'}->gi =~/^(CLASSPATH|LOCALCLASSPATH|CLASSNAME|INSTANCEPATH|LOCALINSTANCEPATH|INSTANCENAME)$/)){
+                        $valueref=XML::Twig::Elt->new('VALUE.REFERENCE');
+                        $key->{'VALUE.REFERENCE'}->paste(last_child => $valueref);
                     }
-                    elsif(defined $key->{'VALUE.REFERENCE'} and ref($key->{'VALUE.REFERENCE'}) and ($key->{'VALUE.REFERENCE'}->gi =~/^(CLASSPATH|LOCALCLASSPATH|CLASSNAME|INSTANCEPATH|LOCALINSTANCEPATH|INSTANCENAME)$/)){
-                        my $keyref=XML::Twig::Elt->new('VALUE.REFERENCE');
-                        $key->{'VALUE.REFERENCE'}->paste(last_child => $keyref);
-                        $keyref->paste( last_child => $keybinding);
+                    elsif(defined $key->{'VALUE.REFERENCE'} and ref($key->{'VALUE.REFERENCE'})=~/^XML::Twig::Elt$/){
+                        carp "WARNING: \"@{[$key->{'VALUE.REFERENCE'}->gi]}\" is not a valid reference type for keybinding\n";
+                        carp "WARNING skipping kebinding $key->{'NAME'} because it has an invalid VALUE.REFERENCE\n";
+                        next KEYBINDINGARRAY;
                     }
+                    
+                    $valueref->paste( last_child => $keybinding);
                     push(@keybindings,$keybinding);
                 }
+                else{
+                    carp "ERROR: A Keybinding is missing requierd fields skipping the current keybinding";
+                    next KEYBINDINGARRAY;
+                }
+            }
+            else{
+                carp "ERROR: A Keybinding is missing requierd fields skipping the current keybinding";
+                next KEYBINDINGARRAY;
             }
         }
         
