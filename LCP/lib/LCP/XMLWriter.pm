@@ -38,25 +38,41 @@ sub addquery{
     my $query=shift;
     push(@{$self->{'query'}},$query);
 }
-#depricated use mkiparamnew
+
 sub mkiparam($$;$){
     my $self=shift;
     my $name=shift;
     my $value=shift;
     my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$name});
     if (defined $value){
-        my $val=XML::Twig::Elt->new('VALUE'=>$value);
-        $val->paste($param);
+        if (ref($value)){
+            if (ref($value)=~/^XML::Twig::Elt$/){
+                if ($value->gi =~/^(VALUE|VALUE.ARRAY|VALUE.REFERENCE|INSTANCENAME|CLASSNAME|QUALIFIER.DECLARATION|CLASS|INSTANCE|VALUE.NAMEDINSTANCE)$/){
+                    $value->paste($param);
+                }
+                else{
+                    carp "ERROR: \"@{[$value->gi]}\" is not a valid sub tag of an IPARAMVALUE\n";
+                    warn "FAILED: Failed to create IPARAMVALUE $name due to invalid subtag";
+                    return;
+                }
+                
+            }
+            elsif(ref($value)=~/^ARRAY$/){
+                my $valuearray=$self->mkvaluearray($value);
+                $valuearray->paste($param);
+            }
+            else{
+                carp "ERROR: \"@{[ref($value)]}\" is not a valid reference type generate a subtag for an IPARAMVALUE\n";
+                warn "FAILED: Failed to create IPARAMVALUE $name due to invalid subtag";
+                return;
+            }
+        }
+        else{
+            my $valuetag=XML::Twig::Elt->new('VALUE'=>$value);
+            $valuetag->paste($param);
+        }
+        
     }
-    return $param;
-}
-# 
-
-sub mkiparamnew($$;$){
-    my $self=shift;
-    my $name=shift;
-    my $value=shift;
-    my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$name});
     return $param;
 }
 
