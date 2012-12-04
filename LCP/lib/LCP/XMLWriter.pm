@@ -55,7 +55,6 @@ sub mkiparam($$;$){
                     warn "FAILED: Failed to create IPARAMVALUE $name due to invalid subtag";
                     return;
                 }
-                
             }
             elsif(ref($value)=~/^ARRAY$/){
                 my $valuearray=$self->mkvaluearray($value);
@@ -76,20 +75,56 @@ sub mkiparam($$;$){
     return $param;
 }
 
-sub mkmethodcall($$){
+sub mkmethodcall($$;*\@){
     my $self=shift;
-    my $type=shift;
-    my $method=XML::Twig::Elt->new('IMETHODCALL',{'NAME' => $type});
+    my $name=shift;
+    my $namespace=shift;
+    my $params=shift;
+    my $method=XML::Twig::Elt->new('IMETHODCALL',{'NAME' => $name});
+    if (defined $namespace){
+        if (ref($namespace) and ref($namespace)=~/^XML::Twig::Elt$/ and $namespace->gi =~/^LOCALNAMESPACEPATH$/){
+            $namespace->paste($method);
+        }
+        elsif(ref($namespace)){
+            carp "ERROR: \"@{[ref($namespace)]}\" is an invalid reference type to define an namespace for an IMETHODCALL\n";
+            warn "FAILED: Failed to create IMETHODCALL $name because of invlid refernece used to define the namespace\n"
+        }
+        else{
+            my $namespacetag=$self->mklocalnamespace($namespace);
+            $namespacetag->paste(first_child => $method);
+        }
+        
+    }
+    if (defined $params){
+        for my $iparam (@{$params}){
+            if (defined){
+                if(ref($iparam) and ref($iparam)=~/^XML::Twig::Elt$/ and $iparam->gi =~/^IPARAMVALUE$/){
+                    $iparam->paste(last_child => $method);
+                }
+                elsif(ref($iparam) and $iparam=~/^HASH$/ and exists $iparam->{'NAME'} and exists $iparam->{'VALUE'}){
+                    my $iparamxml=$self->mkiparam($iparam->{'NAME'},$iparam->{'VALUE'});
+                    $iparamxml->paste(last_child => $method);
+                }
+                elsif(ref($iparam)){
+                    carp "WARNING: A \"@{[ref($iparam)]}\" reference cann not be used to create a valid IPARAMVALUE\n";
+                    warn "ERORR: could not generate one of the IPARAMVALUE fields in IMETHODCALL $name because of incorrect input\n";
+                    
+                }
+                else{
+                    carp "WARNING: \"$iparam\" is insufficient information to create an IPARAMVALUE\n";
+                    warn "ERORR: could not generate one of the IPARAMVALUE fields in IMETHODCALL $name because of incorrect input\n";
+                }
+            }
+        }
+        
+    }
     return $method;
 }
 
-
-
-# replaced mklocalnamespacexml
-# requieres 1 argument the CIM name space for example root/lsiarray13
+# requieres 1 argument the CIM name space for example root/CIM_v2
 # returns an xml twig element for the formated namespace
 # example
-# my $namespace=mklocalnamespace('root/lsiarray13');
+# my $namespace=mklocalnamespace('root/CIM_v2');
 
 sub mklocalnamespace{
     my $self=shift;
@@ -102,6 +137,7 @@ sub mklocalnamespace{
     }
     return $namespace;
 }
+
 sub checktypeconstraints{
     my $self=shift;
     my $constraint=shift;
@@ -310,15 +346,17 @@ sub mkbool{
     my @params;
     for my $key (keys %{$hash}){
         if ($hash->{$key}){
-            my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$key});
-            my $value=XML::Twig::Elt->new('VALUE'=>'TRUE');
-            $value->paste( last_child => $param);
+            my $param=$self->mkiparam($key,'TRUE');
+            #my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$key});
+            #my $value=XML::Twig::Elt->new('VALUE'=>'TRUE');
+            #$value->paste( last_child => $param);
             push(@params,$param);
         }
         else{
-            my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$key});
-            my $value=XML::Twig::Elt->new('VALUE'=>'FALSE');
-            $value->paste( last_child => $param);
+            my $param=$self->mkiparam($key,'FALSE');
+            #my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$key});
+            #my $value=XML::Twig::Elt->new('VALUE'=>'FALSE');
+            #$value->paste( last_child => $param);
             push(@params,$param);
         }
     }
@@ -341,21 +379,23 @@ sub mkproperty($$;$$){
     return $param;
 }
 
-sub mkpropertylist{
+sub mkpropertylist($\@){
     my $self=shift;
     my $array=shift;
-    my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>'PropertyList'});
-    my $valuearray=$self->mkvaluearray($array);
-    $valuearray->paste( last_child => $param);
+    my $param=$self->mkiparam('PropertyList',$array);
+    #my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>'PropertyList'});
+    #my $valuearray=$self->mkvaluearray($array);
+    #$valuearray->paste( last_child => $param);
     return $param;
 }
 
 sub mkclassname{
     my $self=shift;
     my $rawclassname=shift;
-    my $param=$self->mkiparam('ClassName');
-    my $classname=XML::Twig::Elt->new('CLASSNAME'=>{'NAME'=>$rawclassname});
-    $classname->paste($param);
+    my $param=$self->mkiparam('ClassName',XML::Twig::Elt->new('CLASSNAME'=>{'NAME'=>$rawclassname}));
+    #my $param=$self->mkiparam('ClassName');
+    #my $classname=XML::Twig::Elt->new('CLASSNAME'=>{'NAME'=>$rawclassname});
+    #$classname->paste($param);
     return $param;
 }
 
@@ -363,9 +403,9 @@ sub mkobjectname{
     my $self=shift;
     my $rawclassname=shift;
     my $value=shift;
-    my $param=$self->mkiparam('ObjectName');
+    #my $param=$self->mkiparam('ObjectName');
     my $classname=XML::Twig::Elt->new('INSTANCENAME'=>{'CLASSNAME'=>$rawclassname});
-    $classname->paste('last_child'=>$param);
+    #$classname->paste('last_child'=>$param);
     if ($value){
         if (ref($value) eq 'ARRAY'){
             for my $val (@{$value}){
@@ -376,6 +416,7 @@ sub mkobjectname{
             $value->paste('last_child'=>$classname);
         }
     }
+    my $param=$self->mkiparam('ObjectName',$classname);
     return $param;
 }
 
@@ -420,36 +461,40 @@ sub mkresultclass{
 sub mkrole{
     my $self=shift;
     my $value=shift;
-    my $param=$self->mkiparam('Role');
-    my $classname=XML::Twig::Elt->new('VALUE'=>$value);
-    $classname->paste($param);
+    my $param=$self->mkiparam('Role',$value);
+    #my $param=$self->mkiparam('Role');
+    #my $classname=XML::Twig::Elt->new('VALUE'=>$value);
+    #$classname->paste($param);
     return $param;
 }
 
 sub mkresultrole{
     my $self=shift;
     my $value=shift;
-    my $param=$self->mkiparam('ResultRole');
-    my $classname=XML::Twig::Elt->new('VALUE'=>$value);
-    $classname->paste($param);
+    my $param=$self->mkiparam('ResultRole',$value);
+    #my $param=$self->mkiparam('ResultRole');
+    #my $classname=XML::Twig::Elt->new('VALUE'=>$value);
+    #$classname->paste($param);
     return $param;
 }
 
 sub mkpropertyname{
     my $self=shift;
     my $value=shift;
-    my $param=$self->mkiparam('PropertyName');
-    my $classname=XML::Twig::Elt->new('VALUE'=>$value);
-    $classname->paste($param);
+    my $param=$self->mkiparam('PropertyName',$value);
+    #my $param=$self->mkiparam('PropertyName');
+    #my $classname=XML::Twig::Elt->new('VALUE'=>$value);
+    #$classname->paste($param);
     return $param;
 }
 
 sub mkpropertyvalue{
     my $self=shift;
     my $value=shift;
-    my $param=$self->mkiparam('NewValue');
-    my $classname=XML::Twig::Elt->new('VALUE'=>$value);
-    $classname->paste($param);
+    my $param=$self->mkiparam('NewValue',$value);
+    #my $param=$self->mkiparam('NewValue');
+    #my $classname=XML::Twig::Elt->new('VALUE'=>$value);
+    #$classname->paste($param);
     return $param;
 }
 
