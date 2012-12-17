@@ -39,6 +39,58 @@ sub addquery{
     push(@{$self->{'query'}},$query);
 }
 
+sub comparedefaults($\%\%;\%){
+    my $self=shift;
+    my $defaults=shift;
+    my $settings=shift;
+    my $constrains=shift;
+    my $result={};
+    for my $key (keys %{$settings}){
+        unless (defined $defaults->{$key}){
+            warn "WARNING: \"$key\" is not a vailid field in this context\n";
+            carp "WARNING: Disregarding \"$key\" because it is an invalid field\n";
+        }
+        elsif(defined $constrains and defined $constrains->{$key}){
+            if($self->checktypeconstraints($constrains->{$key},$settings->{$key})){
+                $result->{$key}=$settings->{$key}
+            }
+            else{
+                carp "ERROR: \"$settings->{$key}\" does not meet the value constraints for $key\n ";
+            }
+        }
+        else{
+           $result->{$key}=$settings->{$key} 
+        }
+        
+    }
+    for my $key (keys %{$defaults}){
+        unless (defined $result->{$key}){
+            $result->{$key}=$defaults->{$key}
+        }
+    }
+    return $result;
+}
+
+sub checktwigref($\@$){
+    my $self=shift;
+    my $types=shift;
+    my $reference=shift;
+    my $regex='(' . join('|',@{$types}) . ')';
+    if (ref($reference)){
+        if (ref($reference)=~/^XML::Twig::Elt$/){
+            if ($reference->gi =~/^$regex$/){
+                return 1;
+            }
+            else{
+                carp "ERROR: \"@{[$reference->gi]}\" tag is not valid in this context\n";
+                warn "ERROR: The \"@{[$reference->gi]}\" tag is invalid\n";
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
+
 sub mkiparam($$;$){
     my $self=shift;
     my $name=shift;
@@ -150,7 +202,7 @@ sub checktypeconstraints{
             return 0;
         }
     }
-    elsif ($constraint=~/^ParamType/){
+    elsif ($constraint=~/^ParamType$/){
         if ($value=~/^(boolean|string|char16|uint8|sint8|uint16|sint16|uint32|sint32|uint64|sint64|datetime|real32|real64|reference|object|instance)$/){
             return 1;
         }
@@ -160,6 +212,14 @@ sub checktypeconstraints{
     }
     elsif ($constraint=~/^ParamType/){
         if ($value=~/^(boolean|string|char16|uint8|sint8|uint16|sint16|uint32|sint32|uint64|sint64|datetime|real32|real64|reference|object|instance)$/){
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+    elsif ($constraint=~/^TF$/){
+        if ($value=~/^(true|false)$/){
             return 1;
         }
         else {
@@ -227,7 +287,7 @@ sub mkkeybinding{
                         }
                         elsif(defined $keys->{$key}->{'VALUE.REFERENCE'} and ref($keys->{$key}->{'VALUE.REFERENCE'})=~/^XML::Twig::Elt$/ and ($keys->{$key}->{'VALUE.REFERENCE'}->gi =~/^(CLASSPATH|LOCALCLASSPATH|CLASSNAME|INSTANCEPATH|LOCALINSTANCEPATH|INSTANCENAME)$/)){
                             my $keyref=XML::Twig::Elt->new('VALUE.REFERENCE');
-                            $keys->{$key}->{'VALUE.REFERENCE'}->paste(ast_child => $keyref);
+                            $keys->{$key}->{'VALUE.REFERENCE'}->paste(last_child => $keyref);
                             $valueref->paste( last_child => $keybinding);
                         }
                         elsif(defined $$keys->{$key}->{'VALUE.REFERENCE'} and ref($keys->{$key}->{'VALUE.REFERENCE'})=~/^XML::Twig::Elt$/){
@@ -377,6 +437,95 @@ sub mkproperty($$;$$){
         $val->paste($param);
     }
     return $param;
+}
+
+sub mkpropertynew($$;$$){
+    my $self=shift;
+    my $name=shift;
+    my $value=shift;
+    my $type=shift;
+    # attribs to add
+    # CLASSORIGIN #IMPLIED
+    #PROPAGATED     (true|false)  'false'
+    #EmbeddedObject (object|instance) #IMPLIED
+    # xml:lang   NMTOKEN     #IMPLIED
+    unless(defined $type){
+        $type='string';
+    }
+    my $param=XML::Twig::Elt->new('PROPERTY'=>{'NAME'=>$name,'TYPE'=>$type});
+    if (defined $value){
+        my $val=XML::Twig::Elt->new('VALUE'=>$value);
+        $val->paste($param);
+    }
+    return $param;
+}
+
+sub mkqualifier($$;$$$\%$){
+    my $self=shift;
+    my $name=shift;
+    my $value=shift;
+    my $type=shift;
+    my $propagated=shift;
+    my $rawflavor=shift;
+    my $lang=shift;
+    my $defaultflavor={
+        'OVERRIDABLE'=>'true',
+        'TOSUBCLASS'=>'true',
+        'TOINSTANCE'=>'false',
+        'TRANSLATABLE'=>'false'
+    };
+    my $flavorconstraints={
+        'OVERRIDABLE'=>'TF',
+        'TOSUBCLASS'=>'TF',
+        'TOINSTANCE'=>'TF',
+        'TRANSLATABLE'=>'TF'
+    };
+    my $flavor=$self->comparedefaults($defaultflavor,$rawflavor,$flavorconstraints);
+    unless(defined $type){
+        $type='string';
+    }
+    else{
+        unless ($self->checktypeconstraints('CIMType',$type)){
+            carp "ERROR: \"$type\" is not a valid CIM Type\n";
+            warn "WARNING: setting the Type to string because of invalid input\n";
+            $type='string';
+        }
+    }
+    my $qualifier=XML::Twig::Elt->new('QUALIFIER'=>{'NAME'=>$name,'TYPE'=>$type});
+    for my $key (keys %{$flavor}){
+        $qualifier->set_att($key=>$flavor->{$key});
+    }
+    if(defined $propagated and $propagated){
+        $qualifier->set_att('PROPAGATED'=>'true');
+    }
+    else{
+        $qualifier->set_att('PROPAGATED'=>'false');
+    }
+    if(defined $lang){
+        $qualifier->set_att('xml:lang'=>$lang);
+    }
+    if (defined $value){
+        if ($self->checktwigref(['VALUE','VALUE.ARRAY'],$value)){
+            $value->paste(last_child => $qualifier);
+        }
+        elsif(ref($value)){
+            if (ref($value) eq 'ARRAY'){
+                my $valuexml=$self->mkvaluearray($value);
+                $valuexml->paste(last_child => $qualifier);
+            }
+            elsif(ref($value) eq 'XML::Twig::Elt'){
+                carp "ERROR: @{[$value->gi]} is not a valid subtag fora qualifier\n";
+            }
+            else{
+                carp "ERROR: The value of a qualifier can not be defined in a @{[ref($value)]} reference\n";
+            }
+        }
+        else{
+            my $valuexml=XML::Twig::Elt->new('VALUE'=>$value);
+            $valuexml->paste(last_child => $qualifier);
+        }
+    }
+    return $qualifier;
 }
 
 sub mkpropertylist($\@){
