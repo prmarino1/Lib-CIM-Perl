@@ -1,7 +1,7 @@
 This is Todo list that needs to be completed before version 1.0 can be released
 NOTE: This list is not complete yet
 
-1) M-POST to post method auto fail over
+1) M-POST to POST method auto fail over incase M-POST is not implemented on the WBEM server
 2) More work needs to be done with digest vs basic auth
 3) CIM create, modify, and delete methods from DSP0200 need to be added to the LCP::Query and LCP::XMLWriter classes
     3.1) CreateClass
@@ -21,6 +21,9 @@ NOTE: This list is not complete yet
 9) A test harnes needs to be written for CPAN acceptance
 10) version specific CIM protocol handleing needs to be added.
 11) Implement the Pulled Enumeration Operation methods from DSP0200
-12) Support for defining TYPE as values other than string needs to be added to the mkkeybingngs method in the LCP::XMLWtiter class (cuurently avalible for keybindings)
-13) helper methods to create CLASSPATH, LOCALCLASSPATH, CLASSNAME, INSTANCEPATH, LOCALINSTANCEPATH, INSTANCENAME object for VALUE.REFERENCE's needs to be added to LCP::Query
+12) Support for defining TYPE as values other than string needs to be added to various methods in the LCP::XMLWriter class (currently avalible for keybindings)
+13) helper methods to create CLASSPATH, LOCALCLASSPATH, CLASSNAME, INSTANCEPATH, LOCALINSTANCEPATH, INSTANCENAME object for VALUE.REFERENCE's and many more needs to be added to LCP::Query
 14) Need to better document the new complex keybinding formats
+15) Convert various methods to use new constraint checking method in the LCP::XMLWriter class
+16) add more constraint types to the new constraint checking method
+17) Convert various methods to use the new comparedefaults method with constraint checks enabled

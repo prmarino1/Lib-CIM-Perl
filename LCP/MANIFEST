@@ -2,6 +2,7 @@ Changes
 Makefile.PL
 MANIFEST
 README
+Todo.txt
 t/LCP.t
 lib/LCP.pm
 lib/LCP/Agent.pm

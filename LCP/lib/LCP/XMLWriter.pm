@@ -134,7 +134,7 @@ sub mkmethodcall($$;*\@){
     my $params=shift;
     my $method=XML::Twig::Elt->new('IMETHODCALL',{'NAME' => $name});
     if (defined $namespace){
-        if (ref($namespace) and ref($namespace)=~/^XML::Twig::Elt$/ and $namespace->gi =~/^LOCALNAMESPACEPATH$/){
+        if (ref($namespace) and ref($namespace)=~/^XML::Twig::Elt$/ and $namespace->gi =~/^(LOCALNAMESPACEPATH|LOCALCLASSPATH)$/){
             $namespace->paste($method);
         }
         elsif(ref($namespace)){
@@ -769,7 +769,7 @@ after a query has been created by the LCP::Query class.
 
 =head2 EXPORT
 
-This is an OO Class and as such exports nothing
+This is an OO Class and as such it exports nothing
 
 
 
