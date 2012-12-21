@@ -470,12 +470,13 @@ sub ReferenceNames($$$\%;$$){
 	my $objectname=$self->{'writer'}->mkobjectname($cimclass);
 	$objectname->paste('last_child' => $method);
         if (defined $resultclass and $resultclass !~ /^NULL$/i){
-        my $resclass=$self->{'writer'}->mkresultclass($resultclass);
-        $resclass->paste('last_child' => $method);
-    }
+	    my $resclass=$self->{'writer'}->mkresultclass($resultclass);
+	    $resclass->paste('last_child' => $method);
+	}
 	if(defined $role and $role !~ /^NULL$/i){
-        my $rolevalue=$self->{'writer'}->mkrole($role);
-        $rolevalue->paste('last_child' => $method);
+	    my $rolevalue=$self->{'writer'}->mkrole($role);
+	    $rolevalue->paste('last_child' => $method);
+	}
     }
     push(@{$self->{'writer'}->{'query'}},$method);
 }
