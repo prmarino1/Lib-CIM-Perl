@@ -76,16 +76,14 @@ sub GetInstance($$$$;\%\@){
         'IncludeQualifiers'=>0,
         'IncludeClassOrigin'=>1,
     };
-    for my $key (keys %{$defaultoptions}){
-            unless (defined $options->{$key}){
-                $options->{$key}=$defaultoptions->{$key};
-            }
-        
-    }
-    my $method=$self->{'writer'}->mkmethodcall('GetInstance');
-    my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
-    $namespacetwig->paste( 'first_child' => $method);
-    for my $option ($self->{'writer'}->mkbool($options)){
+    my $optionsconstraints={
+	'LocalOnly'=>'boolean',
+	'IncludeQualifiers'=>'boolean',
+        'IncludeClassOrigin'=>'boolean',
+    };
+    my $resultoptions=$self->{'writer'}->comparedefaults($defaultoptions,$options,$optionsconstraints);
+    my $method=$self->{'writer'}->mkmethodcall('GetInstance',$namespace);
+    for my $option ($self->{'writer'}->mkbool($resultoptions)){
         $option->paste('last_child' => $method);
     }
     my $iparam=$self->{'writer'}->mkmethodcall('InstanceName');
@@ -95,7 +93,7 @@ sub GetInstance($$$$;\%\@){
     for my $option ($self->{'writer'}->mkkeybinding($instanceid)){
         $option->paste('last_child' => $instancename);
     }
-    my $keybindings=$self->mkkeybindingxml($instanceid);
+    #my $keybindings=$self->mkkeybindingxml($instanceid);
     if (defined $propertylist){
         my $proplist=$self->{'writer'}->mkpropertylist($propertylist);
         $proplist->paste('last_child' => $method);

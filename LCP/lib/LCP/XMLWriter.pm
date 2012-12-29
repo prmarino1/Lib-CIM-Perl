@@ -226,6 +226,14 @@ sub checktypeconstraints{
             return 0;
         }
     }
+    elsif ($constraint=~/^boolean$/){
+        if ($value=~/^(1|0)$/){
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
 }
 
 sub mkvaluearray($\@){
@@ -407,43 +415,24 @@ sub mkbool{
     for my $key (keys %{$hash}){
         if ($hash->{$key}){
             my $param=$self->mkiparam($key,'TRUE');
-            #my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$key});
-            #my $value=XML::Twig::Elt->new('VALUE'=>'TRUE');
-            #$value->paste( last_child => $param);
             push(@params,$param);
         }
         else{
             my $param=$self->mkiparam($key,'FALSE');
-            #my $param=XML::Twig::Elt->new('IPARAMVALUE'=>{'NAME'=>$key});
-            #my $value=XML::Twig::Elt->new('VALUE'=>'FALSE');
-            #$value->paste( last_child => $param);
             push(@params,$param);
         }
     }
     return @params;
 }
 
-sub mkproperty($$;$$){
+sub mkproperty($$;$$$$$){
     my $self=shift;
     my $name=shift;
     my $value=shift;
     my $type=shift;
-    unless(defined $type){
-        $type='string';
-    }
-    my $param=XML::Twig::Elt->new('PROPERTY'=>{'NAME'=>$name,'TYPE'=>$type});
-    if (defined $value){
-        my $val=XML::Twig::Elt->new('VALUE'=>$value);
-        $val->paste($param);
-    }
-    return $param;
-}
-
-sub mkpropertynew($$;$$){
-    my $self=shift;
-    my $name=shift;
-    my $value=shift;
-    my $type=shift;
+    my $originclass=shift;
+    my $propagated=shift;
+    my $lang=shift;
     # attribs to add
     # CLASSORIGIN #IMPLIED
     #PROPAGATED     (true|false)  'false'
@@ -452,10 +441,42 @@ sub mkpropertynew($$;$$){
     unless(defined $type){
         $type='string';
     }
+    else{
+        unless ($self->checktypeconstraints('CIMType',$type)){
+            carp "ERROR: \"$type\" is not a valid CIM Type\n";
+            warn "WARNING: setting the type to string for PROPERTY name $name because the type is invalid\n";
+            $type='string';
+        }
+    }
     my $param=XML::Twig::Elt->new('PROPERTY'=>{'NAME'=>$name,'TYPE'=>$type});
     if (defined $value){
         my $val=XML::Twig::Elt->new('VALUE'=>$value);
         $val->paste($param);
+    }
+    if (defined $originclass){
+        $param->set_att('CLASSORIGIN'=>$originclass);
+        
+    }
+    if (defined $propagated){
+        if ($self->checktypeconstraints('bool',$propagated)){
+            if ($propagated){
+                $param->set_att('PROPAGATED'=>'true');
+            }
+            else{
+                $param->set_att('PROPAGATED'=>'false');
+            }
+        }
+        elsif($self->checktypeconstraints('TF',$propagated)){
+            $param->set_att('PROPAGATED'=>$propagated);
+        }
+        else{
+            carp "ERROR: \"$propagated\" is not a true, false, or bool value\n";
+            warn "WARNING: skipping the PROPAGATED for PROPERTY $name bacause of invalid value\n";
+        }
+        
+    }
+    if(defined $lang){
+        $param->set_att('xml:lang'=>$lang);
     }
     return $param;
 }
