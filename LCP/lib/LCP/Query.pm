@@ -612,13 +612,14 @@ Each intrisic method is a Perl style version of a method spesified in DTMF DSP02
 
 =over 4
 
-$query->GetClass('name/space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},['property1','property2']);
+$query-E<gt>GetClass('name/space','ClassName',{ 'LocalOnly'=E<gt> 1, 'IncludeQualifiers' =E<gt> 1, IncludeClassOrigin=E<gt> 0},['property1','property2']);
 
-$query->GetClass('name/space','ClassName',{ 'LocalOnly'=>0, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0});
+$query-E<gt>GetClass('name/space','ClassName',{ 'LocalOnly'=E<gt>0, 'IncludeQualifiers' =E<gt>1, IncludeClassOrigin=E<gt> 0});
 
-$query->GetClass('name/space','ClassName',{},['property1','property2']);
+$query-E<gt>GetClass('name/space','ClassName',{},['property1','property2']);
 
-$query->GetClass('name/space','ClassName');
+$query-E<gt>GetClass('name/space','ClassName');
+
 
 See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 

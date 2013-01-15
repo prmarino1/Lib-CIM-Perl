@@ -93,6 +93,17 @@ sub new{
     else{
 	$self->{'Timeout'}='60';
     }
+    if (defined $options->{'Interop'} and $options->{'Interop'}=~/\w+(\/\w+)*/){
+	$self->{'Interop'}=$options->{'Interop'};
+    }
+    elsif(defined $options->{'Interop'}){
+	carp "WARNING: \"$options->{'Interop'}\" does not match the patern for CIM namespace setting the namespace to root/interop instead\n";
+	warn "ERROR: Overriding the Interop namespace speccified for this agent because it failed the format validation check\n";
+	$self->{'Interop'}='root/interop';
+    }
+    else{
+	$self->{'Interop'}='root/interop';
+    }
     bless ($self, $class);
     return $self;
 }

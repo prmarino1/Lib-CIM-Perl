@@ -20,7 +20,6 @@ sub new{
         carp "No agent defined\n";
         return 0;
     }
-    
     # I need to add auto M-POST first then POST logic
     # This detection can be done via a simple query such as listing the supported namespaces and checking the return code on the result
     if (defined $options->{'Method'}){
@@ -41,13 +40,48 @@ sub new{
     else{
 	$self->{'Timeout'}=$self->{'agent'}->{'Timeout'};
     }
+    #interop namespace logic
+    if (defined $options->{'Interop'} and $options->{'Interop'}=~/\w+(\/\w+)*/){
+	$self->{'Interop'}=$options->{'Interop'};
+    }
+    elsif(defined $options->{'Interop'}){
+	carp "WARNING: \"$options->{'Interop'}\" does not match the patern for CIM namespace\n";
+	warn "ERROR: Overriding the Interop namespace specified for this session because it failed the format validation check\n";
+	$self->{'Interop'}=$self->{'agent'}->{'Interop'};
+    }
+    else{
+	$self->{'Interop'}=$self->{'agent'}->{'Interop'};
+    }
     #setting a random message id number to start with;
     $self->{'messageid'}=int(rand(65535));
     bless ($self, $class);
     return $self;
 }
 
-
+sub listnamespaces($){
+    my $self=shift;
+    my $results=[];
+    my $query=LCP::Query->new();
+    $query->EnumerateInstances($self->{'Interop'},'CIM_Namespace');
+    my $post=LCP::Post->new($self,$query);
+    my $parser=LCP::SimpleParser->new($post->get_raw_xml);
+    my $tree=$parser->buildtree;
+    if (defined $tree->{'CIM'}->{'MESSAGE'}->{'SIMPLERSP'}->{'EnumerateInstances'}->{'ERROR'}){
+        carp "$tree->{'CIM'}->{'MESSAGE'}->{'SIMPLERSP'}->{'EnumerateInstances'}->{'ERROR'}->{'DESCRIPTION'}\n";
+	return;
+    }
+    else{
+	for my $instance (@{$tree->{'CIM'}->{'MESSAGE'}->{'SIMPLERSP'}->{'EnumerateInstances'}->{'IRETURNVALUE'}->{'VALUE.NAMEDINSTANCE'}}){
+	    push(@{$results},"$instance->{'INSTANCE'}->{'Name'}");
+	}
+    }
+    if(wantarray){
+	return @{$results};
+    }
+    else{
+	return $results;
+    }
+}
 
 
 
@@ -111,15 +145,29 @@ $session=LCP::Session->new($agent);
 
 The new method requires one paramiter the accessor to the instance of the LCP::Agent class
 One optional paramiter can also be added a hash containing the options to be used for this session only
-The options that ca be specified in the hash are as follows
+The options that can be specified in the hash are as follows
 
 1) Method
 Sets the post method for the session to POST, M-POST, or AUTO. currently AUTO only attempts M-Post; however the functionality will be expanded in the future so that if the WBEM server doesnt support M-POST it will attempt to execute the query via a POST.
+
 Default Method=>'AUTO'
 
 2) Timeout
-Sets how long to wait in seconds for querys posted via the session to return results befor timing out. this option overrides the equivelent option in the Agent instance.
+Sets how long to wait in seconds for querys posted via the session to return results befor timing out. This option overrides the equivelent option in the Agent instance.
 Default Timeout=>180
+
+3) Interop
+Sets the interop namespace used for the session for queries to discover the cpabilities of the WBEM server. Some WBEM providers stray from the standard for example most versions of OpenPegasus use 'root/PG_Interop'. This option overrides the equivelent option in the Agent instance.
+Default Interop=>'root/interop'
+
+=item listnamespaces
+
+my @namespacearray=$session->listnamespaces
+
+my $namespacearrayref=$session->listnamespaces
+
+The listnamespaces method returns an array or array reference containing a list of all of the namespaces registerd on the WBEM server. This method requiers that the Interop option be set correctly in the Agent instance or the session instanceto work.
+
 
 =head1 SEE ALSO
 
