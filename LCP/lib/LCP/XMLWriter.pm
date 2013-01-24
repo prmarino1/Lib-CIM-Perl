@@ -296,9 +296,9 @@ sub mkkeybinding{
                         elsif(defined $keys->{$key}->{'VALUE.REFERENCE'} and ref($keys->{$key}->{'VALUE.REFERENCE'})=~/^XML::Twig::Elt$/ and ($keys->{$key}->{'VALUE.REFERENCE'}->gi =~/^(CLASSPATH|LOCALCLASSPATH|CLASSNAME|INSTANCEPATH|LOCALINSTANCEPATH|INSTANCENAME)$/)){
                             my $keyref=XML::Twig::Elt->new('VALUE.REFERENCE');
                             $keys->{$key}->{'VALUE.REFERENCE'}->paste(last_child => $keyref);
-                            $valueref->paste( last_child => $keybinding);
+                            #$valueref->paste( last_child => $keybinding);
                         }
-                        elsif(defined $$keys->{$key}->{'VALUE.REFERENCE'} and ref($keys->{$key}->{'VALUE.REFERENCE'})=~/^XML::Twig::Elt$/){
+                        elsif(defined $keys->{$key}->{'VALUE.REFERENCE'} and ref($keys->{$key}->{'VALUE.REFERENCE'})=~/^XML::Twig::Elt$/){
                             carp "WARNING: \"@{[$keys->{$key}->{'VALUE.REFERENCE'}->gi]}\" is not a valid reference type for keybinding\n";
                             carp "WARNING skipping kebinding $keys->{$key}->{'NAME'} because it has an invalid VALUE.REFERENCE\n";
                             next KEYBINDING;

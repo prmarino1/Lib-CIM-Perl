@@ -588,6 +588,153 @@ LCP::Query - Lib CIM (Common Information Model) Perl Query Costructor
 
 This is an OO Class and as such exports nothing
 
+=head1 FIELD FORMATS
+
+=head2 FIELD VALUE Constraints
+
+=item CIMType constraint
+
+=over 4
+
+The CIMType constraint is a common constraint used in two contexts. The first is as a value of a field defining a constraint on a second field. The second is defining a restricting the contents of a field.
+
+The possible typs of constraints supported by the CIMType constraints are boolean, string, char16, uint8, sint8, uint16, sint16, uint32, sint32, uint64, sint64, datetime, real32, or real64
+
+=back
+
+=head2 Specialy Formated Fields 
+
+=head3 Keybinding
+
+=over 4
+
+Keyindings are a complex key value paring construct that includes a name, value or value reference, valuetype description, and type description which is an extended version of the valuetype.
+
+The NAME field is a requiered field containing a string that defines the name of the key
+
+Next you must define either the VALUE.REFERENCE or VALUE
+
+Creation of a VALUE.REFERENCE is not supported by this API yet but will be in the future.
+
+The VALUE field is a field containing a string, boolean, or numeric data. If you define the VALUE field you can define the VALUETYPE, and TYPE fields.
+
+The VALUETYPE field describes the type of data contained in the VALUE field. the VALUETYPE may be defined as string, boolean, or numeric. Unless the field is specified it will default to string.
+
+Finally the TYPE field is an extended description of the content of the VALUE field which may be defined as any one of the types defined in the "CIMType constraint". the default is undefind but implied by the VALUETYPE field.
+WARNING: Not all implementions of CIM-XML and WBEM handle the TYPE filed in a key binding properly and some even tools consider it to be invalid, so defining it may break things. At this time I advise users not to set this field unless you are trying to QA test other implementations CIM-XML or your WBEM servers.
+
+LCP supports defining a key binding in 4 different formats
+
+=back
+
+=item Simple hash
+
+=over 4
+
+%hash=(
+  'key1'=>'value1',
+  'key2'=>'35',
+  'key3'=>$value_ref_object
+);
+
+In the simple hash format all VALUETYPE fields are set to string unless the value is a VALUE.REFERENCE object 
+
+=back
+
+=item Complex hash
+
+=over 4
+
+%hash=(
+    'key1'=>{
+	'VALUE'=>'value1',
+	'VALUETYPE'=>'string'
+    },
+    'key2'=>{
+	'VALUE'=>'35',
+	'VALUETYPE'=>'numeric',
+	'TYPE'=>'uint8',
+    }
+    'key3'=>{
+	'VALUE.REFERENCE'=>$value_ref_object
+    }
+);
+
+The name of the top level key is the name of the keybinding
+The supported fields for the child hash are
+
+1) VALUE
+    The VALUE field is requiered unless a VALUE.REFERENCE is defined. It should contain the value of the keybinding
+2) VALUE.REFERENCE
+    The VALUE.REFERENCE is only valid and required if the VALUE field has not been defined. It shoud contain and referent to a VALUE.REFERENCE object.
+    Caviot: LCP does not support the creation of VALUE.REFERENCE objects yet but will in the future
+3) VALUETYPE
+    The VALUETYPE field is only valid if the VALUE field is defined. The contents may be defined as 'string', 'boolean', or 'numeric', and should describe the contents of the VALUE field. If the VALUETYPE is not defined then it defaults to string which is safe in most but not all cases.
+4) TYPE
+    The TYPE field is an optional field which is only valid if the VALUE field is defined. Its contains should be any one of the values described in the "CIMType constraint", and should be a more percise description of the data contained in the VALUE field. If the TYPE is not specified it is left undefined in the key binding, and the standard considers it to be implied by the VALUETYPE feild
+    WARNING: Implementation of the TYPE filed in a keybinding is inconsistant and some CIM implementations break when you define it. As such I advise users not to define it unless absolutly nessisary or you want to QA test other CIM implementations.
+    
+Each Key must contain a hash with either a VALUE or a VALUE.REFERENCE defined
+If both a VALUE and a VALUE.REFERENCE are defined the VALUE.REFERENCE will be ignored
+If the default for VALUETYPE is "string" if a VALUE is specified and the VALUETYPE has not been defined
+
+
+=back
+
+=item Mixed Hash
+
+=over 4
+You may use both the simple and complex format in a single hash mixed hash if you find it more convinient each key will function in accordent to the rules of the simple or complex format as apropriate
+
+%hash=(
+    'key1'=>'value1',
+    'key2'=>{
+	'VALUE'=>'35',
+	'VALUETYPE'=>'numeric',
+	'TYPE'=>'uint8'
+    }
+    'key3'=>$value_ref_object
+);
+
+=back
+
+=item Array of Hashes
+
+@array(
+    {
+	'NAME'=>'key1',
+	'VALUE'=>'value1'
+    },
+    {
+	'NAME'=>'key2',
+	'VALUE'=>'35',
+	'VALUETYPE'=>'numeric',
+	'TYPE'=>'uint8'
+    },
+    {
+	'NAME'=>'key3'
+	'VALUE.REFERENCE'=>$value_ref_object
+    },
+);
+
+Defining a keybinding has one major advantage it preserves the order of the keys where as the other methods do not.
+This method is an array containing hahs references in a complex format containing no less than 2 and up to 5 fields.
+the keys are as follows.
+
+1) NAME
+    The NAME field is a requierd field containing the name of the key
+2) VALUE
+    The VALUE field is requiered unless a VALUE.REFERENCE is defined. It should contain the value of the keybinding
+3) VALUE.REFERENCE
+    The VALUE.REFERENCE is only valid and required if the VALUE field has not been defined. It shoud contain and referent to a VALUE.REFERENCE object.
+    Caviot: LCP does not support the creation of VALUE.REFERENCE objects yet but will in the future
+3) VALUETYPE
+    The VALUETYPE field is only valid if the VALUE field is defined. The contents may be defined as 'string', 'boolean', or 'numeric', and should describe the contents of the VALUE field. If the VALUETYPE is not defined then it defaults to string which is safe in most but not all cases.
+5) TYPE
+    The TYPE field is an optional field which is only valid if the VALUE field is defined. Its contains should be any one of the values described in the "CIMType constraint", and should be a more percise description of the data contained in the VALUE field. If the TYPE is not specified it is left undefined in the key binding, and the standard considers it to be implied by the VALUETYPE feild
+    WARNING: Implementation of the TYPE filed in a keybinding is inconsistant and some CIM implementations break when you define it. As such I advise users not to define it unless absolutly nessisary or you want to QA test other CIM implementations.
+ 
+
 =head1 Basic Methods
 
 =item new
@@ -851,7 +998,20 @@ Not implemented yet
 
 =over 4
 
-$query->GetProperty ( 'name/space','ClassName', {key1=val1,key2=val2}, 'PropertyName');
+$query->GetProperty ( 'name/space','ClassName', $keybinding, 'PropertyName');
+
+GetProperty returns only a specific property from an instance of a class
+It requiers 4 paramiters
+
+1) Namespace
+The namespace that the instance of the class can be found in a common example is 'root/cimv2' or 'root/interop'
+
+2) The name of the class you want to query
+
+3) a keybinding which describes the instance of the class you want to query. please see the Keybinding field format described in the "Specialy Formated Fields" section.
+
+4) the name of the property you wisht to extrace.
+
 
 See DSP0200 Version 1.3.1 section 5.3.2.18 for details
 
