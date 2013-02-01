@@ -767,6 +767,18 @@ $query-E<gt>GetClass('name/space','ClassName',{},['property1','property2']);
 
 $query-E<gt>GetClass('name/space','ClassName');
 
+The GetClass method retrievs the information about a CIM class, thie information that describes the requiered fields, all of the optional fields and in most cases any relivant documentation about how the Class is inteded to be used.
+The LCP's GetClass method requiers 2 fields and has 2 optional fields
+
+1) The CIM namespace you want to query
+This field is requiered
+2) The name of the CIM class you want information about
+This field is requiered
+3) An optioal hash reference containing any combination of the following query modifiers 
+3.1) LocalOnly
+3.2) IncludeQualifiers
+3.3) IncludeClassOrigin
+4) An optional array reference containing a list of specific properties you want to know about
 
 See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
@@ -776,13 +788,29 @@ See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
 =over 4
 
-$query->GetInstance ('name/space','ClassName','InstanceID',{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},['property1','property2']);
+$query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},['property1','property2']);
 
-$query->GetInstance ('name/space','ClassName','InstanceID',{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0});
+$query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0});
 
-$query->GetInstance ('name/space','ClassName','InstanceID',{},['property1','property2']);
+$query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{},['property1','property2']);
 
-$query->GetInstance ('name/space','ClassName','InstanceID');
+$query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
+
+1) The CIM namespace you want to query
+This field is requiered
+2) The name of the CIM class you want information about
+This field is requiered
+3) InstanceName 
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+3) An optioal hash reference containing any combination of the following query modifiers 
+3.1) LocalOnly
+Defaults to 1 (True)
+3.2) IncludeQualifiers
+Defaults to 1 (True)
+3.3) IncludeClassOrigin
+Defaults to 0 (False)
+4) An optional array reference containing a list of specific properties you want to know about 
+
 
 See DSP0200 Version 1.3.1 section 5.3.2.2 for details
 
@@ -794,7 +822,13 @@ See DSP0200 Version 1.3.1 section 5.3.2.2 for details
 
 $query->DeleteClass ('name/space','ClassName')
 
-WARNING: this has not been tested yet
+1) The CIM namespace you want to delet the class from
+This field is requiered
+2) The name of the CIM class you want delete
+This field is requiered
+
+
+WARNING: This method has not been tested yet
 
 See DSP0200 Version 1.3.1 section 5.3.2.3 for details
 
@@ -804,7 +838,17 @@ See DSP0200 Version 1.3.1 section 5.3.2.3 for details
 
 =over 4
 
-$query->CreateInstance ('name/space','ClassName',{property1=val1,property2=val2});
+$query->DeleteInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
+
+1) The CIM namespace you want to delete the class from
+This field is requiered
+2) The name of the CIM class you want delete an intance of.
+This field is requiered
+3) InstanceName 
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to delete. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+This field is requiered
+
+WARNING: This method has not been tested yet
 
 See DSP0200 Version 1.3.1 section 5.3.2.4 for details
 
@@ -822,7 +866,14 @@ Not implemented yet
 
 =over 4
 
-$query->CreateInstance ('name/space','ClassName',{property1=val1,property2=val2});
+$query->CreateInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
+
+1) The CIM namespace you want to create the instance of the class in
+This field is requiered
+2) The name of the CIM class you want create an intance of.
+This field is requiered
+3) InstanceName 
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to create. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
 
 See DSP0200 Version 1.3.1 section 5.3.2.6 for details
 
@@ -858,6 +909,22 @@ $query->EnumerateClasses('name/space',, { 'DeepInheritance' = 0, 'LocalOnly' = 1
 
 $query->EnumerateClasses('name/space');
 
+
+1) The CIM namespace you want to enumerate the classes from
+This field is requiered
+2) The name of the CIM class you want information about
+This field is optional. If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
+3) An optioal hash reference containing any combination of the following query modifiers 
+3.1) DeepInheritance
+Defaults to 0 (False)
+3.2) LocalOnly
+Defaults to 1 (True)
+3.2) IncludeQualifiers
+Defaults to 1 (True)
+3.3) IncludeClassOrigin
+Defaults to 1 (True)
+
+
 See DSP0200 Version 1.3.1 section 5.3.2.9 for details
 
 =back
@@ -876,6 +943,17 @@ $query->EnumerateClassNames ('name/space','ClassName');
 
 $query->EnumerateClassNames ('name/space');
 
+1) The CIM namespace you want to enumerate the class names from
+This field is requiered
+2) The name of the CIM class you want to enumerate the class names of
+This field is optional.
+If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
+Note: this may not sound like it make sence but it does especialy when you enable the Deepinheritence modifier
+3) An optioal hash reference containing any combination of the following query modifiers 
+3.1) DeepInheritance
+Defaults to 0 (False)
+
+
 See DSP0200 Version 1.3.1 section 5.3.2.10 for details
 
 =back
@@ -892,6 +970,8 @@ $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInhe
 
 $query->EnumerateInstances('name/space','ClassName');
 
+
+
 See DSP0200 Version 1.3.1 section 5.3.2.11 for details
 
 =back
@@ -901,6 +981,12 @@ See DSP0200 Version 1.3.1 section 5.3.2.11 for details
 =over 4
 
 EnumerateInstanceNames ('name/space','ClassName');
+
+1) The CIM namespace you want to enumerate the instances name of the classes from
+This field is requiered
+2) The name of the CIM class you want to enumerate the intance names of
+This field is required.
+
 
 See DSP0200 Version 1.3.1 section 5.3.2.12 for details
 
@@ -918,23 +1004,23 @@ Not implemented yet
 
 =over 4
 
-$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
+$query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
 
-$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole',{ }, ['property1','property2'] );
+$query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{ }, ['property1','property2'] );
 
-$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','Role','ResultRole');
+$query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole');
 
-$query->Associators ('name/space','ClassName','ObjectName','AssocClass',);
+$query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass',);
 
-$query->Associators ('name/space','ClassName','ObjectName','NULL','NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->Associators ('name/space','ClassName','ObjectName','','','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'','','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->Associators ('name/space','ClassName','ObjectName','AssocClass','ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
+$query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
 
-$query->Associators ('name/space','ClassName','ObjectName','NULL','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
 See DSP0200 Version 1.3.1 section 5.3.2.14 for details
 
@@ -946,17 +1032,17 @@ See DSP0200 Version 1.3.1 section 5.3.2.14 for details
 
 $query->AssociatorNames('name/space','ClassName', {} , 'AssocClass', 'ResultClass', 'Role','ResultRole');
 
-$query->AssociatorNames('name/space','ClassName', 'ObjectName', 'NULL', 'NULL', 'NULL','NULL');
+$query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'NULL', 'NULL', 'NULL','NULL');
 
-$query->AssociatorNames('name/space','ClassName', 'ObjectName', 'AssocClass', 'NULL', 'Role','ResultRole');
+$query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'AssocClass', 'NULL', 'Role','ResultRole');
 
-$query->AssociatorNames('name/space','ClassName', 'ObjectName', 'NULL', 'ResultClass', 'NULL','ResultRole');
+$query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'NULL', 'ResultClass', 'NULL','ResultRole');
 
-$query->AssociatorNames('name/space','ClassName', 'ObjectName', '', 'ResultClass', '','ResultRole');
+$query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, '', 'ResultClass', '','ResultRole');
 
-$query->AssociatorNames('name/space','ClassName', 'ObjectName', 'NULL', 'ResultClass');
+$query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'NULL', 'ResultClass');
 
-$query->AssociatorNames('name/space','ClassName', 'ObjectName');
+$query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format);
 
 See DSP0200 Version 1.3.1 section 5.3.2.15 for details
 
@@ -966,23 +1052,23 @@ See DSP0200 Version 1.3.1 section 5.3.2.15 for details
 
 =over 4
 
-$query->References ('name/space','ClassName','{key1=val1,key2=val2}','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->References ('name/space','ClassName','ObjectName','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
 
-$query->References ('name/space','ClassName','ObjectName','ResultClass','Role','ResultRole',{ }, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role','ResultRole',{ }, ['property1','property2'] );
 
-$query->References ('name/space','ClassName','ObjectName','ResultClass','Role','ResultRole');
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role','ResultRole');
 
-$query->References ('name/space','ClassName','ObjectName');
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
-$query->References ('name/space','ClassName','ObjectName','NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->References ('name/space','ClassName','ObjectName','','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->References ('name/space','ClassName','ObjectName','ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
 
-$query->References ('name/space','ClassName','ObjectName','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
 =back
 
@@ -998,19 +1084,22 @@ Not implemented yet
 
 =over 4
 
-$query->GetProperty ( 'name/space','ClassName', $keybinding, 'PropertyName');
+$query->GetProperty ( 'name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'PropertyName');
 
 GetProperty returns only a specific property from an instance of a class
 It requiers 4 paramiters
 
 1) Namespace
-The namespace that the instance of the class can be found in a common example is 'root/cimv2' or 'root/interop'
+A string containing the namespace that the instance of the class can be found in a common example is 'root/cimv2' or 'root/interop'
 
-2) The name of the class you want to query
+2) ClassName
+A string containing the name of the class you want to query
 
-3) a keybinding which describes the instance of the class you want to query. please see the Keybinding field format described in the "Specialy Formated Fields" section.
+3) InstanceName 
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
 
-4) the name of the property you wisht to extrace.
+4) PropertyName
+The name of the property you wisht to extrace.
 
 
 See DSP0200 Version 1.3.1 section 5.3.2.18 for details
@@ -1021,7 +1110,7 @@ See DSP0200 Version 1.3.1 section 5.3.2.18 for details
 
 =over 4
 
-$query->SetProperty('name/space','ClassName',{key1=val1,key2=val2},'PropertyName','VALUE')
+$query->SetProperty('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'PropertyName','VALUE')
 
 See DSP0200 Version 1.3.1 section 5.3.2.19 for details
 
