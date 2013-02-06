@@ -27,9 +27,9 @@ sub GetClass($$$;\%\@){
     $self->{'last_method'}='GetClass';
     $self->{'last_namespace'}=$namespace;
     my $defaultoptions={
-        'LocalOnly'=>0,
-        'IncludeQualifiers'=>0,
-        'IncludeClassOrigin'=>1,
+        'LocalOnly'=>1,
+        'IncludeQualifiers'=>1,
+        'IncludeClassOrigin'=>0,
     };
     for my $key (keys %{$defaultoptions}){
             unless (defined $options->{$key}){
@@ -776,9 +776,12 @@ This field is requiered
 This field is requiered
 3) An optioal hash reference containing any combination of the following query modifiers 
 3.1) LocalOnly
+Defaults to 1 (True)
 3.2) IncludeQualifiers
+Defaults to 1 (True)
 3.3) IncludeClassOrigin
-4) An optional array reference containing a list of specific properties you want to know about
+Defaults to 0 (False)
+4) An optional array reference containing a list of specific properties you want to know about instead of retuning every thing.
 
 See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
@@ -796,6 +799,8 @@ $query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybind
 
 $query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
+GetInstance retrieves the data from a specific instance of a CIM class. 
+
 1) The CIM namespace you want to query
 This field is requiered
 2) The name of the CIM class you want information about
@@ -809,7 +814,7 @@ Defaults to 1 (True)
 Defaults to 1 (True)
 3.3) IncludeClassOrigin
 Defaults to 0 (False)
-4) An optional array reference containing a list of specific properties you want to know about 
+4) An optional array reference containing a list of specific properties you want to know about instead of retuning every thing
 
 
 See DSP0200 Version 1.3.1 section 5.3.2.2 for details
@@ -821,6 +826,8 @@ See DSP0200 Version 1.3.1 section 5.3.2.2 for details
 =over 4
 
 $query->DeleteClass ('name/space','ClassName')
+
+DeleteClass deletes a CIM Class from a namespace.
 
 1) The CIM namespace you want to delet the class from
 This field is requiered
@@ -839,6 +846,8 @@ See DSP0200 Version 1.3.1 section 5.3.2.3 for details
 =over 4
 
 $query->DeleteInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
+
+DeleteInstance deletes a specific instance of a CIM class from a namespace.
 
 1) The CIM namespace you want to delete the class from
 This field is requiered
@@ -867,6 +876,8 @@ Not implemented yet
 =over 4
 
 $query->CreateInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
+
+CreateInstance creates specific uniqe instance of a CIM class in a namespace.
 
 1) The CIM namespace you want to create the instance of the class in
 This field is requiered
@@ -969,6 +980,7 @@ $query->EnumerateInstances('name/space','ClassName',{ }, ['property1','property2
 $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInheritance' = 1, 'IncludeQualifiers' = 0, 'IncludeClassOrigin' = 0 });
 
 $query->EnumerateInstances('name/space','ClassName');
+
 
 
 
