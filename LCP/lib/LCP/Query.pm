@@ -216,7 +216,7 @@ sub EnumerateClassNames($$;$\%){
     $self->{'last_method'}='EnumerateClassNames';
     $self->{'last_namespace'}=$namespace;
     my $defaultoptions={
-        'DeepInheritance'=>1,
+        'DeepInheritance'=>0,
     };
     for my $key (keys %{$defaultoptions}){
             unless (defined $options->{$key}){
@@ -884,7 +884,7 @@ This field is requiered
 2) The name of the CIM class you want create an intance of.
 This field is requiered
 3) InstanceName 
-A hash or array reference matching a valid keybinding format which describes the instance of the class you want to create. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to create. Please see the Keybinding field format described in the "Specialy Formated Fields" section. The exact keys allowed are CIM class specific.
 
 See DSP0200 Version 1.3.1 section 5.3.2.6 for details
 
@@ -933,7 +933,7 @@ Defaults to 1 (True)
 3.2) IncludeQualifiers
 Defaults to 1 (True)
 3.3) IncludeClassOrigin
-Defaults to 1 (True)
+Defaults to 0 (False)
 
 
 See DSP0200 Version 1.3.1 section 5.3.2.9 for details
