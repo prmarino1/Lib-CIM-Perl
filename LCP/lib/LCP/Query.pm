@@ -246,10 +246,10 @@ sub EnumerateInstances($$$;\%\@){
     $self->{'last_method'}='EnumerateInstances';
     $self->{'last_namespace'}=$namespace;
     my $defaultoptions={
-        'LocalOnly'=>0,
+        'LocalOnly'=>1,
         'DeepInheritance'=>1,
         'IncludeQualifiers'=>0,
-        'IncludeClassOrigin'=>1,
+        'IncludeClassOrigin'=>0,
     };
     for my $key (keys %{$defaultoptions}){
             unless (defined $options->{$key}){
@@ -807,12 +807,12 @@ This field is requiered
 This field is requiered
 3) InstanceName 
 A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
-3) An optioal hash reference containing any combination of the following query modifiers 
-3.1) LocalOnly
+4) An optioal hash reference containing any combination of the following query modifiers 
+4.1) LocalOnly
 Defaults to 1 (True)
-3.2) IncludeQualifiers
+4.2) IncludeQualifiers
 Defaults to 0 (False)
-3.3) IncludeClassOrigin
+4.3) IncludeClassOrigin
 Defaults to 0 (False)
 4) An optional array reference containing a list of specific properties you want to know about instead of retuning every thing
 
@@ -981,7 +981,21 @@ $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInhe
 
 $query->EnumerateInstances('name/space','ClassName');
 
-
+1) The CIM namespace you want to enumerate the class instances from
+This field is requiered
+2) The name of the CIM class you want to enumerate the instances of
+This field is required.
+If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
+3) An optioal hash reference containing any combination of the following query modifiers.
+3.1) LocalOnly
+Defailts to 1 (True)
+3.2) DeepInheritance
+Defaults to 1 (True)
+3.3) IncludeQualifiers
+Defaults to 0 (False)
+3.4) IncludeClassOrigin
+Defaults to 0 (False)
+4) An array reference containing a list of the specific properties of the instances you want to get
 
 
 See DSP0200 Version 1.3.1 section 5.3.2.11 for details
@@ -1033,6 +1047,24 @@ $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybind
 $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
 
 $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+
+
+1) The CIM namespace you want to enumerate the class instances from
+This field is requiered
+2) The name of the CIM class you want to enumerate the instances of
+This field is required.
+If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
+3) An optioal hash reference containing any combination of the following query modifiers.
+3.1) LocalOnly
+Defailts to 1 (True)
+3.2) DeepInheritance
+Defaults to 1 (True)
+3.3) IncludeQualifiers
+Defaults to 0 (False)
+3.4) IncludeClassOrigin
+Defaults to 0 (False)
+4) An array reference containing a list of the specific properties of the instances you want to get
+
 
 See DSP0200 Version 1.3.1 section 5.3.2.14 for details
 
