@@ -72,9 +72,9 @@ sub GetInstance($$$$;\%\@){
     $self->{'last_method'}='GetInstance';
     $self->{'last_namespace'}=$namespace;
     my $defaultoptions={
-        'LocalOnly'=>0,
+        'LocalOnly'=>1,
         'IncludeQualifiers'=>0,
-        'IncludeClassOrigin'=>1,
+        'IncludeClassOrigin'=>0,
     };
     my $optionsconstraints={
 	'LocalOnly'=>'boolean',
@@ -811,7 +811,7 @@ A hash or array reference matching a valid keybinding format which describes the
 3.1) LocalOnly
 Defaults to 1 (True)
 3.2) IncludeQualifiers
-Defaults to 1 (True)
+Defaults to 0 (False)
 3.3) IncludeClassOrigin
 Defaults to 0 (False)
 4) An optional array reference containing a list of specific properties you want to know about instead of retuning every thing
