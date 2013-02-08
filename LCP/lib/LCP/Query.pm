@@ -308,7 +308,7 @@ sub Associators($$$;\%$$$$\%\@){
     $self->{'last_namespace'}=$namespace;
     my $defaultoptions={
 	'IncludeQualifiers'=>0,
-	'IncludeClassOrigin'=>1,
+	'IncludeClassOrigin'=>0,
     };
     for my $key (keys %{$defaultoptions}){
 	unless (defined $options->{$key}){
@@ -1048,23 +1048,37 @@ $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybind
 
 $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
+The Associators operation enumerates CIM objects (classes or instances) associated with a particular source CIM class or instance. 
+
 
 1) The CIM namespace you want to enumerate the class instances from
 This field is requiered
 2) The name of the CIM class you want to enumerate the instances of
 This field is required.
-If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
-3) An optioal hash reference containing any combination of the following query modifiers.
-3.1) LocalOnly
-Defailts to 1 (True)
-3.2) DeepInheritance
-Defaults to 1 (True)
-3.3) IncludeQualifiers
+3) InstanceName 
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+This field is optional and may be left blank
+4) AssocClass
+The name of a class for which the resulting enumerated classes must be accociated to the original CIM class or instance of the CIM Class via the CIM class sepcified here or a sub class of the CIM class specified here.
+This field is optional and may be left blank or explicitly specified as 'NULL'
+5) ResultClass
+The name of a class for which the resulting enumerated classes must be an instance of the CIM class named here or one of its sub classes
+This field is optional and may be left blank or explicitly specified as 'NULL'
+6) Role
+The name of a property in the source CIM class that is the source of the association betwaen the source class or instance and the resulting enumerated instaces
+This field is optional and may be left blank or explicitly specified as 'NULL'
+7) Result Role
+The name of a property in the resulting CIM class instances that is the source of the association betwaen the source class or instance and the resulting enumerated instaces
+This field is optional and may be left blank or explicitly specified as 'NULL'
+8) Query Modifiers
+A hash reference containing any combination of the following query modifiers.
+This field is optional and may be left blank
+8.1) IncludeQualifiers
+Defailts to 0 (False)
+8.2) IncludeClassOrigin
 Defaults to 0 (False)
-3.4) IncludeClassOrigin
-Defaults to 0 (False)
-4) An array reference containing a list of the specific properties of the instances you want to get
-
+9) Property List
+An optional array reference containing a list of the specific properties of the enumerated instances you want to get
 
 See DSP0200 Version 1.3.1 section 5.3.2.14 for details
 
