@@ -1102,6 +1102,29 @@ $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_key
 
 $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format);
 
+The AssociatorNames operation enumerates the names of CIM objects (classes or instances) associated with a particular source CIM class or instance. 
+
+1) The CIM namespace you want to enumerate the classes or instances from
+This field is requiered
+2) The name of the CIM class you want to enumerate the instances of
+This field is required.
+3) InstanceName 
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+This field is optional and may be left blank
+4) AssocClass
+The name of a class for which the resulting enumerated classes must be accociated to the original CIM class or instance of the CIM Class via the CIM class sepcified here or a sub class of the CIM class specified here.
+This field is optional and may be left blank or explicitly specified as 'NULL'
+5) ResultClass
+The name of a class for which the resulting enumerated classes must be an instance of the CIM class named here or one of its sub classes
+This field is optional and may be left blank or explicitly specified as 'NULL'
+6) Role
+The name of a property in the source CIM class that is the source of the association betwaen the source class or instance and the resulting enumerated instaces
+This field is optional and may be left blank or explicitly specified as 'NULL'
+7) Result Role
+The name of a property in the resulting CIM class instances that is the source of the association betwaen the source class or instance and the resulting enumerated instaces
+This field is optional and may be left blank or explicitly specified as 'NULL'
+
+
 See DSP0200 Version 1.3.1 section 5.3.2.15 for details
 
 =back
