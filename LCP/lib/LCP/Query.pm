@@ -1133,23 +1133,51 @@ See DSP0200 Version 1.3.1 section 5.3.2.15 for details
 
 =over 4
 
-$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
 
-$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role','ResultRole',{ }, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role',{ }, ['property1','property2'] );
 
-$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role','ResultRole');
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role');
 
 $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
-$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
 
-$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+$query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+
+References enumerates the instances or CIM classes that reference a a specifec CIM class or instance
+
+1) The CIM namespace you want to enumerate the classes or instances from
+This field is requiered
+2) The name of the CIM class that the classes you want to enumerate reference
+This field is required.
+3) InstanceName 
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+This field is optional and may be left blank
+4) ResultClass
+The name of a class for which the resulting enumerated classes must be an instance of the CIM class named here or one of its sub classes
+This field is optional and may be left blank or explicitly specified as 'NULL'
+5) Role
+The name of a property in the source CIM class that is the source of the association betwaen the source class or instance and the resulting enumerated instaces
+This field is optional and may be left blank or explicitly specified as 'NULL'
+6) Query Modifiers
+A hash reference containing any combination of the following query modifiers.
+This field is optional and may be left blank
+6.1) IncludeQualifiers
+Defailts to 0 (False)
+6.2) IncludeClassOrigin
+Defaults to 0 (False)
+7) Property List
+An optional array reference containing a list of the specific properties of the enumerated instances you want to get
+
+See DSP0200 Version 1.3.1 section 5.3.2.16 for details
+
 
 =back
 
