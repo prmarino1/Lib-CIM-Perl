@@ -72,7 +72,7 @@ sub GetInstance($$$$;\%\@){
     $self->{'last_method'}='GetInstance';
     $self->{'last_namespace'}=$namespace;
     my $defaultoptions={
-        'LocalOnly'=>1,
+        'LocalOnly'=>0,
         'IncludeQualifiers'=>0,
         'IncludeClassOrigin'=>0,
     };
@@ -543,7 +543,7 @@ sub DeleteQualifier{
 1;
 
 __END__
-# Below is stub documentation for your module. You'd better edit it!
+
 
 =head1 NAME
 
@@ -774,14 +774,21 @@ The LCP's GetClass method requiers 2 fields and has 2 optional fields
 This field is requiered
 2) The name of the CIM class you want information about
 This field is requiered
-3) An optioal hash reference containing any combination of the following query modifiers 
+3) Query Modifiers
+An optional hash reference containing any combination of the following query modifiers 
 3.1) LocalOnly
+If set to 1 (True) local only will instruct the WBEM server to only return elements which have been added to or overriden in the class from its original defaults.
+If set to 0 (False) it will return all elements of the class
 Defaults to 1 (True)
 3.2) IncludeQualifiers
+If set to 1 (True) all qualifiers will be includer in the results
+If set to 0 (False) no qualifiers will be included in the result
 Defaults to 1 (True)
 3.3) IncludeClassOrigin
+If set to 1 (True) the name of origin class from which the class you are querying inherits from will be included.
+If set to 0 (False) the name of the origin class will not be included in the results.
 Defaults to 0 (False)
-4) An optional array reference containing a list of specific properties you want to know about instead of retuning every thing.
+4) An optional array reference containing a list of specific properties names you want to know about instead of retuning every thing.
 
 See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
@@ -807,12 +814,24 @@ This field is requiered
 This field is requiered
 3) InstanceName 
 A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
-4) An optioal hash reference containing any combination of the following query modifiers 
+4) Query Modifiers
+An optional hash reference containing any combination of the following query modifiers 
 4.1) LocalOnly
-Defaults to 1 (True)
+If set to 1 (True) the behavior varies base on which version of the standard the WBEM server supports.
+In versions prior to 1.1 of the standard this modifier to 1 (True) returns only the elements that differ from the defaults of the class or differ from the defaults of the parent classes for elements which are inherited from other classes.
+In version 1.1 or higher of the standard setting this modifier to 1 (True) only returns the elements in the instance that are different from the defaults for class will be returned but not any elements inherited from a parent class unless their defaults in the class you are querieing differ from the parent class. Any elements of the instance that have been altered which were inherited from the parent class are not included in the results.
+If set to 0 (False) all elements of the instance except those filterd out by other options will be returned.
+WARNING: This modifier is deprecated in the standard and will be removed from a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), furthermore some WBEM servers now ignore this modifier and act as though it set to 0 (False) regardles of what you set it to .
+See DSP0200 Version 1.3.1 section ANNEX B "LocalOnly Parameter Discussion" for details
+Defaults to 0 (False)
 4.2) IncludeQualifiers
+If set to 1 (True) includes the qualifiers for the instance will be returned in the results.
+If set to 0 (False) no qualifiers will be included in the results.
+WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the meen time the DMTF advises you to set it to 0 (False), in addition WBEM servers are nolonger requierd to honer it if you set it to 1 (True). The prefered menthod to get the qualifiers is to use the GetClass method instead.
 Defaults to 0 (False)
 4.3) IncludeClassOrigin
+If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element discribing which class it was inherited from.
+If set to 0 (False) the no CLASSORIGIN tags will be included.
 Defaults to 0 (False)
 4) An optional array reference containing a list of specific properties you want to know about instead of retuning every thing
 
@@ -829,9 +848,11 @@ $query->DeleteClass ('name/space','ClassName')
 
 DeleteClass deletes a CIM Class from a namespace.
 
-1) The CIM namespace you want to delet the class from
+1) name/space
+The CIM namespace you want to delet the class from
 This field is requiered
-2) The name of the CIM class you want delete
+2) ClassName
+The name of the CIM class you want delete
 This field is requiered
 
 
@@ -921,11 +942,14 @@ $query->EnumerateClasses('name/space',, { 'DeepInheritance' = 0, 'LocalOnly' = 1
 $query->EnumerateClasses('name/space');
 
 
-1) The CIM namespace you want to enumerate the classes from
+1) name/space
+The CIM namespace you want to enumerate the classes from
 This field is requiered
-2) The name of the CIM class you want information about
-This field is optional. If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
-3) An optioal hash reference containing any combination of the following query modifiers 
+2) ClassName
+The name of the CIM class you want information about
+This field is optional. If you dont wish to specify a value but wish to specify the next field you may leave it empty or set it to 'NULL'
+3) Query Modifiers
+An optional hash reference containing any combination of the following query modifiers 
 3.1) DeepInheritance
 Defaults to 0 (False)
 3.2) LocalOnly
@@ -960,7 +984,8 @@ This field is requiered
 This field is optional.
 If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
 Note: this may not sound like it make sence but it does especialy when you enable the Deepinheritence modifier
-3) An optioal hash reference containing any combination of the following query modifiers 
+3) Query Modifiers
+An optional hash reference containing any combination of the following query modifiers 
 3.1) DeepInheritance
 Defaults to 0 (False)
 
@@ -986,7 +1011,8 @@ This field is requiered
 2) The name of the CIM class you want to enumerate the instances of
 This field is required.
 If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
-3) An optioal hash reference containing any combination of the following query modifiers.
+3) Query Modifiers
+An optional hash reference containing any combination of the following query modifiers.
 3.1) LocalOnly
 Defailts to 1 (True)
 3.2) DeepInheritance
@@ -1008,9 +1034,11 @@ See DSP0200 Version 1.3.1 section 5.3.2.11 for details
 
 EnumerateInstanceNames ('name/space','ClassName');
 
-1) The CIM namespace you want to enumerate the instances name of the classes from
+1) name/space
+The CIM namespace you want to enumerate the instances name of the classes from
 This field is requiered
-2) The name of the CIM class you want to enumerate the intance names of
+2) ClassName
+The name of the CIM class you want to enumerate the intance names of.
 This field is required.
 
 
@@ -1153,9 +1181,11 @@ $query->References ('name/space','ClassName',$InstanceName_reference_in_keybindi
 
 References enumerates the instances or CIM classes that reference a a specifec CIM class or instance
 
-1) The CIM namespace you want to enumerate the classes or instances from
+1) name/space
+The CIM namespace you want to enumerate the classes or instances from
 This field is requiered
-2) The name of the CIM class that the classes you want to enumerate reference
+2) ClassName
+The name of the CIM class that the classes you want to enumerate reference
 This field is required.
 3) InstanceName 
 A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
@@ -1164,7 +1194,7 @@ This field is optional and may be left blank
 The name of a class for which the resulting enumerated classes must be an instance of the CIM class named here or one of its sub classes
 This field is optional and may be left blank or explicitly specified as 'NULL'
 5) Role
-The name of a property in the source CIM class that is the source of the association betwaen the source class or instance and the resulting enumerated instaces
+The name of a property in the CIM class named in the ClassName field that is the source of the association betwean the source class or instance and the resulting enumerated instaces
 This field is optional and may be left blank or explicitly specified as 'NULL'
 6) Query Modifiers
 A hash reference containing any combination of the following query modifiers.
