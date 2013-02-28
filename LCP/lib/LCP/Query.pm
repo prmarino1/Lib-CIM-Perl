@@ -246,7 +246,7 @@ sub EnumerateInstances($$$;\%\@){
     $self->{'last_method'}='EnumerateInstances';
     $self->{'last_namespace'}=$namespace;
     my $defaultoptions={
-        'LocalOnly'=>1,
+        'LocalOnly'=>0,
         'DeepInheritance'=>1,
         'IncludeQualifiers'=>0,
         'IncludeClassOrigin'=>0,
@@ -798,13 +798,13 @@ See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
 =over 4
 
-$query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},['property1','property2']);
+$query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},['property1','property2']);
 
-$query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0});
+$query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0});
 
-$query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{},['property1','property2']);
+$query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{},['property1','property2']);
 
-$query->GetInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
+$query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
 GetInstance retrieves the data from a specific instance of a CIM class. 
 
@@ -821,7 +821,7 @@ If set to 1 (True) the behavior varies base on which version of the standard the
 In versions prior to 1.1 of the standard this modifier to 1 (True) returns only the elements that differ from the defaults of the class or differ from the defaults of the parent classes for elements which are inherited from other classes.
 In version 1.1 or higher of the standard setting this modifier to 1 (True) only returns the elements in the instance that are different from the defaults for class will be returned but not any elements inherited from a parent class unless their defaults in the class you are querieing differ from the parent class. Any elements of the instance that have been altered which were inherited from the parent class are not included in the results.
 If set to 0 (False) all elements of the instance except those filterd out by other options will be returned.
-WARNING: This modifier is deprecated in the standard and will be removed from a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), furthermore some WBEM servers now ignore this modifier and act as though it set to 0 (False) regardles of what you set it to .
+WARNING: This modifier is deprecated in the standard for the GetInstance method and will be removed from a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), furthermore some WBEM servers now ignore this modifier and act as though it set to 0 (False) regardles of what you set it to .
 See DSP0200 Version 1.3.1 section ANNEX B "LocalOnly Parameter Discussion" for details
 Defaults to 0 (False)
 4.2) IncludeQualifiers
@@ -844,7 +844,7 @@ See DSP0200 Version 1.3.1 section 5.3.2.2 for details
 
 =over 4
 
-$query->DeleteClass ('name/space','ClassName')
+$query->DeleteClass('name/space','ClassName')
 
 DeleteClass deletes a CIM Class from a namespace.
 
@@ -870,9 +870,11 @@ $query->DeleteInstance ('name/space','ClassName',$InstanceName_reference_in_keyb
 
 DeleteInstance deletes a specific instance of a CIM class from a namespace.
 
-1) The CIM namespace you want to delete the class from
+1) name/space
+The CIM namespace you want to delete the class from
 This field is requiered
-2) The name of the CIM class you want delete an intance of.
+2) ClassName
+The name of the CIM class you want delete an intance of.
 This field is requiered
 3) InstanceName 
 A hash or array reference matching a valid keybinding format which describes the instance of the class you want to delete. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
@@ -896,15 +898,17 @@ Not implemented yet
 
 =over 4
 
-$query->CreateInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
+$query->CreateInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
 CreateInstance creates specific uniqe instance of a CIM class in a namespace.
 
-1) The CIM namespace you want to create the instance of the class in
+1) name/space'
+The CIM namespace you want to create the instance of the class in
 This field is requiered
-2) The name of the CIM class you want create an intance of.
+2) ClassName
+The name of the CIM class you want create an intance of.
 This field is requiered
-3) InstanceName 
+3) InstanceName
 A hash or array reference matching a valid keybinding format which describes the instance of the class you want to create. Please see the Keybinding field format described in the "Specialy Formated Fields" section. The exact keys allowed are CIM class specific.
 
 See DSP0200 Version 1.3.1 section 5.3.2.6 for details
@@ -946,17 +950,28 @@ $query->EnumerateClasses('name/space');
 The CIM namespace you want to enumerate the classes from
 This field is requiered
 2) ClassName
-The name of the CIM class you want information about
+The name of the CIM class you want information about.
 This field is optional. If you dont wish to specify a value but wish to specify the next field you may leave it empty or set it to 'NULL'
 3) Query Modifiers
 An optional hash reference containing any combination of the following query modifiers 
 3.1) DeepInheritance
+If this modifier is set to 1 (True) and you have specified a class in the ClassName field then all subclasses that inherit directly or indirectly from that class will be returned.
+If this modifier is set to 1 (True) and no class has been specified in the ClassName field or the ClassName field has explicitly been set to NULL then all classes in the namespace will be returned.
+If this modifier is set to 0 (False) and you have specified a class in the ClassName field then only the classes that directly inherit from the class specified will be returned.
+If this modifier is set to 0 (False) and no class has been specified in the ClassName field or the ClassName field has explicitly been set to NULL then only the base classes in the namespace will be returned.
 Defaults to 0 (False)
 3.2) LocalOnly
+If set to 1 (True) only elements modified or defined specificly in the ClassName field will be included in the result, but not any elements inheitered from the origin class which havent been overriden.
+If set to 0 (False) all elements will be included in the results.
 Defaults to 1 (True)
 3.2) IncludeQualifiers
+If set to 1 (True) includes the qualifiers for the instance will be returned in the results.
+If set to 0 (False) no qualifiers will be included in the results.
 Defaults to 1 (True)
 3.3) IncludeClassOrigin
+If set to 1 (True) all elements inherited from a parent class will include a CLASSORIGIN field specifying what class it was inhrited from
+If set to 0 (True) no elements will include the CLASSORIGIN field.
+Setting this field to 1 (True) only makes sence if you set LocalOnly to 0 (False)
 Defaults to 0 (False)
 
 
@@ -978,15 +993,21 @@ $query->EnumerateClassNames ('name/space','ClassName');
 
 $query->EnumerateClassNames ('name/space');
 
-1) The CIM namespace you want to enumerate the class names from
+1) name/space
+The CIM namespace you want to enumerate the class names from
 This field is requiered
-2) The name of the CIM class you want to enumerate the class names of
+2) ClassName
+The name of the CIM class you want to enumerate the class names of
 This field is optional.
 If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
 Note: this may not sound like it make sence but it does especialy when you enable the Deepinheritence modifier
 3) Query Modifiers
 An optional hash reference containing any combination of the following query modifiers 
 3.1) DeepInheritance
+If this modifier is set to 1 (True) and you have specified a class in the ClassName field then all of the names of any of subclasses that inherit directly or indirectly from that class will be returned as well.
+If this modifier is set to 1 (True) and no class has been specified in the ClassName field or the ClassName field has explicitly been set to NULL then the names of all classes in the namespace will be returned.
+If this modifier is set to 0 (False) and you have specified a class in the ClassName field then only the names of the classes which directly inherit from the one specified will be returned
+If this modifier is set to 0 (False) and no class has been specified in the ClassName field or the ClassName field has explicitly been set to NULL then only the names of the base classes in the namespace will be returned.
 Defaults to 0 (False)
 
 
@@ -1006,18 +1027,29 @@ $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInhe
 
 $query->EnumerateInstances('name/space','ClassName');
 
-1) The CIM namespace you want to enumerate the class instances from
+1) name/space
+The CIM namespace you want to enumerate the class instances from
 This field is requiered
-2) The name of the CIM class you want to enumerate the instances of
+2) ClassName
+The name of the CIM class you want to enumerate the instances of
 This field is required.
 If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
 3) Query Modifiers
 An optional hash reference containing any combination of the following query modifiers.
 3.1) LocalOnly
-Defailts to 1 (True)
+If set to 1 (True) the behavior varies base on which version of the standard the WBEM server supports.
+In versions prior to 1.1 of the standard this modifier to 1 (True) returns only the elements that differ from the defaults of the class or differ from the defaults of the parent classes for elements which are inherited from other classes.
+In version 1.1 or higher of the standard setting this modifier to 1 (True) only returns the elements in each instance that are different from the defaults for class will be returned but not any elements inherited from a parent class unless their defaults in the class you are querieing differ from the parent class. Any elements of each instance that have been altered which were inherited from the parent class are not included in the results.
+If set to 0 (False) all elements of each instance except those filterd out by other options will be returned.
+WARNING: This modifier is deprecated in the standard for the EnumerateInstances method and will be removed from a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), furthermore some WBEM servers now ignore this modifier and act as though it set to 0 (False) regardles of what you set it to .
+See DSP0200 Version 1.3.1 section ANNEX B "LocalOnly Parameter Discussion" for details
+Defaults to 1 (True)
 3.2) DeepInheritance
+If set to 1 (True) then all instances of the CIM class specified in the ClassName field, and all of the instances of all class that inheits from the CIM class specified in the ClassName field will be returned
+If set to 0 (False) the only instances of the CIM class specified in the ClassName field will be returned.
 Defaults to 1 (True)
 3.3) IncludeQualifiers
+
 Defaults to 0 (False)
 3.4) IncludeClassOrigin
 Defaults to 0 (False)
