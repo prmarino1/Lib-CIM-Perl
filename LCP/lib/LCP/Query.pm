@@ -767,8 +767,8 @@ $query-E<gt>GetClass('name/space','ClassName',{},['property1','property2']);
 
 $query-E<gt>GetClass('name/space','ClassName');
 
-The GetClass method retrievs the information about a CIM class, thie information that describes the requiered fields, all of the optional fields and in most cases any relivant documentation about how the Class is inteded to be used.
-The LCP's GetClass method requiers 2 fields and has 2 optional fields
+The GetClass method retrievs the information about a CIM class, this is  information that describes the requiered fields, all of the optional fields and in most cases any relivant documentation about how the Class is inteded to be used.
+The LCP::Query's GetClass method requiers 2 fields and has 2 optional fields described as follows.
 
 1) The CIM namespace you want to query
 This field is requiered
@@ -806,14 +806,18 @@ $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybindi
 
 $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
-GetInstance retrieves the data from a specific instance of a CIM class. 
+GetInstance retrieves the data from a specific instance of a CIM class.
+The LCP::Query's GetInstance method requiers 3 fields and has 2 optional fields described as follows.
 
-1) The CIM namespace you want to query
+1) name/space
+The CIM namespace you want to query
 This field is requiered
-2) The name of the CIM class you want information about
+2) ClassName
+The name of the CIM class you want information about
 This field is requiered
 3) InstanceName 
 A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+This field is requiered
 4) Query Modifiers
 An optional hash reference containing any combination of the following query modifiers 
 4.1) LocalOnly
@@ -847,6 +851,7 @@ See DSP0200 Version 1.3.1 section 5.3.2.2 for details
 $query->DeleteClass('name/space','ClassName')
 
 DeleteClass deletes a CIM Class from a namespace.
+The LCP::Query's DeleteClass method requiers 2 fields described as follows
 
 1) name/space
 The CIM namespace you want to delet the class from
@@ -869,6 +874,7 @@ See DSP0200 Version 1.3.1 section 5.3.2.3 for details
 $query->DeleteInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
 DeleteInstance deletes a specific instance of a CIM class from a namespace.
+The LCP::Query's DeleteInstance method requiers 3 fields described as follows.
 
 1) name/space
 The CIM namespace you want to delete the class from
@@ -901,6 +907,7 @@ Not implemented yet
 $query->CreateInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
 CreateInstance creates specific uniqe instance of a CIM class in a namespace.
+The LCP::Query's CreateInstance method requiers 3 fields described as follows.
 
 1) name/space'
 The CIM namespace you want to create the instance of the class in
@@ -945,6 +952,8 @@ $query->EnumerateClasses('name/space',, { 'DeepInheritance' = 0, 'LocalOnly' = 1
 
 $query->EnumerateClasses('name/space');
 
+EnumerateClasses outputs the structure of a class and any classes that imediatly inherit from it the results are nearly identical to that of get class; however if any classes inherit from the class specified in the ClassName field they will be included in the results as well.
+The LCP::Query's EnumerateClasses method requiers 1 fields and has 2 optional fields described as follows.
 
 1) name/space
 The CIM namespace you want to enumerate the classes from
