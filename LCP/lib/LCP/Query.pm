@@ -1049,12 +1049,16 @@ If set to 1 (True) then all instances of the CIM class specified in the ClassNam
 If set to 0 (False) the only instances of the CIM class specified in the ClassName field will be returned.
 Defaults to 1 (True)
 3.3) IncludeQualifiers
-
+If set to 1 (True) the qualifiers for each instance will be returned in the results.
+If set to 0 (False) no qualifiers will be included in the results.
+WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the meen time the DMTF advises you to set it to 0 (False), in addition WBEM servers are nolonger requierd to honer it if you set it to 1 (True). The prefered menthod to get the qualifiers is to use the GetClass method instead.
 Defaults to 0 (False)
 3.4) IncludeClassOrigin
+If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element discribing which class it was inherited from.
+If set to 0 (False) the no CLASSORIGIN tags will be included.
 Defaults to 0 (False)
-4) An array reference containing a list of the specific properties of the instances you want to get
-
+4) Property List
+An array reference containing a list of the specific elements of the instances you want to return, all other elements will not be included. 
 
 See DSP0200 Version 1.3.1 section 5.3.2.11 for details
 
@@ -1111,9 +1115,11 @@ $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybind
 The Associators operation enumerates CIM objects (classes or instances) associated with a particular source CIM class or instance. 
 
 
-1) The CIM namespace you want to enumerate the class instances from
+1) name/space
+The CIM namespace you want to enumerate the class instances from
 This field is requiered
-2) The name of the CIM class you want to enumerate the instances of
+2) ClassName
+The name of the CIM class you want to enumerate the instances of
 This field is required.
 3) InstanceName 
 A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
@@ -1134,8 +1140,13 @@ This field is optional and may be left blank or explicitly specified as 'NULL'
 A hash reference containing any combination of the following query modifiers.
 This field is optional and may be left blank
 8.1) IncludeQualifiers
+If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element discribing which class it was inherited from.
+If set to 0 (False) the no CLASSORIGIN tags will be included.
+WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the meen time the DMTF advises you to set it to 0 (False), in addition WBEM servers are nolonger requierd to honer it if you set it to 1 (True). The prefered menthod to get the qualifiers is to use the GetClass method instead.
 Defailts to 0 (False)
 8.2) IncludeClassOrigin
+If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element discribing which class it was inherited from.
+If set to 0 (False) the no CLASSORIGIN tags will be included.
 Defaults to 0 (False)
 9) Property List
 An optional array reference containing a list of the specific properties of the enumerated instances you want to get
@@ -1232,8 +1243,13 @@ This field is optional and may be left blank or explicitly specified as 'NULL'
 A hash reference containing any combination of the following query modifiers.
 This field is optional and may be left blank
 6.1) IncludeQualifiers
+If set to 1 (True) the qualifiers for each property in each instance will be returned in the results.
+If set to 0 (False) no qualifiers will be included in the results.
+WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the meen time the DMTF advises you to set it to 0 (False), in addition WBEM servers are nolonger requierd to honer it if you set it to 1 (True). The prefered menthod to get the qualifiers is to use the GetClass method instead.
 Defailts to 0 (False)
 6.2) IncludeClassOrigin
+If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element discribing which class it was inherited from.
+If set to 0 (False) the no CLASSORIGIN tags will be included.
 Defaults to 0 (False)
 7) Property List
 An optional array reference containing a list of the specific properties of the enumerated instances you want to get
