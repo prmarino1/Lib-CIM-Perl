@@ -218,16 +218,14 @@ sub EnumerateClassNames($$;$\%){
     my $defaultoptions={
         'DeepInheritance'=>0,
     };
-    for my $key (keys %{$defaultoptions}){
-            unless (defined $options->{$key}){
-                $options->{$key}=$defaultoptions->{$key};
-            }
-        
-    }
+    my $optionsconstraints={
+	'DeepInheritance'=>'boolean',
+    };
+    my $resultoptions=$self->{'writer'}->comparedefaults($defaultoptions,$options,$optionsconstraints);
     my $method=$self->{'writer'}->mkmethodcall('EnumerateClassNames');
     my $namespacetwig=$self->{'writer'}->mklocalnamespace($namespace);
     $namespacetwig->paste( 'first_child' => $method);
-    for my $option ($self->{'writer'}->mkbool($options)){
+    for my $option ($self->{'writer'}->mkbool($resultoptions)){
         $option->paste('last_child' => $method);
     }
     if (defined $cimclass and $cimclass !~ /^NULL$/i){
@@ -274,10 +272,20 @@ sub EnumerateInstances($$$;\%\@){
     push(@{$self->{'writer'}->{'query'}},$method);
 }
 
-sub EnumerateInstanceNames($$$){
+sub EnumerateInstanceNames($$$\%){
     my $self=shift;
     my $namespace=shift;
     my $cimclass=shift;
+    my $options=shift;
+    my $defaultoptions={
+        'DeepInheritance'=>1,
+    };
+    for my $key (keys %{$defaultoptions}){
+            unless (defined $options->{$key}){
+                $options->{$key}=$defaultoptions->{$key};
+            }
+        
+    }
     $self->{'last_method'}='EnumerateInstanceNames';
     $self->{'last_namespace'}=$namespace;
     my $method=$self->{'writer'}->mkmethodcall('EnumerateInstanceNames');
@@ -759,15 +767,15 @@ Each intrisic method is a Perl style version of a method spesified in DTMF DSP02
 
 =over 4
 
-$query-E<gt>GetClass('name/space','ClassName',{ 'LocalOnly'=E<gt> 1, 'IncludeQualifiers' =E<gt> 1, IncludeClassOrigin=E<gt> 0},['property1','property2']);
+$query->GetClass('name/space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers'=>1, IncludeClassOrigin=>0},['property1','property2']);
 
-$query-E<gt>GetClass('name/space','ClassName',{ 'LocalOnly'=E<gt>0, 'IncludeQualifiers' =E<gt>1, IncludeClassOrigin=E<gt> 0});
+$query->GetClass('name/space','ClassName',{ 'LocalOnly'=>0, 'IncludeQualifiers'=>1, IncludeClassOrigin=>0});
 
-$query-E<gt>GetClass('name/space','ClassName',{},['property1','property2']);
+$query->GetClass('name/space','ClassName',{},['property1','property2']);
 
-$query-E<gt>GetClass('name/space','ClassName');
+$query->GetClass('name/space','ClassName');
 
-The GetClass method retrievs the information about a CIM class, this is  information that describes the requiered fields, all of the optional fields and in most cases any relivant documentation about how the Class is inteded to be used.
+The GetClass method retrievs the structural information about a CIM class, this is information that describes the fields, if they are required or optional, the type of data the fields may contain, and in most cases any relivant documentation about how the Class is inteded to be used.
 The LCP::Query's GetClass method requiers 2 fields and has 2 optional fields described as follows.
 
 1) The CIM namespace you want to query
@@ -806,7 +814,7 @@ $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybindi
 
 $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
-GetInstance retrieves the data from a specific instance of a CIM class.
+GetInstance retrieves the contents of a specific instance of a CIM class.
 The LCP::Query's GetInstance method requiers 3 fields and has 2 optional fields described as follows.
 
 1) name/space
@@ -877,7 +885,7 @@ DeleteInstance deletes a specific instance of a CIM class from a namespace.
 The LCP::Query's DeleteInstance method requiers 3 fields described as follows.
 
 1) name/space
-The CIM namespace you want to delete the class from
+The CIM namespace you want to delete the instance from.
 This field is requiered
 2) ClassName
 The name of the CIM class you want delete an intance of.
@@ -909,14 +917,14 @@ $query->CreateInstance('name/space','ClassName',$InstanceName_reference_in_keybi
 CreateInstance creates specific uniqe instance of a CIM class in a namespace.
 The LCP::Query's CreateInstance method requiers 3 fields described as follows.
 
-1) name/space'
+1) name/space
 The CIM namespace you want to create the instance of the class in
 This field is requiered
 2) ClassName
 The name of the CIM class you want create an intance of.
 This field is requiered
 3) InstanceName
-A hash or array reference matching a valid keybinding format which describes the instance of the class you want to create. Please see the Keybinding field format described in the "Specialy Formated Fields" section. The exact keys allowed are CIM class specific.
+A hash or array reference matching a valid keybinding format which describes the instance including all of its properties of the class you want to create. Please see the Keybinding field format described in the "Specialy Formated Fields" section. The exact keys allowed are CIM class specific.
 
 See DSP0200 Version 1.3.1 section 5.3.2.6 for details
 
@@ -952,7 +960,7 @@ $query->EnumerateClasses('name/space',, { 'DeepInheritance' = 0, 'LocalOnly' = 1
 
 $query->EnumerateClasses('name/space');
 
-EnumerateClasses outputs the structure of a class and any classes that imediatly inherit from it the results are nearly identical to that of get class; however if any classes inherit from the class specified in the ClassName field they will be included in the results as well.
+EnumerateClasses outputs the structure of a class and any of its subclasses the results are nearly identical to that of doing multiple GetClass operations; however if any classes inherit from the class specified in the ClassName field they will be included in the results as well.
 The LCP::Query's EnumerateClasses method requiers 1 fields and has 2 optional fields described as follows.
 
 1) name/space
@@ -1002,6 +1010,9 @@ $query->EnumerateClassNames ('name/space','ClassName');
 
 $query->EnumerateClassNames ('name/space');
 
+The EnumerateClassNames method returns the names of any CIM classes that inherit from the CIM class name specified in the ClassName or if the class name is not specified the it returns the names of all of the base CIM classes in the namespace specified in the name/space field.
+The LCP::Query's EnumerateClassNames method requiers 1 fields and has 2 optional fields described as follows.
+
 1) name/space
 The CIM namespace you want to enumerate the class names from
 This field is requiered
@@ -1036,15 +1047,18 @@ $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInhe
 
 $query->EnumerateInstances('name/space','ClassName');
 
+The EnumerateInstances method returns the content of every instance of the CIM class specified in the ClassName and all of the sub classes that it inherits fields from within the namespace specified in the name/space field.
+
 1) name/space
-The CIM namespace you want to enumerate the class instances from
+The CIM namespace you want to enumerate the instances of the class from.
 This field is requiered
 2) ClassName
-The name of the CIM class you want to enumerate the instances of
+The name of the CIM class you want to enumerate the instances of.
 This field is required.
-If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
+If you dont wish to specify a value but wish to specify a latter field next field you may leave it empty or sete it to 'NULL'
 3) Query Modifiers
 An optional hash reference containing any combination of the following query modifiers.
+If you wish to use the defaults for the modifiers and want to specify a latter field you may define the field as {}
 3.1) LocalOnly
 If set to 1 (True) the behavior varies base on which version of the standard the WBEM server supports.
 In versions prior to 1.1 of the standard this modifier to 1 (True) returns only the elements that differ from the defaults of the class or differ from the defaults of the parent classes for elements which are inherited from other classes.
@@ -1054,8 +1068,8 @@ WARNING: This modifier is deprecated in the standard for the EnumerateInstances 
 See DSP0200 Version 1.3.1 section ANNEX B "LocalOnly Parameter Discussion" for details
 Defaults to 1 (True)
 3.2) DeepInheritance
-If set to 1 (True) then all instances of the CIM class specified in the ClassName field, and all of the instances of all class that inheits from the CIM class specified in the ClassName field will be returned
-If set to 0 (False) the only instances of the CIM class specified in the ClassName field will be returned.
+If set to 1 (True) then all instances of the CIM class specified in the ClassName properties, and all of the instances of all class that the CIM class specified inherits fields from will be returned
+If set to 0 (False) the only instances of the CIM class specified in the ClassName properties will be returned.
 Defaults to 1 (True)
 3.3) IncludeQualifiers
 If set to 1 (True) the qualifiers for each instance will be returned in the results.
@@ -1067,7 +1081,7 @@ If set to 1 (True) all of the elements which were inherited from a parent class 
 If set to 0 (False) the no CLASSORIGIN tags will be included.
 Defaults to 0 (False)
 4) Property List
-An array reference containing a list of the specific elements of the instances you want to return, all other elements will not be included. 
+An array reference containing a list of the specific elements of the instances you want to return, all other elements will not be included in the results. 
 
 See DSP0200 Version 1.3.1 section 5.3.2.11 for details
 
@@ -1078,6 +1092,8 @@ See DSP0200 Version 1.3.1 section 5.3.2.11 for details
 =over 4
 
 EnumerateInstanceNames ('name/space','ClassName');
+
+
 
 1) name/space
 The CIM namespace you want to enumerate the instances name of the classes from
