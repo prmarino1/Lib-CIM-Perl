@@ -23,8 +23,7 @@ __END__
 LCP - Lib CIM (Common Information Model) Perl
 
 =head1 SYNOPSIS
-
-  use LCP;
+C<<<  use LCP;
   use Data::Dumper;
   my $options={
         'username'=>'username',
@@ -48,7 +47,7 @@ LCP - Lib CIM (Common Information Model) Perl
         my $parser=LCP::SimpleParser->new($post->get_raw_xml);
         my $tree=$parser->buildtree;
         print Dumper($tree) . "\n";
-  }
+  } >>>
   
 
 
