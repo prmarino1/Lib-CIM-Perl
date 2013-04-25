@@ -1437,7 +1437,7 @@ What that tells me is that CIM_ComputerSystem class was used as the initial temp
 
 That means that PG_ComputerSystem indirectly inherits from CIM_ComputerSystem and by enabling DeepInheritance we can see this relationship by using the EnumerateClassNames method on the CIM_ComputerSystem class; however without DeepInheritance enabled we can not.
 
-=item The great thing about this is it works for standard CIM, SMI-S, WMI, WMWare, etc.. Any standard or API based on CIM is structured in this manner so the class name discovery process works the same way for all of them.
+The great thing about this is it works for standard CIM, SMI-S, WMI, WMWare, etc.. Any standard or API based on CIM is structured in this manner so the class name discovery process works the same way for all of them.
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.10 for details
 
@@ -1452,6 +1452,8 @@ That means that PG_ComputerSystem indirectly inherits from CIM_ComputerSystem an
 =over 4
 
 =item The EnumerateInstances method returns the content of every instance of the CIM class specified in the ClassName and all of the sub classes that it inherits fields from within the namespace specified in the name/space field.
+
+=item The LCP::Query's EnumerateClassNames method requiers 2 fields and has 2 optional fields described as follows.
 
 E<10>
 
@@ -1566,6 +1568,10 @@ An array reference containing a list of the specific elements of the instances y
 
 =over 4
 
+=item The LCP::Query's EnumerateClassNames method requiers 2 fields described as follows.
+
+E<10>
+
 =item B<1) name/space>
 
 The CIM namespace you want to enumerate the instances name of the classes from
@@ -1582,7 +1588,7 @@ This field is required.
 
 =back
 
-=head3 ExecQuery
+=head3 B<ExecQuery>
 
 =over 4
 
@@ -1590,7 +1596,7 @@ This field is required.
 
 =back
 
-=head3 Associators
+=head3 B<Associators>
     C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
     $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
     $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{ }, ['property1','property2'] );
@@ -1603,8 +1609,11 @@ This field is required.
 
 =over 4
 
-=item The Associators operation enumerates CIM objects (classes or instances) associated with a particular source CIM class or instance. 
+=item The Associators operation enumerates CIM objects (classes or instances) associated with a particular source CIM class or instance.
 
+=item The LCP::Query's Associators method requiers 2 fields and has 7 optional fields described as follows.
+
+E<10>
 
 =item B<1) name/space>
 
@@ -1654,7 +1663,15 @@ A hash reference containing any combination of the following query modifiers.
 
 This field is optional and may be left blank
 
-=item B<8.1) IncludeQualifiers>
+=back
+
+=over 6
+
+B<8.1) IncludeQualifiers>
+
+=back
+
+=over 8
 
 If set to 1 (True) all of the elements which were inherited from a parent class will include an QUALIFIER the field.
 
@@ -1664,13 +1681,25 @@ B<WARNING: This modifier is deprecated and will be removed in a future version o
 
 Defailts to 0 (False)
 
-=item B<8.2) IncludeClassOrigin>
+=back
+
+=over 6
+
+B<8.2) IncludeClassOrigin>
+
+=back
+
+=over 8
 
 If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element discribing which class it was inherited from.
 
 If set to 0 (False) the no CLASSORIGIN elements will be included.
 
 Defaults to 0 (False)
+
+=back
+
+=over 4
 
 =item B<9) Property List>
 
@@ -1692,6 +1721,8 @@ An optional array reference containing a list of the specific properties of the 
 =over 4
 
 =item The AssociatorNames operation enumerates the names of CIM objects (classes or instances) associated with a particular source CIM class or instance. 
+
+=item The LCP::Query's AssociatorNames method requiers 2 fields and has 5 optional fields described as follows.
 
 =item B<1) name/space>
 
@@ -1753,6 +1784,10 @@ This field is optional and may be left blank or explicitly specified as 'NULL'
 =over 4
 
 =item References enumerates the instances or CIM classes that reference a a specifec CIM class or instance
+
+=item The LCP::Query's References method requiers 2 fields and has 5 optional fields described as follows.
+
+E<10>
 
 =item B<1) name/space>
 
@@ -1836,7 +1871,7 @@ An optional array reference containing a list of the specific properties of the 
 
 =back
 
-=head3 ReferenceNames
+=head3 B<ReferenceNames>
 
 =over 4
 
@@ -1844,14 +1879,16 @@ An optional array reference containing a list of the specific properties of the 
 
 =back
 
-=head3 GetProperty
+=head3 B<GetProperty>
     C<<< $query->GetProperty ( 'name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'PropertyName'); >>>
 
 =over 4
 
 =item GetProperty returns only a specific property from an instance of a class
 
-=item It requiers 4 paramiters
+=item The LCP::Query's GetProperty method requiers 4 fields fields described as follows.
+
+E<10>
 
 =item B<1) name/space>
 
@@ -1859,7 +1896,7 @@ A string containing the namespace that the instance of the class can be found in
 
 =item B<2) ClassName>
 
-A string containing the name of the class you want to query
+A string containing the name of the CIM class you want to query the property from.
 
 =item B<3) InstanceName>
 
@@ -1873,16 +1910,42 @@ The name of the property you wisht to extrace.
 
 =back
 
-=head3 SetProperty
+=head3 B<SetProperty>
     C<<< $query->SetProperty('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'PropertyName','VALUE'); >>>
 
 =over 4
+
+=item SetProperty allows you to set the value of a specific property in an instance of a CIM class.
+
+=item The LCP::Query's SetProperty method requiers 5 fields fields described as follows.
+
+E<10>
+
+=item B<1) name/space>
+
+A string containing the namespace that the instance of the class can be found in a common example is 'root/cimv2' or 'root/interop'
+
+=item B<2) ClassName>
+
+A string containing the name of the CIM class of the instance you wish to modify.
+
+=item B<3) InstanceName>
+
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to modify. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+
+=item B<4) PropertyName>
+
+The name of the property you wish to modify.
+
+=item B<VALUE>
+
+The new value for the property.
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.19 for details
 
 =back
 
-=head3 GetQualifier
+=head3 B<GetQualifier>
 
 =over 4
 
@@ -1890,7 +1953,7 @@ The name of the property you wisht to extrace.
 
 =back
 
-=head3 SetQualifier
+=head3 B<SetQualifier>
 
 =over 4
 
@@ -1898,7 +1961,7 @@ The name of the property you wisht to extrace.
 
 =back
 
-=head3 DeleteQualifier
+=head3 B<DeleteQualifier>
 
 =over 4
 
