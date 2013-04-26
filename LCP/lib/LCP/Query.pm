@@ -622,27 +622,27 @@ E<10>
 
 =head2 B<Specialy Formated Fields>
 
-
+E<10>
 
 =head3 B<Keybinding>
 
-=over 4
-
 E<10>
+
+=over 4
 
 =item Keyindings are a complex key value paring construct that includes a name, value or value reference, valuetype description, and type description.
 
-=item
+E<10>
 
 =item Stucturally each key in a keybinding contains the following elements.
 
-=item
+E<10>
 
-=item NAME
+=item B<NAME>
 
 The NAME field is a requiered field containing a string that defines the name of the key
 
-=item VALUE.REFERENCE or VALUE
+=item B<VALUE.REFERENCE> or B<VALUE>
 
 Next you must define either the VALUE.REFERENCE or VALUE
 
@@ -650,13 +650,13 @@ B<WARNING:> Creation of a VALUE.REFERENCE is not currently supported by this API
 
 The VALUE field is a field containing a string, boolean, or numeric data. If you define the VALUE field you can define the VALUETYPE, and TYPE fields.
 
-=item VALUETYPE
+=item B<VALUETYPE>
 
 The VALUETYPE field describes the type of data contained in the VALUE field. The VALUETYPE may be defined as string, boolean, or numeric.
 
 If the VALUE field is defined and VALUETYPE is not defined it will default to "string"
 
-=item TYPE
+=item B<TYPE>
 
 The TYPE field is an extended description of the content of the VALUE field which may be defined as any one of the types defined in the "CIMType constraint". the default is undefind but implied by the VALUETYPE field.
 
@@ -1421,6 +1421,10 @@ C<<< <CLASS NAME="PG_ComputerSystem"  SUPERCLASS="CIM_UnitaryComputerSystem" > >
 
 What that tells me is that CIM_UnitaryComputerSystem class was used as the initial template for creating the PG_ComputerSystem class
 
+=back
+
+=over4
+
 =item From the CIM_UnitaryComputerSystem Class.
 
 =back
@@ -1438,6 +1442,10 @@ What that tells me is that CIM_ComputerSystem class was used as the initial temp
 That means that PG_ComputerSystem indirectly inherits from CIM_ComputerSystem and by enabling DeepInheritance we can see this relationship by using the EnumerateClassNames method on the CIM_ComputerSystem class; however without DeepInheritance enabled we can not.
 
 The great thing about this is it works for standard CIM, SMI-S, WMI, WMWare, etc.. Any standard or API based on CIM is structured in this manner so the class name discovery process works the same way for all of them.
+
+=back
+
+=over 4 
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.10 for details
 
