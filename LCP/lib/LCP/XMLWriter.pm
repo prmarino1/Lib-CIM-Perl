@@ -133,7 +133,7 @@ sub mkmethodcall($$;*\@){
     my $namespace=shift;
     my $params=shift;
     my $method=XML::Twig::Elt->new('IMETHODCALL',{'NAME' => $name});
-    if (defined $namespace){
+    if (defined $namespace and $namespace){
         if (ref($namespace) and ref($namespace)=~/^XML::Twig::Elt$/ and $namespace->gi =~/^(LOCALNAMESPACEPATH|LOCALCLASSPATH)$/){
             $namespace->paste($method);
         }
@@ -143,6 +143,9 @@ sub mkmethodcall($$;*\@){
         }
         else{
             my $namespacetag=$self->mklocalnamespace($namespace);
+            unless ($namespacetag){
+                die "CRITICAL: could not create a namespace for \"$name\"";
+            }
             $namespacetag->paste(first_child => $method);
         }
         
