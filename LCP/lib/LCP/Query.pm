@@ -555,7 +555,7 @@ __END__
 
 =head1 NAME
 
-LCP::Query - Lib CIM (Common Information Model) Perl Query Costructor
+LCP::Query - Lib CIM (Common Information Model) Perl Query Constructor
 
 =head1 SYNOPSIS
 
@@ -583,7 +583,7 @@ LCP::Query - Lib CIM (Common Information Model) Perl Query Costructor
     print "post executed\n";
     #Parsing the query
     my $parser=LCP::SimpleParser->new($post->get_raw_xml);
-    # returning a multi dimentional hash reference of the results
+    # returning a multi dimensional hash reference of the results
     my $tree=$parser->buildtree;
   } >>>
 
@@ -622,13 +622,13 @@ E<10>
 
 =item The CIMType constraint is a common constraint used in two contexts. The first is as a value of a field defining a constraint on a second field. The second is defining a restricting the contents of a field.
 
-=item The possible typs of constraints supported by the CIMType constraints are as follows.
+=item The possible types of constraints supported by the CIMType constraints are as follows.
 
 =item boolean, string, char16, uint8, sint8, uint16, sint16, uint32, sint32, uint64, sint64, datetime, real32, or real64
 
 =back
 
-=head2 B<Specialy Formated Fields>
+=head2 B<Specially Formatted Fields>
 
 E<10>
 
@@ -642,13 +642,13 @@ E<10>
 
 E<10>
 
-=item Stucturally each key in a keybinding contains the following elements.
+=item Structurally each key in a keybinding contains the following elements.
 
 E<10>
 
 =item B<NAME>
 
-The NAME field is a requiered field containing a string that defines the name of the key
+The NAME field is a required field containing a string that defines the name of the key
 
 =item B<VALUE.REFERENCE> or B<VALUE>
 
@@ -666,9 +666,9 @@ If the VALUE field is defined and VALUETYPE is not defined it will default to "s
 
 =item B<TYPE>
 
-The TYPE field is an extended description of the content of the VALUE field which may be defined as any one of the types defined in the "CIMType constraint". the default is undefind but implied by the VALUETYPE field.
+The TYPE field is an extended description of the content of the VALUE field which may be defined as any one of the types defined in the "CIMType constraint". the default is undefined but implied by the VALUETYPE field.
 
-B<WARNING:> Not all implementions of CIM-XML and WBEM handle the TYPE filed in a key binding properly and some even tools consider it to be invalid despite the fact that it is clearly included in the specification, so defining it may break things. At this time I advise users not to set this field unless you are trying to QA test other implementations CIM-XML or your WBEM servers.
+B<WARNING:> Not all implementations of CIM-XML and WBEM handle the TYPE filed in a key binding properly and some even tools consider it to be invalid despite the fact that it is clearly included in the specification, so defining it may break things. At this time I advise users not to set this field unless you are trying to QA test other implementations CIM-XML or your WBEM servers.
 
 =item LCP supports defining a key binding in 4 different formats
 
@@ -717,11 +717,11 @@ E<10>
 
 =item 1) B<VALUE>
 
-The VALUE field is requiered unless a VALUE.REFERENCE is defined. It should contain the value of the keybinding
+The VALUE field is required unless a VALUE.REFERENCE is defined. It should contain the value of the keybinding
 
 =item 2) B<VALUE.REFERENCE>
 
-The VALUE.REFERENCE is only valid and required if the VALUE field has not been defined. It shoud contain and reference to a VALUE.REFERENCE object.
+The VALUE.REFERENCE is only valid and required if the VALUE field has not been defined. It should contain and reference to a VALUE.REFERENCE object.
 
 B<Caviot:> LCP does not support the creation of VALUE.REFERENCE objects yet but will in the future.
 
@@ -731,9 +731,9 @@ The VALUETYPE field is only valid if the VALUE field is defined. The contents ma
 
 =item 4) B<TYPE>
 
-The TYPE field is an optional field which is only valid if the VALUE field is defined. Its contains should be any one of the values described in the "CIMType constraint", and should be a more percise description of the data contained in the VALUE field. If the TYPE is not specified it is left undefined in the key binding, and the standard considers it to be implied by the VALUETYPE feild
+The TYPE field is an optional field which is only valid if the VALUE field is defined. Its contains should be any one of the values described in the "CIMType constraint", and should be a more precise description of the data contained in the VALUE field. If the TYPE is not specified it is left undefined in the key binding, and the standard considers it to be implied by the VALUETYPE field
 
-B<WARNING:> Implementation of the TYPE filed in a keybinding is inconsistant and some CIM implementations break when you define it. As such I advise users not to define it unless absolutly nessisary or you want to QA test other CIM implementations.
+B<WARNING:> Implementation of the TYPE filed in a keybinding is inconsistent and some CIM implementations break when you define it. As such I advise users not to define it unless absolutely necessary or you want to QA test other CIM implementations.
 
 =item Each Key must contain a hash with either a VALUE or a VALUE.REFERENCE defined.
 
@@ -759,7 +759,7 @@ E<10>
 
 =over 4
 
-=item You may use both the simple and complex format in a single hash mixed hash if you find it more convinient each key will function in accordent to the rules of the simple or complex format as apropriate
+=item You may use both the simple and complex format in a single hash mixed hash if you find it more convenient each key will function in accordance to the rules of the simple or complex format as appropriate
 
 =back
 
@@ -788,21 +788,21 @@ E<10>
 
 =item Defining a keybinding has one major advantage it preserves the order of the keys where as the other methods do not.
 
-=item This method is an array containing hahs references in a complex format containing no less than 2 and up to 5 fields.
+=item This method is an array containing hash references in a complex format containing no less than 2 and up to 5 fields.
 
 =item The keys are as follows.
 
 =item 1) B<NAME>
 
-The NAME field is a requierd field containing the name of the key
+The NAME field is a required field containing the name of the key
 
 =item 2) B<VALUE>
 
-The VALUE field is requiered unless a VALUE.REFERENCE is defined. It should contain the value of the keybinding
+The VALUE field is required unless a VALUE.REFERENCE is defined. It should contain the value of the keybinding
 
 =item 3) B<VALUE.REFERENCE>
 
-The VALUE.REFERENCE is only valid and required if the VALUE field has not been defined. It shoud contain and referent to a VALUE.REFERENCE object.
+The VALUE.REFERENCE is only valid and required if the VALUE field has not been defined. It should contain and referent to a VALUE.REFERENCE object.
 
 B<Caviot:> LCP does not support the creation of VALUE.REFERENCE objects yet but will in the future
 
@@ -812,9 +812,9 @@ The VALUETYPE field is only valid if the VALUE field is defined. The contents ma
 
 =item 5) B<TYPE>
 
-The TYPE field is an optional field which is only valid if the VALUE field is defined. Its contains should be any one of the values described in the "CIMType constraint", and should be a more percise description of the data contained in the VALUE field. If the TYPE is not specified it is left undefined in the key binding, and the standard considers it to be implied by the VALUETYPE feild
+The TYPE field is an optional field which is only valid if the VALUE field is defined. Its contains should be any one of the values described in the "CIMType constraint", and should be a more precise description of the data contained in the VALUE field. If the TYPE is not specified it is left undefined in the key binding, and the standard considers it to be implied by the VALUETYPE field
 
-B<WARNING:> Implementation of the TYPE filed in a keybinding is inconsistant and some CIM implementations break when you define it. As such I advise users not to define it unless absolutly nessisary or you want to QA test other CIM implementations.
+B<WARNING:> Implementation of the TYPE filed in a keybinding is inconsistent and some CIM implementations break when you define it. As such I advise users not to define it unless absolutely necessary or you want to QA test other CIM implementations.
 
 =back
 
@@ -832,7 +832,7 @@ C<<< $query=LCP::Query->new(); >>>
 
 =item To create a simple query just create a new query instance and then use one of the intrinsic methods to create your query.
 
-=item To create a multireq (Multiple requests in one query) create a query handle via this method then use anu combination of the intrinsic methods against the same query handle.
+=item To create a multireq (Multiple requests in one query) create a query handle via this method then use a combination of the intrinsic methods against the same query handle.
 
 =item B<WARNING: multireq queries are not supported by all WBEM servers. If you have doubts about your WBEM server use simple queries instead they are safer because all WBEM servers support them.>
 
@@ -844,7 +844,7 @@ E<10>
 
 =over 4
 
-=item Each intrisic method is a Perl style version of a method spesified in DTMF DSP0200. All WBEM servers tested with this class thus far support simple queries which means you can use one intrinsic method per instance of the class. If your WBEM server supports it multipart queries may also be generated by simply calling multiple intrinsic methods against a single instance of the class. 
+=item Each intrinsic method is a Perl style version of a method specified in DTMF DSP0200. All WBEM servers tested with this class thus far support simple queries which means you can use one intrinsic method per instance of the class. If your WBEM server supports it multipart queries may also be generated by simply calling multiple intrinsic methods against a single instance of the class. 
 
 =back
 
@@ -872,9 +872,9 @@ C<<< $query->GetClass('name/space','ClassName'); >>>
 E<10>
 
 
-The GetClass method retrievs the structural information about a CIM class, this information that describes the fields, if they are required or optional, the type of data they fields may contain, and in most cases any relivant documentation about the intended use of the CIM class and the fields it contains.
+The GetClass method retrieves the structural information about a CIM class, this information describes all of the fields in the CIM Class, if they are required or optional, the type of data they fields may contain, and in most cases any relevant documentation about the intended use of the CIM class.
 
-The LCP::Query's GetClass method requiers 2 fields and has 2 optional fields described as follows.
+The LCP::Query's GetClass method requires 2 fields and has 2 optional fields described as follows.
 
 =back
 
@@ -882,15 +882,15 @@ The LCP::Query's GetClass method requiers 2 fields and has 2 optional fields des
 
 =item 1 B<Name/Space>
 
-The CIM namespace you want to query
+The CIM namespace you want to query.
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
 The name of the CIM class you want the structural information for.
 
-This field is requiered
+This field is required
 
 =item 3 B<Query Modifiers>
 
@@ -900,7 +900,7 @@ An optional hash reference containing any combination of the following query mod
 
 =item * B<LocalOnly>
 
-If set to 1 (True) local only will instruct the WBEM server to only return elements which have been added to the class, or has had its contents or default values overriden from the class from the class it inheritied the field from.
+If set to 1 (True) local only will instruct the WBEM server to only return elements which have been added to the class, or has had its contents or default values overridden from the class from the class it inherited the field from.
 
 If set to 0 (False) the WBEM server will return all elements of the class regardless of any other considerations.
 
@@ -908,11 +908,11 @@ Defaults to 1 (True)
 
 =item * B<IncludeQualifiers>
 
-Quallifiers are intended to be human understandable descriptions of a CIM field.
+Qualifiers are intended to be human understandable descriptions of a CIM field.
 
-If set to 1 (True) will instruct the WBEM server include all relivant qualifiers in its respose.
+If set to 1 (True) will instruct the WBEM server include all relevant qualifiers in its response.
 
-If set to 0 (False) instruct the WBEM server not to include any qualifiers in its responce.
+If set to 0 (False) instruct the WBEM server not to include any qualifiers in its response.
 
 Defaults to 1 (True)
 
@@ -920,7 +920,7 @@ B<See DSP0004 section 5.5 for details>
 
 =item * B<IncludeClassOrigin>
 
-If set to 1 (True) it instructs the WBEM server to include the name of origin class from which each field came from if it was inheirited from a parent CIM class.
+If set to 1 (True) it instructs the WBEM server to include the name of origin class from which each field came from if it was inherited from a parent CIM class.
 
 If set to 0 (False) instructs the WBEM server not to include the origin class information in any of the fields it describes.
 
@@ -928,15 +928,18 @@ Defaults to 0 (False)
 
 =back
 
-=item 4 B<Propperty Array Reference>
+=item 4 B<Property Array Reference>
 
 C<['property1','property2']>
 
 An optional array reference that instructs the WBEM server only to provide information about specific fields instead of the entire class.
 
-just include the name of each proerty you wnat to know about as an item in the array.
+just include the name of each property you want to know about as an item in the array.
 
-Defaults to undefined which means the WBEM server will return everthing that the query modifiers allow.
+Defaults to undefined which means the WBEM server will return everything that the query modifiers allow.
+
+=item B<Implementation Note:>
+
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
@@ -958,7 +961,7 @@ C<<< $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_key
 
 GetInstance retrieves the contents of a specific instance of a CIM class.
 
-The LCP::Query's GetInstance method requiers 3 fields and has 2 optional fields described as follows.
+The LCP::Query's GetInstance method requires 3 fields and has 2 optional fields described as follows.
 
 =back
 
@@ -970,31 +973,31 @@ E<10>
 
 The CIM namespace you want to query
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
 The name of the CIM class of the instance you want the contents from
 
-This field is requiered
+This field is required
 
 =item 3 B<InstanceName>
 
 A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query.
 
-Please see the Keybinding field format described in the "Specialy Formated Fields" section for percise information the format of this field.
+Please see the Keybinding field format described in the "Specially Formatted Fields" section for precise information the format of this field.
 
-This field is requiered
+This field is required
 
 =item 4 B<Query Modifiers>
 
-An optional hash reference containing any combination of the following query modifiers. Each of hese modifier change the results returned from the WBEM server in very specific ways.
+An optional hash reference containing any combination of the following query modifiers. Each of these modifier change the results returned from the WBEM server in very specific ways.
 
-each modifier may be specifire as a key in the hash reference with a value of 1 for True or 0 for False.
+each modifier may be specified as a key in the hash reference with a value of 1 for True or 0 for False.
 
 Any key not specified will assume their default values.
 
-B<NOTE: Modifiers with the same name may or may not have the same effect depending on the method so please read the deffinitions for each intrinsic method carefully.>
+B<NOTE: Modifiers with the same name may or may not have the same effect depending on the method so please read the definitions for each intrinsic method carefully.>
 
 =over 2
 
@@ -1004,13 +1007,13 @@ If set to 1 (True) the behavior varies base on which version of the standard the
 
 In versions prior to 1.1 of the standard this modifier to 1 (True) returns only the elements that differ from the defaults of the class or differ from the defaults of the parent classes for elements which are inherited from other classes.
 
-In version 1.1 or higher of the standard setting this modifier to 1 (True) only returns the elements in the instance that are different from the defaults for class will be returned but not any elements inherited from a parent class unless their defaults in the class you are querieing differ from the parent class. Any elements of the instance that have been altered which were inherited from the parent class are not included in the results.
+In version 1.1 or higher of the standard setting this modifier to 1 (True) only returns the elements in the instance that are different from the defaults for class will be returned but not any elements inherited from a parent class unless their defaults in the class you are querying differ from the parent class. Any elements of the instance that have been altered which were inherited from the parent class are not included in the results.
 
 
 
 If set to 0 (False) all elements of the instance except those filtered out by other options will be returned.
 
-B<WARNING: This modifier is deprecated in the standard for the GetInstance method and will be removed from a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), furthermore some WBEM servers now ignore this modifier and act as though it set to 0 (False) regardles of what you set it to.>
+B<WARNING: This modifier is deprecated in the standard for the GetInstance method and will be removed from a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), furthermore some WBEM servers now ignore this modifier and act as though it set to 0 (False) regardless of what you set it to.>
 
 See DSP0200 Version 1.3.1 section ANNEX B "LocalOnly Parameter Discussion" for details
 
@@ -1022,15 +1025,15 @@ If set to 1 (True) includes the qualifiers for the instance will be returned in 
 
 If set to 0 (False) no qualifiers will be included in the results.
 
-Quallifiers are intended to be human understandable descriptions of a CIM field
+Qualifiers are intended to be human understandable descriptions of a CIM field
 
-B<WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the meen time the DMTF advises you to set it to 0 (False), in addition WBEM servers are nolonger requierd to honer it if you set it to 1 (True). The prefered menthod to get the qualifiers is to use the GetClass method instead.>
+B<WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), in addition WBEM servers are no longer required to honer it if you set it to 1 (True). The preferred method to get the qualifiers is to use the GetClass method instead.>
 
 Defaults to 0 (False)
 
 =item * B<IncludeClassOrigin>
 
-If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element discribing which class it was inherited from.
+If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element describing which class it was inherited from.
 
 If set to 0 (False) the no CLASSORIGIN tags will be included.
 
@@ -1038,7 +1041,7 @@ Defaults to 0 (False)
 
 =back
 
-=item 5 B<Propperty Array Reference>
+=item 5 B<Property Array Reference>
 
 C<['property1','property2']>
 
@@ -1060,7 +1063,7 @@ C<<< $query->DeleteClass('name/space','ClassName') >>>
 
 =item DeleteClass deletes a CIM Class from a namespace.
 
-=item The LCP::Query's DeleteClass method requiers 2 fields described as follows
+=item The LCP::Query's DeleteClass method requires 2 fields described as follows
 
 =back
 
@@ -1070,15 +1073,15 @@ E<10>
 
 =item 1 B<name/space>
 
-The CIM namespace you want to delet the class from
+The CIM namespace you want to delete the class from
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
 The name of the CIM class you want delete
 
-This field is requiered
+This field is required
 
 =item B<WARNING:> This method has not been tested in LCP yet but should work in theory.
 
@@ -1096,7 +1099,7 @@ C<<< $query->DeleteInstance ('name/space','ClassName',$InstanceName_reference_in
 
 =item DeleteInstance deletes a specific instance of a CIM class from a namespace.
 
-=item The LCP::Query's DeleteInstance method requiers 3 fields described as follows.
+=item The LCP::Query's DeleteInstance method requires 3 fields described as follows.
 
 =back
 
@@ -1106,19 +1109,19 @@ C<<< $query->DeleteInstance ('name/space','ClassName',$InstanceName_reference_in
 
 The CIM namespace you want to delete the instance from.
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
-The name of the CIM class you want delete an intance of.
+The name of the CIM class you want delete an instance of.
 
-This field is requiered
+This field is required
 
 =item 3 B<InstanceName> 
 
-A hash or array reference matching a valid keybinding format which describes the instance of the class you want to delete. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to delete. Please see the Keybinding field format described in the "Specially Formatted Fields" section.
 
-This field is requiered
+This field is required
 
 =item B<WARNING:> This method has not been tested in LCP yet but should work in theory
 
@@ -1140,9 +1143,9 @@ This field is requiered
 
 =over 4
 
-=item CreateInstance creates specific uniqe instance of a CIM class in a namespace.
+=item CreateInstance creates specific unique instance of a CIM class in a namespace.
 
-=item The LCP::Query's CreateInstance method requiers 3 fields described as follows.
+=item The LCP::Query's CreateInstance method requires 3 fields described as follows.
 
 E<10>
 
@@ -1150,17 +1153,17 @@ E<10>
 
 The CIM namespace you want to create the instance of the class in
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
-The name of the CIM class you want create an intance of.
+The name of the CIM class you want create an instance of.
 
-This field is requiered
+This field is required
 
 =item 3 B<InstanceName>
 
-A hash or array reference matching a valid keybinding format which describes the instance including all of its properties of the class you want to create. Please see the Keybinding field format described in the "Specialy Formated Fields" section. The exact keys allowed are CIM class specific.
+A hash or array reference matching a valid keybinding format which describes the instance including all of its properties of the class you want to create. Please see the Keybinding field format described in the "Specially Formatted Fields" section. The exact keys allowed are CIM class specific.
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.6 for details
 
@@ -1199,7 +1202,7 @@ E<10>
 
 =item EnumerateClasses outputs the structure of a class and any of its subclasses the results are nearly identical to that of doing multiple GetClass operations; however if any classes inherit from the class specified in the ClassName field they will be included in the results as well.
 
-=item The LCP::Query's EnumerateClasses method requiers 1 fields and has 2 optional fields described as follows.
+=item The LCP::Query's EnumerateClasses method requires 1 fields and has 2 optional fields described as follows.
 
 E<10>
 
@@ -1211,13 +1214,13 @@ E<10>
 
 The CIM namespace you want to enumerate the classes from
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
 The name of the CIM class you want information about.
 
-This field is optional. If you dont wish to specify a value but wish to specify the next field you may leave it empty or set it to 'NULL'
+This field is optional. If you don't wish to specify a value but wish to specify the next field you may leave it empty or set it to 'NULL'
 
 =item 3 B<Query Modifiers>
 
@@ -1239,7 +1242,7 @@ Defaults to 0 (False)
 
 =item * B<LocalOnly>
 
-If set to 1 (True) only elements modified or defined specificly in the ClassName field will be included in the result, but not any elements inheitered from the origin class which havent been overriden.
+If set to 1 (True) only elements modified or defined specifically in the ClassName field will be included in the result, but not any elements inherited from the origin class which haven't been overridden.
 
 If set to 0 (False) all elements will be included in the results.
 
@@ -1255,11 +1258,11 @@ Defaults to 1 (True)
 
 =item * B<IncludeClassOrigin>
 
-If set to 1 (True) all elements inherited from a parent class will include a CLASSORIGIN field specifying what class it was originaly inhrited from.
+If set to 1 (True) all elements inherited from a parent class will include a CLASSORIGIN field specifying what class it was originally inherited from.
 
 If set to 0 (True) no elements will include the CLASSORIGIN field.
 
-Setting this field to 1 (True) only makes sence if you set LocalOnly to 0 (False)
+Setting this field to 1 (True) only makes sense if you set LocalOnly to 0 (False)
 
 Defaults to 0 (False)
 
@@ -1287,7 +1290,7 @@ C<<< $query->EnumerateClassNames ('name/space'); >>>
 
 =item The EnumerateClassNames method returns the names of any CIM classes that inherit from the CIM class name specified in the ClassName or if the ClassName filed is not specified the it returns the names of all of the base CIM classes in the name space specified in the name/space field.
 
-=item The LCP::Query's EnumerateClassNames method requiers 1 fields and has 2 optional fields described as follows.
+=item The LCP::Query's EnumerateClassNames method requires 1 fields and has 2 optional fields described as follows.
 
 E<10>
 
@@ -1299,7 +1302,7 @@ E<10>
 
 The CIM namespace you want to enumerate the class names from
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
@@ -1307,9 +1310,9 @@ The name of the CIM class you want to enumerate the class names of
 
 This field is optional.
 
-If you dont wish to specify a value but wish to specify the next field you may leave it empty or sete it to 'NULL'
+If you don't wish to specify a value but wish to specify the next field you may leave it empty or set it to 'NULL'
 
-B<Note:> This option may not sound like it make sence but its, especialy when you enable the B<DeepInheritence> modifier.
+B<Note:> This option may not sound like it make sense but its, especially when you enable the B<DeepInheritence> modifier.
 
 =item 3 B<Query Modifiers>
 
@@ -1335,7 +1338,7 @@ Defaults to 0 (False)
 
 One of the common complaints about SMI-S is that the class names are not standardized from one vendor to the next; but this is a half truth.
 
-SMI-S allows a vendor to create their own CIM subclasses of the CIM classes named the standard. This allows the vendor to add fields for their one propriatary features and in some cases remove optional fields that do not apply to their devices. By using the EnumerateClassNames CIM Intrinsic method with DeepInheritance enabled you can usually figure out very quickly what the vendor specific CIM class names are, or if youre in doubt just assume they all are.
+SMI-S allows a vendor to create their own CIM subclasses of the CIM classes named the standard. This allows the vendor to add fields for their one proprietary features and in some cases remove optional fields that do not apply to their devices. By using the EnumerateClassNames CIM Intrinsic method with DeepInheritance enabled you can usually figure out very quickly what the vendor specific CIM class names are, or if you're in doubt just assume they all are.
 
 For example if I wanted to know the name of the vendor specific version of CIM_ComputerSystem on a Fedora Linux box with SBLIM and TOG_OpenPegasus installed I would execute the following query
 
@@ -1355,7 +1358,7 @@ With DeepInheritence set to 1 (True) it returns
 
 Notice with DeepInheritence set to 1 (True) and additional CIM class name PG_ComputerSystem is included in the results, this is because the super class for PG_ComputerSystem is CIM_UnitaryComputerSystem and the super class for CIM_UnitaryComputerSystem is CIM_ComputerSystem
 
-Here is the relivant portions of the raw XML from a GetClass against the two classes that illistrates the relatinoship.
+Here is the relevant portions of the raw XML from a GetClass against the two classes that illustrates the relationship.
 
 From the PG_ComputerSystem CIM Class'
 
@@ -1393,7 +1396,7 @@ C<<< $query->EnumerateInstances('name/space','ClassName'); >>>
 
 =item The EnumerateInstances method returns the content of every instance of the CIM class specified in the ClassName and all of the sub classes that it inherits fields from within the namespace specified in the name/space field.
 
-=item The LCP::Query's EnumerateClassNames method requiers 2 fields and has 2 optional fields described as follows.
+=item The LCP::Query's EnumerateClassNames method requires 2 fields and has 2 optional fields described as follows.
 
 E<10>
 
@@ -1405,7 +1408,7 @@ E<10>
 
 The CIM namespace from which you want to enumerate the instances of the class.
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
@@ -1413,7 +1416,7 @@ The name of the CIM class you want to enumerate the instances of.
 
 This field is required.
 
-If you dont wish to specify a value but wish to specify a latter field next field you may leave it empty or sete it to 'NULL'
+If you don't wish to specify a value but wish to specify a latter field next field you may leave it empty or set it to 'NULL'
 
 =item 3 B<Query Modifiers>
 
@@ -1429,11 +1432,11 @@ If set to 1 (True) the behavior varies base on which version of the standard the
 
 In versions prior to 1.1 of the standard this modifier to 1 (True) returns only the elements that differ from the defaults of the class or differ from the defaults of the parent classes for elements which are inherited from other classes.
 
-In version 1.1 or higher of the standard setting this modifier to 1 (True) only returns the elements in each instance that are different from the defaults for class will be returned but not any elements inherited from a parent class unless their defaults in the class you are querieing differ from the parent class. Any elements of each instance that have been altered which were inherited from the parent class are not included in the results.
+In version 1.1 or higher of the standard setting this modifier to 1 (True) only returns the elements in each instance that are different from the defaults for class will be returned but not any elements inherited from a parent class unless their defaults in the class you are querying differ from the parent class. Any elements of each instance that have been altered which were inherited from the parent class are not included in the results.
 
-If set to 0 (False) all elements of each instance except those filterd out by other options will be returned.
+If set to 0 (False) all elements of each instance except those filtered out by other options will be returned.
 
-B<WARNING: This modifier is deprecated in the standard for the EnumerateInstances method and will be removed from a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), furthermore some WBEM servers now ignore this modifier and act as though it set to 0 (False) regardles of what you set it to .>
+B<WARNING: This modifier is deprecated in the standard for the EnumerateInstances method and will be removed from a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), furthermore some WBEM servers now ignore this modifier and act as though it set to 0 (False) regardless of what you set it to .>
 
 See DSP0200 Version 1.3.1 section ANNEX B "LocalOnly Parameter Discussion" for details on why this modifier was deprecated
 
@@ -1443,7 +1446,7 @@ Defaults to 1 (True)
 
 If set to 1 (True) then all instances of the CIM class specified in the ClassName properties, and all of the instances of CIM classes that inherit field directly or indirectly from the CIM class specified
 
-If set to 0 (False) the only instances of the CIM class specified in the ClassName and any CIM classes that directly inhert from it.
+If set to 0 (False) the only instances of the CIM class specified in the ClassName and any CIM classes that directly inherit from it.
 
 Defaults to 1 (True)
 
@@ -1453,13 +1456,13 @@ If set to 1 (True) the qualifiers for each instance will be returned in the resu
 
 If set to 0 (False) no qualifiers will be included in the results.
 
-B<WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the meen time the DMTF advises you to set it to 0 (False), in addition WBEM servers are nolonger requierd to honer it if you set it to 1 (True). The prefered menthod to get the qualifiers is to use the GetClass method instead.>
+B<WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), in addition WBEM servers are no longer required to honer it if you set it to 1 (True). The preferred method to get the qualifiers is to use the GetClass method instead.>
 
 Defaults to 0 (False)
 
 =item * B<IncludeClassOrigin>
 
-If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element discribing which class it was inherited from.
+If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element describing which class it was inherited from.
 
 If set to 0 (False) the no CLASSORIGIN tags will be included.
 
@@ -1483,7 +1486,7 @@ An array reference containing a list of the specific elements of the instances y
 
 C<<<$query-> EnumerateInstanceNames ('name/space','ClassName'); >>>
 
-=item The LCP::Query's EnumerateClassNames method requiers 2 fields described as follows.
+=item The LCP::Query's EnumerateClassNames method requires 2 fields described as follows.
 
 E<10>
 
@@ -1495,11 +1498,11 @@ E<10>
 
 The CIM namespace you want to enumerate the instances name of the classes from
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
-The name of the CIM class you want to enumerate the intance names of.
+The name of the CIM class you want to enumerate the instance names of.
 
 This field is required.
 
@@ -1541,7 +1544,7 @@ C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_ke
 
 =item The Associators operation enumerates CIM objects (classes or instances) associated with a particular source CIM class or instance.
 
-=item The LCP::Query's Associators method requiers 2 fields and has 7 optional fields described as follows.
+=item The LCP::Query's Associators method requires 2 fields and has 7 optional fields described as follows.
 
 E<10>
 
@@ -1553,41 +1556,41 @@ E<10>
 
 The CIM namespace you want to enumerate the class instances from
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
-The name of the CIM class for which you want enumerate the CIM classes or instaces which are associated to the CIM class specified here.
+The name of the CIM class for which you want enumerate the CIM classes or instances which are associated to the CIM class specified here.
 
 This field is required.
 
 =item 3 B<InstanceName>
 
-A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specially Formatted Fields" section.
 
 This field is optional and may be left blank
 
 =item 4 B<AssocClass>
 
-The name of a CIM class for which the resulting enumerated classes must be associated to the original CIM class or instance of the CIM Class associated via the CIM class sepcified here or one of its subclasses.
+The name of a CIM class for which the resulting enumerated classes must be associated to the original CIM class or instance of the CIM Class associated via the CIM class specified here or one of its subclasses.
 
 This field is optional and may be left blank or explicitly specified as 'NULL'
 
 =item 5 B<ResultClass>
 
-The name of a CIM class for which the resulting enumerated CIM classes must be an instance of the CIM class named here or a class that imediatly inherits from it.
+The name of a CIM class for which the resulting enumerated CIM classes must be an instance of the CIM class named here or a class that immediately inherits from it.
 
 This field is optional and may be left blank or explicitly specified as 'NULL'
 
 =item 6 B<Role>
 
-The name of a property in the source CIM class that is the source of the association betwaen the source class or instance and the resulting enumerated instaces.
+The name of a property in the source CIM class that is the source of the association between the source class or instance and the resulting enumerated instances.
 
 This field is optional and may be left blank or explicitly specified as 'NULL'
 
 =item 7 B<Result Role>
 
-The name of a property in the resulting CIM class instances that is the source of the association betwean the source class or instance and the resulting enumerated instaces
+The name of a property in the resulting CIM class instances that is the source of the association between the source class or instance and the resulting enumerated instances
 
 This field is optional and may be left blank or explicitly specified as 'NULL'
 
@@ -1603,15 +1606,15 @@ This field is optional and may be left blank
 
 If set to 1 (True) all of the elements which were inherited from a parent class will include an QUALIFIER the field.
 
-If set to 0 (False) the no QUALIFIERs will be included.
+If set to 0 (False) the no Qualifiers will be included.
 
-B<WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the meen time the DMTF advises you to set it to 0 (False), in addition WBEM servers are nolonger requierd to honer it if you set it to 1 (True). The prefered menthod to get the qualifiers is to use the GetClass method instead.>
+B<WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), in addition WBEM servers are no longer required to honer it if you set it to 1 (True). The preferred method to get the qualifiers is to use the GetClass method instead.>
 
-Defailts to 0 (False)
+Defaults to 0 (False)
 
 =item * B<IncludeClassOrigin>
 
-If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element discribing which class it was inherited from.
+If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element describing which class it was inherited from.
 
 If set to 0 (False) the no CLASSORIGIN elements will be included.
 
@@ -1649,7 +1652,7 @@ C<<< $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_i
 
 =item The AssociatorNames operation enumerates the names of CIM objects (classes or instances) associated with a particular source CIM class or instance. 
 
-=item The LCP::Query's AssociatorNames method requiers 2 fields and has 5 optional fields described as follows.
+=item The LCP::Query's AssociatorNames method requires 2 fields and has 5 optional fields described as follows.
 
 =back
 
@@ -1659,23 +1662,23 @@ C<<< $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_i
 
 The CIM namespace you want to enumerate the classes or instances from
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
-The name of the CIM class for which you want enumerate the names of CIM classes or instaces which are associated to the CIM class specified here.
+The name of the CIM class for which you want enumerate the names of CIM classes or instances which are associated to the CIM class specified here.
 
 This field is required.
 
 =item 3 B<InstanceName>
 
-A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specially Formatted Fields" section.
 
 This field is optional and may be left blank
 
 =item 4 B<AssocClass>
 
-The name of a class for which the resulting enumerated classes must be accociated to the original CIM class or instance of the CIM Class via the CIM class sepcified here or a sub class of the CIM class specified here.
+The name of a class for which the resulting enumerated classes must be associated to the original CIM class or instance of the CIM Class via the CIM class specified here or a sub class of the CIM class specified here.
 
 This field is optional and may be left blank or explicitly specified as 'NULL'
 
@@ -1687,13 +1690,13 @@ This field is optional and may be left blank or explicitly specified as 'NULL'
 
 =item 6 B<Role>
 
-The name of a property in the source CIM class that is the source of the association betwaen the source class or instance and the resulting enumerated instaces
+The name of a property in the source CIM class that is the source of the association between the source class or instance and the resulting enumerated instances
 
 This field is optional and may be left blank or explicitly specified as 'NULL'
 
 =item 7 B<Result Role>
 
-The name of a property in the resulting CIM class instances that is the source of the association betwaen the source class or instance and the resulting enumerated instaces
+The name of a property in the resulting CIM class instances that is the source of the association between the source class or instance and the resulting enumerated instances
 
 This field is optional and may be left blank or explicitly specified as 'NULL'
 
@@ -1725,9 +1728,9 @@ C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_key
 
 C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] ); >>>
 
-=item References enumerates the instances or CIM classes that reference a a specifec CIM class or instance
+=item References enumerates the instances or CIM classes that reference a a specific CIM class or instance
 
-=item The LCP::Query's References method requiers 2 fields and has 5 optional fields described as follows.
+=item The LCP::Query's References method requires 2 fields and has 5 optional fields described as follows.
 
 E<10>
 
@@ -1739,7 +1742,7 @@ E<10>
 
 The CIM namespace you want to enumerate the classes or instances from
 
-This field is requiered
+This field is required
 
 =item 2 B<ClassName>
 
@@ -1749,7 +1752,7 @@ This field is required.
 
 =item 3 B<InstanceName>
 
-A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specially Formatted Fields" section.
 
 This field is optional and may be left blank
 
@@ -1761,7 +1764,7 @@ This field is optional and may be left blank or explicitly specified as 'NULL'
 
 =item 5 B<Role>
 
-The name of a property in the CIM class named in the ClassName field that is the source of the association betwean the source class or instance and the resulting enumerated instaces
+The name of a property in the CIM class named in the ClassName field that is the source of the association between the source class or instance and the resulting enumerated instances
 
 This field is optional and may be left blank or explicitly specified as 'NULL'
 
@@ -1779,13 +1782,13 @@ If set to 1 (True) the qualifiers for each property in each instance will be ret
 
 If set to 0 (False) no qualifiers will be included in the results.
 
-B<WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the meen time the DMTF advises you to set it to 0 (False), in addition WBEM servers are nolonger requierd to honer it if you set it to 1 (True). The prefered menthod to get the qualifiers is to use the GetClass method instead.>
+B<WARNING: This modifier is deprecated and will be removed in a future version of the standard. In the mean time the DMTF advises you to set it to 0 (False), in addition WBEM servers are no longer required to honer it if you set it to 1 (True). The preferred method to get the qualifiers is to use the GetClass method instead.>
 
-Defailts to 0 (False)
+Defaults to 0 (False)
 
 =item * B<IncludeClassOrigin>
 
-If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN property discribing which class it was inherited from.
+If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN property describing which class it was inherited from.
 
 If set to 0 (False) the no CLASSORIGIN properties will be included.
 
@@ -1819,7 +1822,7 @@ C<<< $query->GetProperty ( 'name/space','ClassName', $InstanceName_reference_in_
 
 =item GetProperty returns only a specific property from an instance of a class
 
-=item The LCP::Query's GetProperty method requiers 4 fields fields described as follows.
+=item The LCP::Query's GetProperty method requires 4 fields fields described as follows.
 
 E<10>
 
@@ -1837,11 +1840,11 @@ A string containing the name of the CIM class you want to query the property fro
 
 =item 3 B<InstanceName>
 
-A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to query. Please see the Keybinding field format described in the "Specially Formatted Fields" section.
 
 =item 4 B<PropertyName>
 
-The name of the property you wisht to extrace.
+The name of the property you wish to extract.
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.18 for details
 
@@ -1857,7 +1860,7 @@ C<<< $query->SetProperty('name/space','ClassName',$InstanceName_reference_in_key
 
 =item SetProperty allows you to set the value of a specific property in an instance of a CIM class.
 
-=item The LCP::Query's SetProperty method requiers 5 fields fields described as follows.
+=item The LCP::Query's SetProperty method requires 5 fields fields described as follows.
 
 E<10>
 
@@ -1875,7 +1878,7 @@ A string containing the name of the CIM class of the instance you wish to modify
 
 =item 3 B<InstanceName>
 
-A hash or array reference matching a valid keybinding format which describes the instance of the class you want to modify. Please see the Keybinding field format described in the "Specialy Formated Fields" section.
+A hash or array reference matching a valid keybinding format which describes the instance of the class you want to modify. Please see the Keybinding field format described in the "Specially Formatted Fields" section.
 
 =item 4 B<PropertyName>
 
