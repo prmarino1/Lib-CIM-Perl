@@ -559,35 +559,34 @@ LCP::Query - Lib CIM (Common Information Model) Perl Query Constructor
 
 =head1 SYNOPSIS
 
-  C<<< use LCP;
-  # setting the options for the agent
-  my $options={
-	'username'=>'someuser',
-	'password'=>'somepassword',
-	'protocol'=>'http',
-	'Method'=>'POST'
-  };
-  # initializing the agent
-  my $agent=LCP::Agent->new('localhost',$options);
-  #Creating a session
-  my $session=LCP::Session->new($agent);
-  # creating a new query
-  my $query=LCP::Query->new();
-  # Constructing a simple Enumerate classes query against root/cimv2
-  $query->EnumerateClasses('root/cimv2');
-  # Posting the query
-  my $post=LCP::Post->new($session,$query);
-  my $tree;
-  # Parse if the query executed properly
-  if (defined $post and $post->success){
+    use LCP;
+
+    # setting the options for the agent
+    my $options={
+        'username'=>'someuser',
+        'password'=>'somepassword',
+        'protocol'=>'http',
+        'Method'=>'POST'
+    };
+    # initializing the agent
+    my $agent=LCP::Agent->new('localhost',$options);
+    #Creating a session
+    my $session=LCP::Session->new($agent);
+    # creating a new query
+    my $query=LCP::Query->new();
+    # Constructing a simple Enumerate classes query against root/cimv2
+    $query->EnumerateClasses('root/cimv2');
+    # Posting the query
+    my $post=LCP::Post->new($session,$query);
+    my $tree;
+    # Parse if the query executed properly
+    if (defined $post and $post->success){
     print "post executed\n";
     #Parsing the query
     my $parser=LCP::SimpleParser->new($post->get_raw_xml);
     # returning a multi dimensional hash reference of the results
     my $tree=$parser->buildtree;
-  } >>>
-
-E<10>
+    }
 
 =begin html
 
@@ -608,7 +607,7 @@ E<10>
 
 =over 4
 
-=item This is an OO Class and as such exports nothing
+=item This is an OO Class and as such it exports nothing
 
 =back
 
@@ -676,11 +675,11 @@ B<WARNING:> Not all implementations of CIM-XML and WBEM handle the TYPE filed in
 
 =head4 Simple hash
 
-    C<<< %hash=(
-      'key1'=>'value1',
-      'key2'=>'35',
-      'key3'=>$value_ref_object
-    ); >>>
+    %hash=(
+        'key1'=>'value1',
+        'key2'=>'35',
+        'key3'=>$value_ref_object
+    );
 
 E<10>
 
@@ -692,20 +691,20 @@ E<10>
 
 =head4 Complex hash
 
-    C<<< %hash=(
-	'key1'=>{
-	    'VALUE'=>'value1',
-	    'VALUETYPE'=>'string'
-	},
-	'key2'=>{
-	    'VALUE'=>'35',
-	    'VALUETYPE'=>'numeric',
-	    'TYPE'=>'uint8',
-	}
-	'key3'=>{
-	    'VALUE.REFERENCE'=>$value_ref_object
-	}
-    ); >>>
+    %hash=(
+        'key1'=>{
+            'VALUE'=>'value1',
+            'VALUETYPE'=>'string'
+            },
+            'key2'=>{
+            'VALUE'=>'35',
+            'VALUETYPE'=>'numeric',
+            'TYPE'=>'uint8',
+        }
+        'key3'=>{
+            'VALUE.REFERENCE'=>$value_ref_object
+        }
+    );
 
 E<10>
 
@@ -745,14 +744,14 @@ B<WARNING:> Implementation of the TYPE filed in a keybinding is inconsistent and
 
 =head4 Mixed Hash
 
-    C<<< %hash=(
-	'key1'=>'value1',
-	'key2'=>{
-	    'VALUE'=>'35',
-	    'VALUETYPE'=>'numeric',
-	    'TYPE'=>'uint8'
-	}
-	'key3'=>$value_ref_object
+    %hash=(
+        'key1'=>'value1',
+        'key2'=>{
+            'VALUE'=>'35',
+            'VALUETYPE'=>'numeric',
+            'TYPE'=>'uint8'
+        }
+        'key3'=>$value_ref_object
     ); >>>
 
 E<10>
@@ -765,22 +764,22 @@ E<10>
 
 =head4 Array of Hashes
 
-    C<<< @array(
-	{
-	    'NAME'=>'key1',
-	    'VALUE'=>'value1'
-	},
-	{
-	    'NAME'=>'key2',
-	    'VALUE'=>'35',
-	    'VALUETYPE'=>'numeric',
-	    'TYPE'=>'uint8'
-	},
-	{
-	    'NAME'=>'key3'
-	    'VALUE.REFERENCE'=>$value_ref_object
+    @array(
+        {
+            'NAME'=>'key1',
+            'VALUE'=>'value1'
         },
-    ); >>>
+        {
+            'NAME'=>'key2',
+            'VALUE'=>'35',
+            'VALUETYPE'=>'numeric',
+            'TYPE'=>'uint8'
+        },
+        {
+            'NAME'=>'key3'
+            'VALUE.REFERENCE'=>$value_ref_object
+        },
+    );
 
 E<10>
 
@@ -820,31 +819,29 @@ B<WARNING:> Implementation of the TYPE filed in a keybinding is inconsistent and
 
 =head1 Basic Methods
 
-=over 4
+=head3 B<new()>
 
-=item new()
+    $query=LCP::Query->new();
 
-C<<< $query=LCP::Query->new(); >>>
+Creates an accessor for a new query.
 
-=item Creates an accessor for a new query.
+All queries must be made via an accessor created by this method.
 
-=item All queries must be made via an accessor created by this method.
+To create a simple query just create a new query instance and then use one of the intrinsic methods to create your query.
 
-=item To create a simple query just create a new query instance and then use one of the intrinsic methods to create your query.
+To create a multireq (Multiple requests in one query) create a query handle via this method then use a combination of the intrinsic methods against the same query handle.
 
-=item To create a multireq (Multiple requests in one query) create a query handle via this method then use a combination of the intrinsic methods against the same query handle.
+This method does not take any options.
 
-=item B<WARNING: multireq queries are not supported by all WBEM servers. If you have doubts about your WBEM server use simple queries instead they are safer because all WBEM servers support them.>
-
-=back
+B<WARNING: multireq queries are not supported by all WBEM servers. If you have doubts about your WBEM server use simple queries instead they are safer because all WBEM servers support them.>
 
 =head1 Using The Intrinsic Methods
 
 E<10>
 
-=over 4
+=over 1
 
-=item Each intrinsic method is a Perl style version of a method specified in DTMF DSP0200. All WBEM servers tested with this class thus far support simple queries which means you can use one intrinsic method per instance of the class. If your WBEM server supports it multipart queries may also be generated by simply calling multiple intrinsic methods against a single instance of the class. 
+=item Each intrinsic method is a Perl style version of a method specified in DTMF DSP0200. All WBEM servers tested with this class thus far support simple queries which means you can use one intrinsic method per instance of the class. If your WBEM server supports it multipart queries may also be generated by simply calling multiple intrinsic methods against a single instance of the class.
 
 =back
 
@@ -855,28 +852,17 @@ E<10>
 
 =head3 B<GetClass>
 
-=over 1
-
-=item Synopsys
-
-C<<< $query->GetClass('Name/Space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers'=>1, IncludeClassOrigin=>0},['property1','property2']); >>>
-
-C<<< $query->GetClass('Name/Space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers'=>1, IncludeClassOrigin=>0},['property1','property2']); >>>
-
-C<<< $query->GetClass('name/space','ClassName',{ 'LocalOnly'=>0, 'IncludeQualifiers'=>1, IncludeClassOrigin=>0}); >>>
-
-C<<< $query->GetClass('name/space','ClassName',{},['property1','property2']); >>>
-
-C<<< $query->GetClass('name/space','ClassName'); >>>
+    $query->GetClass('Name/Space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers'=>1, IncludeClassOrigin=>1},['property1','property2']);
+    $query->GetClass('Name/Space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers'=>0, IncludeClassOrigin=>1},['property1','property2']);
+    $query->GetClass('name/space','ClassName',{ 'LocalOnly'=>0, 'IncludeQualifiers'=>1, IncludeClassOrigin=>0});
+    $query->GetClass('name/space','ClassName',{},['property1','property2']);
+    $query->GetClass('name/space','ClassName');
 
 E<10>
-
 
 The GetClass method retrieves the structural information about a CIM class, this information describes all of the fields in the CIM Class, if they are required or optional, the type of data they fields may contain, and in most cases any relevant documentation about the intended use of the CIM class.
 
 The LCP::Query's GetClass method requires 2 fields and has 2 optional fields described as follows.
-
-=back
 
 =over 1
 
@@ -900,6 +886,8 @@ An optional hash reference containing any combination of the following query mod
 
 =item * B<LocalOnly>
 
+    'LocalOnly'=>1 # True
+
 If set to 1 (True) local only will instruct the WBEM server to only return elements which have been added to the class, or has had its contents or default values overridden from the class from the class it inherited the field from.
 
 If set to 0 (False) the WBEM server will return all elements of the class regardless of any other considerations.
@@ -907,6 +895,8 @@ If set to 0 (False) the WBEM server will return all elements of the class regard
 Defaults to 1 (True)
 
 =item * B<IncludeQualifiers>
+
+    'IncludeQualifiers'=>1 # True
 
 Qualifiers are intended to be human understandable descriptions of a CIM field.
 
@@ -920,6 +910,8 @@ B<See DSP0004 section 5.5 for details>
 
 =item * B<IncludeClassOrigin>
 
+    'IncludeClassOrigin'=>0 # False
+
 If set to 1 (True) it instructs the WBEM server to include the name of origin class from which each field came from if it was inherited from a parent CIM class.
 
 If set to 0 (False) instructs the WBEM server not to include the origin class information in any of the fields it describes.
@@ -930,7 +922,7 @@ Defaults to 0 (False)
 
 =item 4 B<Property Array Reference>
 
-C<['property1','property2']>
+    ['property1','property2']
 
 An optional array reference that instructs the WBEM server only to provide information about specific fields instead of the entire class.
 
@@ -941,29 +933,21 @@ Defaults to undefined which means the WBEM server will return everything that th
 =item B<Implementation Note:>
 
 
+
 =item See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
 =back
 
 =head3 B<GetInstance>
 
-=over 1
-
-=item Synopsys
-
-C<<< $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},['property1','property2']); >>>
-
-C<<< $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0}); >>>
-
-C<<< $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{},['property1','property2']); >>>
-
-C<<< $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format); >>>
+    $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0},['property1','property2']);
+    $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{ 'LocalOnly'=>1, 'IncludeQualifiers' =>1, IncludeClassOrigin=> 0});
+    $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format,{},['property1','property2']);
+    $query->GetInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
 GetInstance retrieves the contents of a specific instance of a CIM class.
 
 The LCP::Query's GetInstance method requires 3 fields and has 2 optional fields described as follows.
-
-=back
 
 E<10>
 
@@ -1003,11 +987,14 @@ B<NOTE: Modifiers with the same name may or may not have the same effect dependi
 
 =item * B<LocalOnly>
 
+    'LocalOnly'=>1, # True
+    'LocalOnly'=>0, # False
+
 If set to 1 (True) the behavior varies base on which version of the standard the WBEM server supports.
 
-In versions prior to 1.1 of the standard this modifier to 1 (True) returns only the elements that differ from the defaults of the class or differ from the defaults of the parent classes for elements which are inherited from other classes.
+In B<versions prior to 1.1> of the standard this modifier to 1 (True) returns only the elements that differ from the defaults of the class or differ from the defaults of the parent classes for elements which are inherited from other classes.
 
-In version 1.1 or higher of the standard setting this modifier to 1 (True) only returns the elements in the instance that are different from the defaults for class will be returned but not any elements inherited from a parent class unless their defaults in the class you are querying differ from the parent class. Any elements of the instance that have been altered which were inherited from the parent class are not included in the results.
+In B<version 1.1 or higher> of the standard setting this modifier to 1 (True) only returns the elements in the instance that are different from the defaults for class will be returned but not any elements inherited from a parent class unless their defaults in the class you are querying differ from the parent class. Any elements of the instance that have been altered which were inherited from the parent class are not included in the results.
 
 
 
@@ -1021,6 +1008,9 @@ Defaults to 0 (False)
 
 =item * B<IncludeQualifiers>
 
+    'IncludeQualifiers'=>1, # True
+    'IncludeQualifiers'=>0, # False
+
 If set to 1 (True) includes the qualifiers for the instance will be returned in the results.
 
 If set to 0 (False) no qualifiers will be included in the results.
@@ -1032,6 +1022,9 @@ B<WARNING: This modifier is deprecated and will be removed in a future version o
 Defaults to 0 (False)
 
 =item * B<IncludeClassOrigin>
+
+    'IncludeClassOrigin'=>1, # True
+    'IncludeClassOrigin'=>0, # False
 
 If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element describing which class it was inherited from.
 
@@ -1055,17 +1048,11 @@ An optional array reference containing a list of specific properties you want th
 
 =head3 B<DeleteClass>
 
-=over 1    
+    $query->DeleteClass('name/space','ClassName');
 
-=item Synopsys
+DeleteClass deletes a CIM Class from a namespace.
 
-C<<< $query->DeleteClass('name/space','ClassName') >>>
-
-=item DeleteClass deletes a CIM Class from a namespace.
-
-=item The LCP::Query's DeleteClass method requires 2 fields described as follows
-
-=back
+The LCP::Query's DeleteClass method requires 2 fields described as follows
 
 E<10>
 
@@ -1091,17 +1078,11 @@ This field is required
 
 =head3 B<DeleteInstance>
 
-=over 1
+    $query->DeleteInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
-=item Synopsys
+DeleteInstance deletes a specific instance of a CIM class from a namespace.
 
-C<<< $query->DeleteInstance ('name/space','ClassName',$InstanceName_reference_in_keybinding_format); >>>
-
-=item DeleteInstance deletes a specific instance of a CIM class from a namespace.
-
-=item The LCP::Query's DeleteInstance method requires 3 fields described as follows.
-
-=back
+The LCP::Query's DeleteInstance method requires 3 fields described as follows.
 
 =over 1
 
@@ -1139,15 +1120,15 @@ This field is required
 
 =head3 B<CreateInstance>
 
-    C<<< $query->CreateInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format); >>>
+    $query->CreateInstance('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
 
-=over 4
+CreateInstance creates specific unique instance of a CIM class in a namespace.
 
-=item CreateInstance creates specific unique instance of a CIM class in a namespace.
-
-=item The LCP::Query's CreateInstance method requires 3 fields described as follows.
+The LCP::Query's CreateInstance method requires 3 fields described as follows.
 
 E<10>
+
+=over 1
 
 =item 1 B<name/space>
 
@@ -1187,26 +1168,17 @@ A hash or array reference matching a valid keybinding format which describes the
 
 =head3 B<EnumerateClasses>
 
-=over 1
+    $query->EnumerateClasses('name/space','ClassName', { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1});
+    $query->EnumerateClasses('name/space','ClassName');
+    $query->EnumerateClasses('name/space','NULL', { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1});
+    $query->EnumerateClasses('name/space',, { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1});
+    $query->EnumerateClasses('name/space');
 
-=item Synopsys
+EnumerateClasses outputs the structure of a class and any of its subclasses the results are nearly identical to that of doing multiple GetClass operations; however if any classes inherit from the class specified in the ClassName field they will be included in the results as well.
 
-C<<< $query->EnumerateClasses('name/space','ClassName', { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1}); >>>
-
-C<<< $query->EnumerateClasses('name/space','ClassName'); >>>
-C<<< $query->EnumerateClasses('name/space','NULL', { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1}); >>>
-C<<< $query->EnumerateClasses('name/space',, { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1}); >>>
-C<<< $query->EnumerateClasses('name/space'); >>>
-
-E<10>
-
-=item EnumerateClasses outputs the structure of a class and any of its subclasses the results are nearly identical to that of doing multiple GetClass operations; however if any classes inherit from the class specified in the ClassName field they will be included in the results as well.
-
-=item The LCP::Query's EnumerateClasses method requires 1 fields and has 2 optional fields described as follows.
+The LCP::Query's EnumerateClasses method requires 1 fields and has 2 optional fields described as follows.
 
 E<10>
-
-=back
 
 =over 1
 
@@ -1230,6 +1202,9 @@ An optional hash reference containing any combination of the following query mod
 
 =item * B<DeepInheritance>
 
+    'DeepInheritance'=>1, # True
+    'DeepInheritance'=>0, # False
+
 If this modifier is set to 1 (True) and you have specified a class in the ClassName field then all subclasses that inherit directly or indirectly from that class will be returned.
 
 If this modifier is set to 1 (True) and no class has been specified in the ClassName field or the ClassName field has explicitly been set to NULL then all classes in the namespace will be returned.
@@ -1242,6 +1217,9 @@ Defaults to 0 (False)
 
 =item * B<LocalOnly>
 
+    'LocalOnly'=>1, # True
+    'LocalOnly'=>0, # False
+
 If set to 1 (True) only elements modified or defined specifically in the ClassName field will be included in the result, but not any elements inherited from the origin class which haven't been overridden.
 
 If set to 0 (False) all elements will be included in the results.
@@ -1250,6 +1228,9 @@ Defaults to 1 (True)
 
 =item * B<IncludeQualifiers>
 
+    'IncludeQualifiers'=>1, # True
+    'IncludeQualifiers'=>0, # False
+
 If set to 1 (True) includes the qualifiers for the instance will be returned in the results.
 
 If set to 0 (False) no qualifiers will be included in the results.
@@ -1257,6 +1238,9 @@ If set to 0 (False) no qualifiers will be included in the results.
 Defaults to 1 (True)
 
 =item * B<IncludeClassOrigin>
+
+    'IncludeClassOrigin'=>1, # True
+    'IncludeClassOrigin'=>0, # False
 
 If set to 1 (True) all elements inherited from a parent class will include a CLASSORIGIN field specifying what class it was originally inherited from.
 
@@ -1272,29 +1256,19 @@ Defaults to 0 (False)
 
 =back
 
-=head3 B<EnumerateClassNames>
+=head3 B<EnumerateClassNames()>
 
-=over 1
+    $query->EnumerateClassNames ('name/space','ClassName', { 'DeepInheritance' = 1});
+    $query->EnumerateClassNames ('name/space',, { 'DeepInheritance' = 0});
+    $query->EnumerateClassNames ('name/space','NULL', { 'DeepInheritance' = 0});
+    $query->EnumerateClassNames ('name/space','ClassName');
+    $query->EnumerateClassNames ('name/space');
 
-=item Synopsys
+The EnumerateClassNames method returns the names of any CIM classes that inherit from the CIM class name specified in the ClassName or if the ClassName filed is not specified the it returns the names of all of the base CIM classes in the name space specified in the name/space field.
 
-C<<< $query->EnumerateClassNames ('name/space','ClassName', { 'DeepInheritance' = 0}); >>>
-
-C<<< $query->EnumerateClassNames ('name/space',, { 'DeepInheritance' = 0}); >>>
-
-C<<< $query->EnumerateClassNames ('name/space','NULL', { 'DeepInheritance' = 0}); >>>
-
-C<<< $query->EnumerateClassNames ('name/space','ClassName'); >>>
-
-C<<< $query->EnumerateClassNames ('name/space'); >>>
-
-=item The EnumerateClassNames method returns the names of any CIM classes that inherit from the CIM class name specified in the ClassName or if the ClassName filed is not specified the it returns the names of all of the base CIM classes in the name space specified in the name/space field.
-
-=item The LCP::Query's EnumerateClassNames method requires 1 fields and has 2 optional fields described as follows.
+The LCP::Query's EnumerateClassNames method requires 1 fields and has 2 optional fields described as follows.
 
 E<10>
-
-=back
 
 =over 1
 
@@ -1321,6 +1295,9 @@ An optional hash reference containing any combination of the following query mod
 =over 2
 
 =item * B<DeepInheritance>
+
+    'DeepInheritance'=>1, # True
+    'DeepInheritance'=>0, # False
 
 If this modifier is set to 1 (True) and you have specified a class in the ClassName field then all of the names of any of subclasses that inherit directly or indirectly from that class will be returned as well.
 
@@ -1380,27 +1357,18 @@ The great thing about this is it works for standard CIM, SMI-S, WMI, WMWare, etc
 
 =back
 
-=head3 EnumerateInstances
+=head3 B<EnumerateInstances()>
 
-=over 1
+    $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInheritance' = 1, 'IncludeQualifiers' = 0, 'IncludeClassOrigin' = 0 }, ['property1','property2']);
+    $query->EnumerateInstances('name/space','ClassName',{ }, ['property1','property2']);
+    $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInheritance' = 1, 'IncludeQualifiers' = 0, 'IncludeClassOrigin' = 0 });
+    $query->EnumerateInstances('name/space','ClassName');
 
-=item Synopsys
+The EnumerateInstances method returns the content of every instance of the CIM class specified in the ClassName and all of the sub classes that it inherits fields from within the namespace specified in the name/space field.
 
-C<<< $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInheritance' = 1, 'IncludeQualifiers' = 0, 'IncludeClassOrigin' = 0 }, ['property1','property2']); >>>
-
-C<<< $query->EnumerateInstances('name/space','ClassName',{ }, ['property1','property2']); >>>
-
-C<<< $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInheritance' = 1, 'IncludeQualifiers' = 0, 'IncludeClassOrigin' = 0 }); >>>
-
-C<<< $query->EnumerateInstances('name/space','ClassName'); >>>
-
-=item The EnumerateInstances method returns the content of every instance of the CIM class specified in the ClassName and all of the sub classes that it inherits fields from within the namespace specified in the name/space field.
-
-=item The LCP::Query's EnumerateClassNames method requires 2 fields and has 2 optional fields described as follows.
+The LCP::Query's EnumerateClassNames method requires 2 fields and has 2 optional fields described as follows.
 
 E<10>
-
-=back
 
 =over 1
 
@@ -1428,6 +1396,9 @@ If you wish to use the defaults for the modifiers and want to specify a latter f
 
 =item * B<LocalOnly>
 
+    'LocalOnly'=>1, # True
+    'LocalOnly'=>0, # False
+
 If set to 1 (True) the behavior varies base on which version of the standard the WBEM server supports.
 
 In versions prior to 1.1 of the standard this modifier to 1 (True) returns only the elements that differ from the defaults of the class or differ from the defaults of the parent classes for elements which are inherited from other classes.
@@ -1444,6 +1415,9 @@ Defaults to 1 (True)
 
 =item * B<DeepInheritance>
 
+    'DeepInheritance'=>1, # True
+    'DeepInheritance'=>0, # False
+
 If set to 1 (True) then all instances of the CIM class specified in the ClassName properties, and all of the instances of CIM classes that inherit field directly or indirectly from the CIM class specified
 
 If set to 0 (False) the only instances of the CIM class specified in the ClassName and any CIM classes that directly inherit from it.
@@ -1451,6 +1425,9 @@ If set to 0 (False) the only instances of the CIM class specified in the ClassNa
 Defaults to 1 (True)
 
 =item * B<IncludeQualifiers>
+
+    'IncludeQualifiers'=>1, # True
+    'IncludeQualifiers'=>0, # False
 
 If set to 1 (True) the qualifiers for each instance will be returned in the results.
 
@@ -1461,6 +1438,9 @@ B<WARNING: This modifier is deprecated and will be removed in a future version o
 Defaults to 0 (False)
 
 =item * B<IncludeClassOrigin>
+
+    'IncludeClassOrigin'=>1, # True
+    'IncludeClassOrigin'=>0, # False
 
 If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element describing which class it was inherited from.
 
@@ -1478,19 +1458,13 @@ An array reference containing a list of the specific elements of the instances y
 
 =back
 
-=head3 EnumerateInstanceNames
+=head3 B<EnumerateInstanceNames()>
 
-=over 1
+    query-> EnumerateInstanceNames ('name/space','ClassName');
 
-=item Synopsys
-
-C<<<$query-> EnumerateInstanceNames ('name/space','ClassName'); >>>
-
-=item The LCP::Query's EnumerateClassNames method requires 2 fields described as follows.
+The LCP::Query's EnumerateClassNames method requires 2 fields described as follows.
 
 E<10>
-
-=back
 
 =over 1
 
@@ -1510,7 +1484,7 @@ This field is required.
 
 =back
 
-=head3 B<ExecQuery>
+=head3 B<ExecQuery()>
 
 =over 1
 
@@ -1518,37 +1492,23 @@ This field is required.
 
 =back
 
-=head3 B<Associators>
+=head3 B<Associators()>
 
-=over 1
+    $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+    $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
+    $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{ }, ['property1','property2'] );
+    $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole');
+    $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass',);
+    $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+    $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'','','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+    $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
+    $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-=item Synopsys
+The Associators operation enumerates CIM objects (classes or instances) associated with a particular source CIM class or instance.
 
-C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] ); >>>
-
-C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}); >>>
-
-C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole',{ }, ['property1','property2'] ); >>>
-
-C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','Role','ResultRole'); >>>
-
-C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass',); >>>
-
-C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','NULL','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] ); >>>
-
-C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'','','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] ); >>>
-
-C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'AssocClass','ResultClass','','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']); >>>
-
-C<<< $query->Associators ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','ResultClass','NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] ); >>>
-
-=item The Associators operation enumerates CIM objects (classes or instances) associated with a particular source CIM class or instance.
-
-=item The LCP::Query's Associators method requires 2 fields and has 7 optional fields described as follows.
+The LCP::Query's Associators method requires 2 fields and has 7 optional fields described as follows.
 
 E<10>
-
-=back
 
 =over 1
 
@@ -1604,6 +1564,9 @@ This field is optional and may be left blank
 
 =item * B<IncludeQualifiers>
 
+    'IncludeQualifiers'=>1, # True
+    'IncludeQualifiers'=>0, # False
+
 If set to 1 (True) all of the elements which were inherited from a parent class will include an QUALIFIER the field.
 
 If set to 0 (False) the no Qualifiers will be included.
@@ -1613,6 +1576,9 @@ B<WARNING: This modifier is deprecated and will be removed in a future version o
 Defaults to 0 (False)
 
 =item * B<IncludeClassOrigin>
+
+    'IncludeClassOrigin'=>1, # True
+    'IncludeClassOrigin'=>0, # False
 
 If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN element describing which class it was inherited from.
 
@@ -1630,31 +1596,19 @@ An optional array reference containing a list of the specific properties of the 
 
 =back
 
-=head3 AssociatorNames
+=head3 B<AssociatorNames()>
 
-=over 1
+    $query->AssociatorNames('name/space','ClassName', {} , 'AssocClass', 'ResultClass', 'Role','ResultRole');
+    $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'NULL', 'NULL', 'NULL','NULL');
+    $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'AssocClass', 'NULL', 'Role','ResultRole');
+    $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'NULL', 'ResultClass', 'NULL','ResultRole');
+    $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, '', 'ResultClass', '','ResultRole');
+    $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'NULL', 'ResultClass');
+    $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format);
 
-=item Synopsys
+The AssociatorNames operation enumerates the names of CIM objects (classes or instances) associated with a particular source CIM class or instance. 
 
-C<<< $query->AssociatorNames('name/space','ClassName', {} , 'AssocClass', 'ResultClass', 'Role','ResultRole'); >>>
-
-C<<< $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'NULL', 'NULL', 'NULL','NULL'); >>>
-
-C<<< $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'AssocClass', 'NULL', 'Role','ResultRole'); >>>
-
-C<<< $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'NULL', 'ResultClass', 'NULL','ResultRole'); >>>
-
-C<<< $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, '', 'ResultClass', '','ResultRole'); >>>
-
-C<<< $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'NULL', 'ResultClass'); >>>
-
-C<<< $query->AssociatorNames('name/space','ClassName', $InstanceName_reference_in_keybinding_format); >>>
-
-=item The AssociatorNames operation enumerates the names of CIM objects (classes or instances) associated with a particular source CIM class or instance. 
-
-=item The LCP::Query's AssociatorNames method requires 2 fields and has 5 optional fields described as follows.
-
-=back
+The LCP::Query's AssociatorNames method requires 2 fields and has 5 optional fields described as follows.
 
 =over 1
 
@@ -1704,37 +1658,23 @@ This field is optional and may be left blank or explicitly specified as 'NULL'
 
 =back
 
-=head3 References
+=head3 B<References()>
 
-=over 1
+    $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+    $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0});
+    $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role',{ }, ['property1','property2'] );
+    $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role');
+    $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format);
+    $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+    $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
+    $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']);
+    $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] );
 
-=item Synopsys
+References enumerates the instances or CIM classes that reference a a specific CIM class or instance
 
-C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] ); >>>
-
-C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}); >>>
-
-C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role',{ }, ['property1','property2'] ); >>>
-
-C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','Role'); >>>
-
-C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format); >>>
-
-C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'NULL','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] ); >>>
-
-C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] ); >>>
-
-C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2']); >>>
-
-C<<< $query->References ('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'ResultClass','NULL',{'IncludeQualifiers' => 0, 'IncludeClassOrigin' => 0}, ['property1','property2'] ); >>>
-
-=item References enumerates the instances or CIM classes that reference a a specific CIM class or instance
-
-=item The LCP::Query's References method requires 2 fields and has 5 optional fields described as follows.
+The LCP::Query's References method requires 2 fields and has 5 optional fields described as follows.
 
 E<10>
-
-=back
 
 =over 1
 
@@ -1778,6 +1718,9 @@ This field is optional and may be left blank
 
 =item * B<IncludeQualifiers>
 
+    'IncludeQualifiers'=>1, # True
+    'IncludeQualifiers'=>0, # False
+
 If set to 1 (True) the qualifiers for each property in each instance will be returned in the results.
 
 If set to 0 (False) no qualifiers will be included in the results.
@@ -1787,6 +1730,9 @@ B<WARNING: This modifier is deprecated and will be removed in a future version o
 Defaults to 0 (False)
 
 =item * B<IncludeClassOrigin>
+
+    'IncludeClassOrigin'=>1, # True
+    'IncludeClassOrigin'=>0, # False
 
 If set to 1 (True) all of the elements which were inherited from a parent class will include an CLASSORIGIN property describing which class it was inherited from.
 
@@ -1804,7 +1750,7 @@ An optional array reference containing a list of the specific properties of the 
 
 =back
 
-=head3 B<ReferenceNames>
+=head3 B<ReferenceNames()>
 
 =over 1
 
@@ -1812,21 +1758,15 @@ An optional array reference containing a list of the specific properties of the 
 
 =back
 
-=head3 B<GetProperty>
+=head3 B<GetProperty()>
 
-=over 1
+    $query->GetProperty ( 'name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'PropertyName');
 
-=item Synopsys
+GetProperty returns only a specific property from an instance of a class
 
-C<<< $query->GetProperty ( 'name/space','ClassName', $InstanceName_reference_in_keybinding_format, 'PropertyName'); >>>
-
-=item GetProperty returns only a specific property from an instance of a class
-
-=item The LCP::Query's GetProperty method requires 4 fields fields described as follows.
+The LCP::Query's GetProperty method requires 4 fields fields described as follows.
 
 E<10>
-
-=back
 
 =over 1
 
@@ -1850,21 +1790,15 @@ The name of the property you wish to extract.
 
 =back
 
-=head3 B<SetProperty>
+=head3 B<SetProperty()>
 
-=over 1
+    $query->SetProperty('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'PropertyName','VALUE');
 
-=item Synopsys
+SetProperty allows you to set the value of a specific property in an instance of a CIM class.
 
-C<<< $query->SetProperty('name/space','ClassName',$InstanceName_reference_in_keybinding_format,'PropertyName','VALUE'); >>>
-
-=item SetProperty allows you to set the value of a specific property in an instance of a CIM class.
-
-=item The LCP::Query's SetProperty method requires 5 fields fields described as follows.
+The LCP::Query's SetProperty method requires 5 fields fields described as follows.
 
 E<10>
-
-=back
 
 =over 1
 
@@ -1892,7 +1826,7 @@ The new value for the property.
 
 =back
 
-=head3 B<GetQualifier>
+=head3 B<GetQualifier()>
 
 =over 1
 
@@ -1900,7 +1834,7 @@ The new value for the property.
 
 =back
 
-=head3 B<SetQualifier>
+=head3 B<SetQualifier()>
 
 =over 1
 
@@ -1908,7 +1842,7 @@ The new value for the property.
 
 =back
 
-=head3 B<DeleteQualifier>
+=head3 B<DeleteQualifier()>
 
 =over 1
 

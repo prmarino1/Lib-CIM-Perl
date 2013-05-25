@@ -72,10 +72,11 @@ sub buildtree{
                 for my $branch($tree->children){
 			my $branchname=$self->get_field_name($branch);
 			my $rawbranchname=$branch->local_name;
-                        if ($rawbranchname =~ /^PROPERTY$/o and $branch->has_children){
-                                $hashtree->{$lname}->{$branchname}=$self->property_twig($branch);
-                        }
-                        elsif($rawbranchname =~ /^KEYBINDING$/o){
+                        #if ($rawbranchname =~ /^PROPERTY$/o and $branch->has_children){
+                        #        $hashtree->{$lname}->{$branchname}=$self->property_twig($branch);
+                        #}
+                        #els
+			if($rawbranchname =~ /^KEYBINDING$/o){
                                 $hashtree->{$lname}->{$branchname}=$self->get_cim_keybinding_value($branch);
                         }
                        
