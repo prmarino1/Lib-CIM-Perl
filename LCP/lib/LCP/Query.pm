@@ -550,7 +550,7 @@ sub DeleteQualifier{
 
 1;
 
-__END__
+#__END__
 
 
 =head1 NAME
@@ -930,9 +930,155 @@ just include the name of each property you want to know about as an item in the 
 
 Defaults to undefined which means the WBEM server will return everything that the query modifiers allow.
 
+=back
+
+=over 1
+
 =item B<Implementation Note:>
 
+All examples below were produced using TOG-OpenPegasus with SBLIM on Fedora Linux
 
+=over 2
+
+=item here is a basic use of the CIM_UnitaryComputerSystem CIM class using GetClass
+
+    $query->GetClass('root/cimv2','CIM_UnitaryComputerSystem',{'LocalOnly'=>0,'IncludeClassOrigin'=>0,'IncludeQualifiers'=>0};
+
+Querying this class returns a large number of properties.
+
+the following output was achieved by grepping the resulting XML for PROPERTY and NAME
+
+    <PROPERTY NAME="InstanceID"  PROPAGATED="true" TYPE="string">
+    <PROPERTY NAME="Caption"  PROPAGATED="true" TYPE="string">
+    <PROPERTY NAME="Description"  PROPAGATED="true" TYPE="string">
+    <PROPERTY NAME="ElementName"  PROPAGATED="true" TYPE="string">
+    <PROPERTY NAME="InstallDate"  PROPAGATED="true" TYPE="datetime">
+    <PROPERTY.ARRAY NAME="OperationalStatus"  TYPE="uint16" PROPAGATED="true">
+    <PROPERTY.ARRAY NAME="StatusDescriptions"  TYPE="string" PROPAGATED="true">
+    <PROPERTY NAME="Status"  PROPAGATED="true" TYPE="string">
+    <PROPERTY NAME="HealthState"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="CommunicationStatus"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="DetailedStatus"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="OperatingStatus"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="PrimaryStatus"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="EnabledState"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="OtherEnabledState"  PROPAGATED="true" TYPE="string">
+    <PROPERTY NAME="RequestedState"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="EnabledDefault"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="TimeOfLastStateChange"  PROPAGATED="true" TYPE="datetime">
+    <PROPERTY.ARRAY NAME="AvailableRequestedStates"  TYPE="uint16" PROPAGATED="true">
+    <PROPERTY NAME="TransitioningToState"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="CreationClassName"  PROPAGATED="true" TYPE="string">
+    <PROPERTY NAME="Name"  PROPAGATED="true" TYPE="string">
+    <PROPERTY NAME="PrimaryOwnerName"  PROPAGATED="true" TYPE="string">
+    <PROPERTY NAME="PrimaryOwnerContact"  PROPAGATED="true" TYPE="string">
+    <PROPERTY.ARRAY NAME="Roles"  TYPE="string" PROPAGATED="true">
+    <PROPERTY.ARRAY NAME="OtherIdentifyingInfo"  TYPE="string" PROPAGATED="true">
+    <PROPERTY.ARRAY NAME="IdentifyingDescriptions"  TYPE="string" PROPAGATED="true">
+    <PROPERTY NAME="NameFormat"  PROPAGATED="true" TYPE="string">
+    <PROPERTY.ARRAY NAME="Dedicated"  TYPE="uint16" PROPAGATED="true">
+    <PROPERTY.ARRAY NAME="OtherDedicatedDescriptions"  TYPE="string" PROPAGATED="true">
+    <PROPERTY NAME="ResetCapability"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY.ARRAY NAME="PowerManagementCapabilities"  TYPE="uint16" PROPAGATED="true">
+    <PROPERTY.ARRAY NAME="InitialLoadInfo"  TYPE="string">
+    <PROPERTY NAME="LastLoadInfo"  TYPE="string">
+    <PROPERTY NAME="PowerManagementSupported"  TYPE="boolean">
+    <PROPERTY NAME="PowerState"  TYPE="uint16">
+    <PROPERTY NAME="WakeUpType"  TYPE="uint16">
+
+=item We can refine this query by specifying specific properties, methods etc..
+
+    $query->GetClass('root/cimv2','CIM_UnitaryComputerSystem',{'LocalOnly'=>0,'IncludeClassOrigin'=>0,'IncludeQualifiers'=>0},['HealthState','PowerState','RequestStateChange']);
+
+With this query we only get the following two properties.
+
+    <PROPERTY NAME="HealthState"  PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="PowerState"  TYPE="uint16">
+
+=item Now lets start looking at the query modifiers starting with IncludeClassOrigin
+
+In the previous queries you will notice some say PROPAGATED="true" and others do not. PROPAGATED="true" indicates that this property has been inherited from an other Parent CIM Class (A. K. A. SUPERCLASS). By enabling IncludeClassOrigin we can see what CIM class these properties were inherited from.
+
+    $query->GetClass('root/cimv2','CIM_UnitaryComputerSystem',{'LocalOnly'=>0,'IncludeClassOrigin'=>1,'IncludeQualifiers'=>0},['HealthState','PowerState','RequestStateChange']);
+
+Now the results includes a new tag indicating the ORIGINCLASS of each PROPERTY.
+
+    <PROPERTY NAME="HealthState"  CLASSORIGIN="CIM_ManagedSystemElement" PROPAGATED="true" TYPE="uint16">
+    <PROPERTY NAME="PowerState"  CLASSORIGIN="CIM_UnitaryComputerSystem" TYPE="uint16">
+
+In this query PowerState has an CLASSORIGIN of CIM_UnitaryComputerSystem indicating it came from the Class we queried; however HealthState which also says PROPAGATED="True" has the CLASSORIGIN of CIM_ManagedSystemElement which means it originally came from that class and was either directly inherited it from CIM_ManagedSystemElement or indirectly from another class which itself directly or indirectly inherited it from the CIM_ManagedSystemElement class
+
+=item next lets see what happens when we enable LocalOnly
+
+when enabling LocalOnly we are indicating that we only want elements with the same CLASSORIGIN as the class we are querying or elements that have been some how modified only in this class so it differs from any of the classes it was inherited from.
+
+    $query->GetClass('root/cimv2','CIM_UnitaryComputerSystem',{'LocalOnly'=>1,'IncludeClassOrigin'=>1,'IncludeQualifiers'=>0},['HealthState','PowerState','RequestStateChange']);
+
+Now only the PowerState property is returned.
+
+    <PROPERTY NAME="PowerState"  CLASSORIGIN="CIM_UnitaryComputerSystem" TYPE="uint16">
+
+The reason why is that the HealthState property was inherited from an other class and has been otherwise unaltered form the parent class (AKA. SUPERCLASS) of the CIM_UnitaryComputerSystem class. So even though the Property list says to include it the LocalOnly query modifier filters it out.
+
+=item finally Lets look at the IncludeQualifiers query modifier
+
+to understand the difference you must first see the full contents of a property without it enabled.
+
+    $query->GetClass('root/cimv2','CIM_UnitaryComputerSystem',{'LocalOnly'=>1,'IncludeClassOrigin'=>1,'IncludeQualifiers'=>0},['HealthState','PowerState','RequestStateChange']);
+
+returns the PowerState class as follows
+
+    <PROPERTY NAME="PowerState"  CLASSORIGIN="CIM_UnitaryComputerSystem" TYPE="uint16">
+    </PROPERTY>
+
+Now when we enable IncludeQualifiers in this query
+
+    $query->GetClass('root/cimv2','CIM_UnitaryComputerSystem',{'LocalOnly'=>1,'IncludeClassOrigin'=>1,'IncludeQualifiers'=>0},['HealthState','PowerState','RequestStateChange']);
+
+we get very different results
+
+    <PROPERTY NAME="PowerState"  CLASSORIGIN="CIM_UnitaryComputerSystem" TYPE="uint16">
+    <QUALIFIER NAME="Deprecated" TYPE="string" TOSUBCLASS="false">
+    <VALUE.ARRAY>
+    <VALUE>CIM_AssociatedPowerManagementService.PowerState</VALUE>
+    </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true">
+    <VALUE>Indicates the current power state of the ComputerSystem and its associated OperatingSystem. This property is being deprecated. Instead, the PowerState property in the AssociatedPowerManagementService class SHOULD be used. Regarding the Power Save states, these are defined as follows: Value 4 (&quot;Power Save - Unknown&quot;) indicates that the System is known to be in a power save mode, but its exact status in this mode is unknown; &#10;Value 2 (&quot;Power Save - Low Power Mode&quot;) indicates that the System is in a power save state but still functioning, and may exhibit degraded performance; &#10;Value 3 (&quot;Power Save - Standby&quot;) describes that the System is not functioning but could be brought to full power &apos;quickly&apos;; value 7 (&quot;Power Save - Warning&quot;) indicates that the ComputerSystem is in a warning state, though also in a power save mode. &#10;Values 8 and 9 describe the ACPI &quot;Hibernate&quot; and &quot;Soft Off&quot; states.</VALUE>
+    </QUALIFIER>
+    <QUALIFIER NAME="ValueMap" TYPE="string">
+    <VALUE.ARRAY>
+    <VALUE>0</VALUE>
+    <VALUE>1</VALUE>
+    <VALUE>2</VALUE>
+    <VALUE>3</VALUE>
+    <VALUE>4</VALUE>
+    <VALUE>5</VALUE>
+    <VALUE>6</VALUE>
+    <VALUE>7</VALUE>
+    <VALUE>8</VALUE>
+    <VALUE>9</VALUE>
+    </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="Values" TYPE="string" TRANSLATABLE="true">
+    <VALUE.ARRAY>
+    <VALUE>Unknown</VALUE>
+    <VALUE>Full Power</VALUE>
+    <VALUE>Power Save - Low Power Mode</VALUE>
+    <VALUE>Power Save - Standby</VALUE>
+    <VALUE>Power Save - Unknown</VALUE>
+    <VALUE>Power Cycle</VALUE>
+    <VALUE>Power Off</VALUE>
+    <VALUE>Power Save - Warning</VALUE>
+    <VALUE>Power Save - Hibernate</VALUE>
+    <VALUE>Power Save - Soft Off</VALUE>
+    </VALUE.ARRAY>
+    </QUALIFIER>
+    </PROPERTY>
+
+Well this is a lot more verbose. first you have the Description QUALIFIER which is a full text description of the property and what it means. Next we have the ValueMap and Values qualifiers which are tied together. a common mistake here is that the the ValueMap may only contain test in the array but this is not true, its may contain may be text or any thing else. So what you need to do when decoding an instance of the class is to find the item in the array that matches the content of the results returned by the property in the instance and match its content position in the VALUE.ARRAY under the ValueMap and return corresponding position in the VALUE.ARRAY under Values Qualifier to decode the results as human readable text.
+
+=back
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
