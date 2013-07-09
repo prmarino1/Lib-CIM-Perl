@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Carp;
 use LCP::Post;
+use Data::Dumper;
 
 our $VERSION = '0.00_01';
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
@@ -64,15 +65,17 @@ sub listnamespaces($){
     my $query=LCP::Query->new();
     $query->EnumerateInstances($self->{'Interop'},'CIM_Namespace');
     my $post=LCP::Post->new($self,$query);
+    # print $post->get_raw_xml . "\n"; # debuging line
     my $parser=LCP::SimpleParser->new($post->get_raw_xml);
-    my $tree=$parser->buildtree;
+    my $tree=$parser->buildtree; # debuging line 
+    # print Dumper($tree) . "\n"; 
     if (defined $tree->{'CIM'}->{'MESSAGE'}->{'SIMPLERSP'}->{'EnumerateInstances'}->{'ERROR'}){
         carp "$tree->{'CIM'}->{'MESSAGE'}->{'SIMPLERSP'}->{'EnumerateInstances'}->{'ERROR'}->{'DESCRIPTION'}\n";
 	return;
     }
     else{
 	for my $instance (@{$tree->{'CIM'}->{'MESSAGE'}->{'SIMPLERSP'}->{'EnumerateInstances'}->{'IRETURNVALUE'}->{'VALUE.NAMEDINSTANCE'}}){
-	    push(@{$results},"$instance->{'INSTANCE'}->{'Name'}");
+	    push(@{$results},"$instance->{'INSTANCE'}->{'PROPERTY'}->{'Name'}");
 	}
     }
     if(wantarray){

@@ -72,11 +72,10 @@ sub buildtree{
                 for my $branch($tree->children){
 			my $branchname=$self->get_field_name($branch);
 			my $rawbranchname=$branch->local_name;
-                        #if ($rawbranchname =~ /^PROPERTY$/o and $branch->has_children){
-                        #        $hashtree->{$lname}->{$branchname}=$self->property_twig($branch);
-                        #}
-                        #els
-			if($rawbranchname =~ /^KEYBINDING$/o){
+                        if ($rawbranchname =~ /^(PROPERTY|PROPERTY\.REFERENCE|PROPERTY\.ARRAY|METHOD|PARAMETER)$/o and $branch->has_children){
+                                $hashtree->{$lname}->{$rawbranchname}->{$branchname}=$self->property_twig($branch);
+                        }
+                        elsif($rawbranchname =~ /^KEYBINDING$/o){
                                 $hashtree->{$lname}->{$branchname}=$self->get_cim_keybinding_value($branch);
                         }
                        
@@ -154,15 +153,19 @@ sub property_twig{
 	my $self=shift;
         my $property=shift;
         my $propertyhash;
-        if ($property->local_name eq 'PROPERTY'){
-                my $value=$property->{'first_child'};
-                my $valuetext;
-                if ($value){
-                        $valuetext=$value->text;
-                }
-		
+        if ($property->local_name =~ /^(PROPERTY|PROPERTY\.REFERENCE|PROPERTY\.ARRAY|METHOD|PARAMETER)$/o){
+		# print "found property @{[$self->get_field_name($property)]}\n"; # debuging line
+		my $proptree=$self->buildtree($property);
+		$proptree=$proptree->{$self->get_field_name($property)};
+		# print "processing property @{[$self->get_field_name($property)]}\n"; #debuging line
                 $self->{'twig'}->purge_up_to($property);
-                return $valuetext;
+		if (ref $proptree eq 'HASH'){
+			if (defined $proptree->{'ValueMap'} and defined $proptree->{'Values'}) {
+				%{$proptree->{'ValueHash'}}= map {@{$proptree->{'ValueMap'}}[$_] => @{$proptree->{'Values'}}[$_]} 0..$#{$proptree->{'ValueMap'}};
+			}
+		}
+		
+                return $proptree;
         }
         else{
                 return  "Error unknown the field was expaected to be a Property field but was not\n";
@@ -200,7 +203,8 @@ sub cim_value{
         }
         else{
             # warn the user if there is an error
-            carp "cim property undefined\n";
+	    return
+            #carp "cim property undefined\n";
         }
 }
 

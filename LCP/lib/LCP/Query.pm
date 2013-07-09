@@ -199,7 +199,7 @@ sub EnumerateClasses($$;$\%){
         $option->paste('last_child' => $method);
     }
 
-    if ($cimclass and $cimclass !~ /^NULL$/i){
+    if (defined $cimclass and $cimclass !~ /^NULL$/i and ( $cimclass or $cimclass =~/^0$/)){
         my $classname=$self->{'writer'}->mkclassname($cimclass);
         $classname->paste('last_child' => $method);
     }
@@ -228,7 +228,7 @@ sub EnumerateClassNames($$;$\%){
     for my $option ($self->{'writer'}->mkbool($resultoptions)){
         $option->paste('last_child' => $method);
     }
-    if (defined $cimclass and $cimclass !~ /^NULL$/i){
+    if (defined $cimclass and $cimclass !~ /^NULL$/i and ( $cimclass or $cimclass =~/^0$/)){
         my $classname=$self->{'writer'}->mkclassname($cimclass);
         $classname->paste('last_child' => $method);
     }
@@ -338,19 +338,19 @@ sub Associators($$$;\%$$$$\%\@){
 	my $objectname=$self->{'writer'}->mkobjectname($cimclass);
 	$objectname->paste('last_child' => $method);
     }
-    if (defined $associatedclass and $associatedclass !~ /^NULL$/i){
+    if (defined $associatedclass and $associatedclass !~ /^NULL$/i and ( $associatedclass or $associatedclass =~/^0$/)){
         my $assocclass=$self->{'writer'}->mkassocclass($associatedclass);
         $assocclass->paste('last_child' => $method);
     }
-    if (defined $resultclass and $resultclass !~ /^NULL$/i){
+    if (defined $resultclass and $resultclass !~ /^NULL$/i and ( $resultclass or $resultclass =~/^0$/)){
         my $resclass=$self->{'writer'}->mkresultclass($associatedclass);
         $resclass->paste('last_child' => $method);
     }
-    if(defined $role and $role !~ /^NULL$/i){
+    if(defined $role and $role !~ /^NULL$/i and ( $role or $role =~/^0$/)){
         my $rolevalue=$self->{'writer'}->mkrole($role);
         $rolevalue->paste('last_child' => $method);
     }
-    if(defined $resultrole and $resultrole !~ /^NULL$/i){
+    if(defined $resultrole and $resultrole !~ /^NULL$/i and ( $resultrole or $resultrole =~/^0$/)){
         my $resrole=$self->{'writer'}->mkresultrole($role);
         $resrole->paste('last_child' => $method);
     }
@@ -384,19 +384,19 @@ sub AssociatorNames($$$;\%$$$$){
 	my $objectname=$self->{'writer'}->mkobjectname($cimclass);
 	$objectname->paste('last_child' => $method);
     }
-    if (defined $associatedclass and $associatedclass !~ /^NULL$/i){
+    if (defined $associatedclass and $associatedclass !~ /^NULL$/i and ( $associatedclass or $associatedclass =~/^0$/)){
         my $assocclass=$self->{'writer'}->mkassocclass($associatedclass);
         $assocclass->paste('last_child' => $method);
     }
-    if (defined $resultclass and $resultclass !~ /^NULL$/i){
+    if (defined $resultclass and $resultclass !~ /^NULL$/i and ( $resultclass or $resultclass =~/^0$/)){
         my $resclass=$self->{'writer'}->mkresultclass($resultclass);
         $resclass->paste('last_child' => $method);
     }
-    if(defined $role and $role !~ /^NULL$/i){
+    if(defined $role and $role !~ /^NULL$/i and ( $role or $role =~/^0$/)){
         my $rolevalue=$self->{'writer'}->mkrole($role);
         $rolevalue->paste('last_child' => $method);
     }
-    if(defined $resultrole and $resultrole !~ /^NULL$/i){
+    if(defined $resultrole and $resultrole !~ /^NULL$/i and ( $resultrole or $resultrole =~/^0$/)){
        my $resrole=$self->{'writer'}->mkresultrole($role);
         $resrole->paste('last_child' => $method); 
     }
@@ -437,11 +437,11 @@ sub References($$$;\%$$\%\@){
 	my $objectname=$self->{'writer'}->mkobjectname($cimclass);
 	$objectname->paste('last_child' => $method);
     }
-    if (defined $resultclass and $resultclass !~ /^NULL$/i){
+    if (defined $resultclass and $resultclass !~ /^NULL$/i and ( $resultclass or $resultclass =~/^0$/)){
         my $resclass=$self->{'writer'}->mkresultclass($resultclass);
         $resclass->paste('last_child' => $method);
     }
-    if(defined $role and $role !~ /^NULL$/i){
+    if(defined $role and $role !~ /^NULL$/i and ( $role or $role =~/^0$/)){
         my $rolevalue=$self->{'writer'}->mkrole($role);
         $rolevalue->paste('last_child' => $method);
     }
@@ -475,11 +475,11 @@ sub ReferenceNames($$$\%;$$){
     else{
 	my $objectname=$self->{'writer'}->mkobjectname($cimclass);
 	$objectname->paste('last_child' => $method);
-        if (defined $resultclass and $resultclass !~ /^NULL$/i){
+        if (defined $resultclass and $resultclass !~ /^NULL$/i and ( $resultclass or $resultclass =~/^0$/)){
 	    my $resclass=$self->{'writer'}->mkresultclass($resultclass);
 	    $resclass->paste('last_child' => $method);
 	}
-	if(defined $role and $role !~ /^NULL$/i){
+	if(defined $role and $role !~ /^NULL$/i and ( $role or $role =~/^0$/)){
 	    my $rolevalue=$self->{'writer'}->mkrole($role);
 	    $rolevalue->paste('last_child' => $method);
 	}
@@ -850,7 +850,7 @@ E<10>
 
 E<10>
 
-=head3 B<GetClass>
+=head3 B<GetClass()>
 
     $query->GetClass('Name/Space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers'=>1, IncludeClassOrigin=>1},['property1','property2']);
     $query->GetClass('Name/Space','ClassName',{ 'LocalOnly'=>1, 'IncludeQualifiers'=>0, IncludeClassOrigin=>1},['property1','property2']);
@@ -1020,9 +1020,9 @@ Now only the PowerState property is returned.
 
 The reason why is that the HealthState property was inherited from an other class and has been otherwise unaltered form the parent class (AKA. SUPERCLASS) of the CIM_UnitaryComputerSystem class. So even though the Property list says to include it the LocalOnly query modifier filters it out.
 
-=item finally Lets look at the IncludeQualifiers query modifier
+=item finally Lets look at the IncludeQualifiers query modifier.
 
-to understand the difference you must first see the full contents of a property without it enabled.
+To understand the difference you must first see the full contents of a property without it enabled.
 
     $query->GetClass('root/cimv2','CIM_UnitaryComputerSystem',{'LocalOnly'=>1,'IncludeClassOrigin'=>1,'IncludeQualifiers'=>0},['HealthState','PowerState','RequestStateChange']);
 
@@ -1033,7 +1033,7 @@ returns the PowerState class as follows
 
 Now when we enable IncludeQualifiers in this query
 
-    $query->GetClass('root/cimv2','CIM_UnitaryComputerSystem',{'LocalOnly'=>1,'IncludeClassOrigin'=>1,'IncludeQualifiers'=>0},['HealthState','PowerState','RequestStateChange']);
+    $query->GetClass('root/cimv2','CIM_UnitaryComputerSystem',{'LocalOnly'=>1,'IncludeClassOrigin'=>1,'IncludeQualifiers'=>1},['HealthState','PowerState','RequestStateChange']);
 
 we get very different results
 
@@ -1076,7 +1076,64 @@ we get very different results
     </QUALIFIER>
     </PROPERTY>
 
-Well this is a lot more verbose. first you have the Description QUALIFIER which is a full text description of the property and what it means. Next we have the ValueMap and Values qualifiers which are tied together. a common mistake here is that the the ValueMap may only contain test in the array but this is not true, its may contain may be text or any thing else. So what you need to do when decoding an instance of the class is to find the item in the array that matches the content of the results returned by the property in the instance and match its content position in the VALUE.ARRAY under the ValueMap and return corresponding position in the VALUE.ARRAY under Values Qualifier to decode the results as human readable text.
+Well this is a lot more verbose.
+
+
+
+First you have the Description QUALIFIER which is a full text description of the property and what it means.
+
+Next we have the ValueMap and Values qualifiers which are tied together. A common mistake here is that people some times think ValueMap may only contain numbers and that they are always sequential in the array of values but this is not true. the values may contain may contain text strings or any thing else based on the constrain specified in the TYPE field, which in this case is "string". So what you need to do when decoding an instance of the class is to find the item in the value array that matches the content of the results returned for this property in the instance and match its content position in the "VALUE.ARRAY" under the ValueMap and return corresponding position in the VALUE.ARRAY under Values Qualifier to decode the results as human readable text. To ease this process if you use LCP::SimpleParser to parse the XML an additional hash will be added named 'ValueHash'. The 'ValueHash'Quallifier is not part of the standard nor was it returned by the WBEM server, instead it was generated by LCP::SimpleParser as a quick cheat sheet to use in application. Each value in the 'ValueMap' is a key in the ValueHash containing the corosponding content from the 'Values' array.
+
+Here is how the PowerState property looks after its been parsed by the the LCP::SimpleParser class and just printing the PowerState property via Data::Dumper
+
+    $VAR1 = {
+              'ValueMap' => [
+                              '0',
+                              '1',
+                              '2',
+                              '3',
+                              '4',
+                              '5',
+                              '6',
+                              '7',
+                              '8',
+                              '9'
+                            ],
+              'NAME' => 'PowerState',
+              'TYPE' => 'uint16',
+              'Deprecated' => [
+                              'CIM_AssociatedPowerManagementService.PowerState'
+                            ],
+              'Values' => [
+                            'Unknown',
+                            'Full Power',
+                            'Power Save - Low Power Mode',
+                            'Power Save - Standby',
+                            'Power Save - Unknown',
+                            'Power Cycle',
+                            'Power Off',
+                            'Power Save - Warning',
+                            'Power Save - Hibernate',
+                            'Power Save - Soft Off'
+                          ],
+              'ValueHash' => {
+                               '6' => 'Power Off',
+                               '3' => 'Power Save - Standby',
+                               '7' => 'Power Save - Warning',
+                               '9' => 'Power Save - Soft Off',
+                               '2' => 'Power Save - Low Power Mode',
+                               '8' => 'Power Save - Hibernate',
+                               '1' => 'Full Power',
+                               '4' => 'Power Save - Unknown',
+                               '0' => 'Unknown',
+                               '5' => 'Power Cycle'
+                             },
+              'CLASSORIGIN' => 'CIM_UnitaryComputerSystem',
+              'Description' => 'Indicates the current power state of the ComputerSystem and its associated OperatingSystem. This property is being deprecated. Instead, the PowerState property in the AssociatedPowerManagementService class SHOULD be used. Regarding the Power Save states, these are defined as follows: Value 4 ("Power Save - Unknown") indicates that the System is known to be in a power save mode, but its exact status in this mode is unknown; 
+    Value 2 ("Power Save - Low Power Mode") indicates that the System is in a power save state but still functioning, and may exhibit degraded performance; 
+    Value 3 ("Power Save - Standby") describes that the System is not functioning but could be brought to full power \'quickly\'; value 7 ("Power Save - Warning") indicates that the ComputerSystem is in a warning state, though also in a power save mode. 
+    Values 8 and 9 describe the ACPI "Hibernate" and "Soft Off" states.'
+            };
 
 =back
 
@@ -1093,7 +1150,7 @@ Well this is a lot more verbose. first you have the Description QUALIFIER which 
 
 GetInstance retrieves the contents of a specific instance of a CIM class.
 
-The LCP::Query's GetInstance method requires 3 fields and has 2 optional fields described as follows.
+The LCP::Query's GetInstance method requires 3 fields and has additional 2 optional fields described as follows.
 
 E<10>
 
@@ -1187,6 +1244,8 @@ C<['property1','property2']>
 An optional array reference containing a list of specific properties you want the values of instead of retuning all of the properties in the instance.
 
 =item B<Implementation Note:>
+
+
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.2 for details
 
@@ -1405,7 +1464,7 @@ Defaults to 0 (False)
 =head3 B<EnumerateClassNames()>
 
     $query->EnumerateClassNames ('name/space','ClassName', { 'DeepInheritance' = 1});
-    $query->EnumerateClassNames ('name/space',, { 'DeepInheritance' = 0});
+    $query->EnumerateClassNames ('name/space','', { 'DeepInheritance' = 0});
     $query->EnumerateClassNames ('name/space','NULL', { 'DeepInheritance' = 0});
     $query->EnumerateClassNames ('name/space','ClassName');
     $query->EnumerateClassNames ('name/space');
