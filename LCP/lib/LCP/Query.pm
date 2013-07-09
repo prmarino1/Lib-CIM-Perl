@@ -1376,7 +1376,7 @@ A hash or array reference matching a valid keybinding format which describes the
     $query->EnumerateClasses('name/space','ClassName', { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1});
     $query->EnumerateClasses('name/space','ClassName');
     $query->EnumerateClasses('name/space','NULL', { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1});
-    $query->EnumerateClasses('name/space',, { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1});
+    $query->EnumerateClasses('name/space','', { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1});
     $query->EnumerateClasses('name/space');
 
 EnumerateClasses outputs the structure of a class and any of its subclasses the results are nearly identical to that of doing multiple GetClass operations; however if any classes inherit from the class specified in the ClassName field they will be included in the results as well.
