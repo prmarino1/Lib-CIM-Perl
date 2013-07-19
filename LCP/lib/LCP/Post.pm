@@ -62,7 +62,7 @@ sub new {
     }
     $self->{'Result'}=$self->{'Session'}->{'agent'}->{'agent'}->request($self->{'Request'});
     unless($self->{'Result'}->is_success){
-        carp "The Query Faild\n";
+        carp "The Query Failed\n";
     }
     return $self;
 }
