@@ -26,7 +26,7 @@ sub new{
     }
     # creating self hash with LWP Agent and hostname
     my $self={
-        'agent' => LWP::UserAgent->new(),
+        'agent' => $options->{'useragent'} || LWP::UserAgent->new(),
         'host' => $host,
     };
     
@@ -199,6 +199,8 @@ How long to wait in seconds for a query to return results befor timing out.
 
 LCP::Agent uses LWP::UserAgent for a large part of its non CIM specific functionality. The LWP::UserAgent instance can be accessed via the Agent hashref key of the accessor created by the new method.
 Advanced developers who are familiar with LWP may utilize this to further tune their settings however this is not advisable for most, and eventually may go away as this module evolves.
+
+If you wish to pass in a mock user agent for testing or for other reasons, the options key is 'useragent'.
 
 =head1 SEE ALSO
 
