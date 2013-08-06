@@ -1371,7 +1371,7 @@ A hash or array reference matching a valid keybinding format which describes the
 
 =back
 
-=head3 B<EnumerateClasses>
+=head3 B<EnumerateClasses()>
 
     $query->EnumerateClasses('name/space','ClassName', { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1});
     $query->EnumerateClasses('name/space','ClassName');
@@ -1379,7 +1379,7 @@ A hash or array reference matching a valid keybinding format which describes the
     $query->EnumerateClasses('name/space','', { 'DeepInheritance' = 0, 'LocalOnly' = 1, 'IncludeQualifiers' = 1, 'IncludeClassOrigin' = 1});
     $query->EnumerateClasses('name/space');
 
-EnumerateClasses outputs the structure of a class and any of its subclasses the results are nearly identical to that of doing multiple GetClass operations; however if any classes inherit from the class specified in the ClassName field they will be included in the results as well.
+EnumerateClasses outputs the structure of any subclasses of name space or a class specified. The results are nearly identical to that of doing multiple GetClass operations; however the results may not include any classes or may include multiple classes depending on howmany subclasses are found.
 
 The LCP::Query's EnumerateClasses method requires 1 fields and has 2 optional fields described as follows.
 
@@ -1397,7 +1397,7 @@ This field is required
 
 The name of the CIM class you want information about.
 
-This field is optional. If you don't wish to specify a value but wish to specify the next field you may leave it empty or set it to 'NULL'
+This field is optional. If you don't wish to specify a value but wish to specify the next field you may leave it empty quotes or set it to 'NULL'
 
 =item 3 B<Query Modifiers>
 
@@ -1454,6 +1454,52 @@ If set to 0 (True) no elements will include the CLASSORIGIN field.
 Setting this field to 1 (True) only makes sense if you set LocalOnly to 0 (False)
 
 Defaults to 0 (False)
+
+=back
+
+=item B<Implementation Note:>
+
+All examples below were produced using TOG-OpenPegasus with SBLIM on Fedora Linux 16
+
+=over 2
+
+=item If I run an EnumerateClasses query against the root/cimv2 namespase with no other options
+
+    $query->EnumerateClasses('root/cimv2');
+
+The results simmilar to running a multireq set of GetClass queries against all 99 of the base classes in the name space.
+
+=item If I ran the same query with DeepInheritance enabled
+
+    $query->EnumerateClasses('root/cimv2','',{ 'DeepInheritance' = 1});
+
+The results simmilar to running a multireq set of GetClass queries against all 1583 of the classes in the name space.
+
+=item If I ran the against the CIM_UnitaryComputerSystem CIM Class
+
+    $query->EnumerateClasses('root/cimv2','CIM_UnitaryComputerSystem',{ 'DeepInheritance' = 1});
+
+The results simmilar to running GetClass query against the PG_ComputerSystem class because that is the only class that directly or indirectly inherits from the CIM_UnitaryComputerSystem class.
+
+=item If I ran the against the PG_ComputerSystem CIM Class
+
+$query->EnumerateClasses('root/cimv2','PG_ComputerSystem',{ 'DeepInheritance' = 1});
+
+The query would succede however it wouldn't include any results because no other classes inherit from the PG_ComputerSystem class.
+
+The resulitng XML looks like this
+
+    <?xml version="1.0" ?>
+    <CIM CIMVERSION="2.0" DTDVERSION="2.0">
+	<MESSAGE ID="1942" PROTOCOLVERSION="1.0">
+	    <SIMPLERSP>
+		<IMETHODRESPONSE NAME="EnumerateClasses">
+		</IMETHODRESPONSE>
+	    </SIMPLERSP>
+	</MESSAGE>
+    </CIM>
+
+All other query modifiers work the same way as they do in a GetClass query.
 
 =back
 
@@ -1526,17 +1572,17 @@ For example if I wanted to know the name of the vendor specific version of CIM_C
 
 here is the query I might create.
 
-    C<<< $query->EnumerateClassNames ('name/space','CIM_ComputerSystem', { 'DeepInheritance' = 1}); >>>
+    $query->EnumerateClassNames ('name/space','CIM_ComputerSystem', { 'DeepInheritance' = 1});
 
 Once the query was posted and the results parsed results were either of the following two results depending on the value of DeepInheritance.
 
 With DeepInheritence set to 0 (False) it returns
 
-    C<"CIM_Cluster", "CIM_VirtualComputerSystem", "CIM_UnitaryComputerSystem", "Linux_ComputerSystem", "Xen_ComputerSystem", "KVM_ComputerSystem", "LXC_ComputerSystem">
+    "CIM_Cluster", "CIM_VirtualComputerSystem", "CIM_UnitaryComputerSystem", "Linux_ComputerSystem", "Xen_ComputerSystem", "KVM_ComputerSystem", "LXC_ComputerSystem"
 
 With DeepInheritence set to 1 (True) it returns
 
-    C<"CIM_Cluster", "PG_ComputerSystem", "CIM_VirtualComputerSystem", "CIM_UnitaryComputerSystem", "Linux_ComputerSystem", "Xen_ComputerSystem", "KVM_ComputerSystem", "LXC_ComputerSystem">
+    "CIM_Cluster", "PG_ComputerSystem", "CIM_VirtualComputerSystem", "CIM_UnitaryComputerSystem", "Linux_ComputerSystem", "Xen_ComputerSystem", "KVM_ComputerSystem", "LXC_ComputerSystem"
 
 Notice with DeepInheritence set to 1 (True) and additional CIM class name PG_ComputerSystem is included in the results, this is because the super class for PG_ComputerSystem is CIM_UnitaryComputerSystem and the super class for CIM_UnitaryComputerSystem is CIM_ComputerSystem
 
@@ -1544,13 +1590,13 @@ Here is the relevant portions of the raw XML from a GetClass against the two cla
 
 From the PG_ComputerSystem CIM Class'
 
-    C<<< <CLASS NAME="PG_ComputerSystem"  SUPERCLASS="CIM_UnitaryComputerSystem" > >>>
+    <CLASS NAME="PG_ComputerSystem"  SUPERCLASS="CIM_UnitaryComputerSystem" >
 
 What that tells me is that CIM_UnitaryComputerSystem class was used as the initial template for creating the PG_ComputerSystem class
 
 =item From the CIM_UnitaryComputerSystem Class.
 
-    C<<< <CLASS NAME="CIM_UnitaryComputerSystem"  SUPERCLASS="CIM_ComputerSystem" > >>>
+    <CLASS NAME="CIM_UnitaryComputerSystem"  SUPERCLASS="CIM_ComputerSystem" >
 
 What that tells me is that CIM_ComputerSystem class was used as the initial template for creating the CIM_UnitaryComputerSystem class.
 
