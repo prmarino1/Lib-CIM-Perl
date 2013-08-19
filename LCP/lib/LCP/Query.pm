@@ -79,7 +79,7 @@ sub GetInstance($$$$;\%\@){
     my $optionsconstraints={
 	'LocalOnly'=>'boolean',
 	'IncludeQualifiers'=>'boolean',
-        'IncludeClassOrigin'=>'boolean',
+	'IncludeClassOrigin'=>'boolean',
     };
     my $resultoptions=$self->{'writer'}->comparedefaults($defaultoptions,$options,$optionsconstraints);
     my $method=$self->{'writer'}->mkmethodcall('GetInstance',$namespace);
@@ -285,6 +285,10 @@ sub EnumerateInstanceNames($$$\%){
                 $options->{$key}=$defaultoptions->{$key};
             }
         
+    }
+    unless (defined $cimclass and $cimclass=~/\w+/){
+	carp "ERROR: No Class Name defined for EnumerateInstanceNames method call\n";
+	return 0;
     }
     $self->{'last_method'}='EnumerateInstanceNames';
     $self->{'last_namespace'}=$namespace;
