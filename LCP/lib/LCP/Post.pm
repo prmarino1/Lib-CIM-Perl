@@ -6,6 +6,27 @@ use Carp;
 our $VERSION = '0.00_01';
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
 
+my $lastErr;
+my $suppressWarnings	= 0;
+
+sub getLastWarning {
+    return $lastErr;
+}
+
+sub suppressWarnings {
+    $suppressWarnings = 1;
+}
+
+sub _warn {
+    my $warning = shift;
+
+    if ($suppressWarnings) {
+        $lastErr = $warning;
+    } else {
+        carp($warning);
+    }
+}
+
 sub new {
     my $class = shift;
     my $session= shift;
@@ -16,7 +37,7 @@ sub new {
     $self->{'query'}=$query;
         unless(@{$query->{'writer'}->{'query'}} > 1) {
         unless(defined $self->{'query'}->{'last_method'} or $session->{'Method'}=~/^(M-POST|AUTO)$/i){
-            carp "ERROR: No CIM Method defined for POST operation\n";
+            &_warn("ERROR: No CIM Method defined for POST operation\n");
             return 0;
         }
     }
@@ -28,7 +49,7 @@ sub new {
         $self->{'fallback_method'}='POST';
     }
     else {
-        carp "$session->{'Method'} is not a valid query method please choose AUTO, M-POST or POST";
+        &_warn("$session->{'Method'} is not a valid query method please choose AUTO, M-POST or POST");
         return 0;
     }
     $self->{'Request'}=0;
@@ -49,7 +70,7 @@ sub new {
         $self->set_mpost_headers();
     }
     unless($self->{'Session'}->{'messageid'}){
-        carp "couldn't find the session messageid\n";
+        &_warn("couldn't find the session messageid\n");
     }
     $self->{'query'}->{'writer'}->set_query_id($self->{'Session'}->{'messageid'});
     $self->{'Request'}->content($self->{'query'}->{'writer'}->extractxml());
@@ -62,7 +83,7 @@ sub new {
     }
     $self->{'Result'}=$self->{'Session'}->{'agent'}->{'agent'}->request($self->{'Request'});
     unless($self->{'Result'}->is_success){
-        carp "The Query Faild\n";
+        &_warn("The Query Failed\n");
     }
     return $self;
 }
@@ -221,6 +242,20 @@ $post->success
 
 returns a boolian result of a query
 Note: at this time this method only returns true it the WBEM server respods with a 200 or 207 code it does not parse the XML for error messages embeded in the responce.
+
+=back
+
+=item suppressWarnings
+
+=over 4
+
+Call suppressWarnings() you would prefer to keep the constuctor from printing to STDOUT if there are errors.
+
+You can get any warings by calling getLastWarning() if suppressWarnings() has been called.
+
+=back
+
+=back
 
 =head1 Advanced Tuning Notes
 
