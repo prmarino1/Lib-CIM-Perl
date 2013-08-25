@@ -26,7 +26,7 @@ sub new{
     }
     # creating self hash with LWP Agent and hostname
     my $self={
-        'agent' => LWP::UserAgent->new(),
+        'agent' => $options->{'useragent'} || LWP::UserAgent->new(),
         'host' => $host,
     };
     
@@ -163,7 +163,7 @@ This is an OO Class and as such exports nothing.
 
 =over 4
 
-$agent=LCP::Agent->new('hostname',%{ 'protocol' =>'https', 'port' => 5989, 'Method'=>'M-POST', username=>'someuser', 'password'=>'somepassword', 'Timeout'=>180  });
+$agent=LCP::Agent->new('hostname',%{ 'protocol' =>'https', 'port' => 5989, 'Method'=>'M-POST', username=>'someuser', 'password'=>'somepassword', 'Timeout'=>180, 'useragent' => $optionalUserAgent  });
 
 This class only has one method however its important to set the default information for several of the other classes.
 There is one required paramiter the hostname or IP address of the WBEM server.
@@ -199,6 +199,8 @@ How long to wait in seconds for a query to return results befor timing out.
 
 LCP::Agent uses LWP::UserAgent for a large part of its non CIM specific functionality. The LWP::UserAgent instance can be accessed via the Agent hashref key of the accessor created by the new method.
 Advanced developers who are familiar with LWP may utilize this to further tune their settings however this is not advisable for most, and eventually may go away as this module evolves.
+
+If you wish to pass in a mock user agent for testing or for other reasons, the options key to use is 'useragent'.
 
 =head1 SEE ALSO
 
