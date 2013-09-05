@@ -1707,7 +1707,11 @@ Defaults to 0 (False)
 
 =item 4 B<Property List>
 
-An array reference containing a list of the specific elements of the instances you want to return, all other elements will not be included in the results. 
+An array reference containing a list of the specific elements of the instances you want to return, all other elements will not be included in the results.
+
+=item B<Implementation Note:>
+
+
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.11 for details
 
