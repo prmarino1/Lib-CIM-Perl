@@ -504,10 +504,10 @@ sub GetProperty($$$\%$){
     $namespacetwig->paste( 'first_child' => $method);
     my $keybindings=$self->{'writer'}->mkkeybinding($filter);
     my $instancename=$self->{'writer'}->mkinstancename($cimclass,$keybindings);
-    $instancename->paste( 'first_child' => $method);
+    $instancename->paste( 'last_child' => $method);
     if($property){
         my $propname=$self->{'writer'}->mkpropertyname($property);
-        $propname->paste( 'first_child' => $method);
+        $propname->paste( 'last_child' => $method);
     }
     push(@{$self->{'writer'}->{'query'}},$method);
 }
