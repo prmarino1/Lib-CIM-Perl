@@ -159,6 +159,8 @@ This is an OO Class and as such exports nothing.
 
 =head1 Methods
 
+=over 1
+
 =item new
 
 =over 4

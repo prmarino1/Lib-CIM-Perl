@@ -1247,6 +1247,10 @@ C<['property1','property2']>
 
 An optional array reference containing a list of specific properties you want the values of instead of retuning all of the properties in the instance.
 
+=back
+
+=over 1
+
 =item B<Implementation Note:>
 
 
@@ -1278,6 +1282,10 @@ This field is required
 The name of the CIM class you want delete
 
 This field is required
+
+=back
+
+=over 1
 
 =item B<WARNING:> This method has not been tested in LCP yet but should work in theory.
 
@@ -1312,6 +1320,10 @@ This field is required
 A hash or array reference matching a valid keybinding format which describes the instance of the class you want to delete. Please see the Keybinding field format described in the "Specially Formatted Fields" section.
 
 This field is required
+
+=back
+
+=over 1
 
 =item B<WARNING:> This method has not been tested in LCP yet but should work in theory
 
@@ -1354,6 +1366,10 @@ This field is required
 =item 3 B<InstanceName>
 
 A hash or array reference matching a valid keybinding format which describes the instance including all of its properties of the class you want to create. Please see the Keybinding field format described in the "Specially Formatted Fields" section. The exact keys allowed are CIM class specific.
+
+=back
+
+=over 1
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.6 for details
 
@@ -1461,6 +1477,10 @@ Defaults to 0 (False)
 
 =back
 
+=back
+
+=over 1
+
 =item B<Implementation Note:>
 
 All examples below were produced using TOG-OpenPegasus with SBLIM on Fedora Linux 16
@@ -1565,6 +1585,10 @@ If this modifier is set to 0 (False) and no class has been specified in the Clas
 Defaults to 0 (False)
 
 =back
+
+=back
+
+=over 1
 
 =item B<Implementation Note:>
 
@@ -1709,6 +1733,10 @@ Defaults to 0 (False)
 
 An array reference containing a list of the specific elements of the instances you want to return, all other elements will not be included in the results.
 
+=back
+
+=over 1
+
 =item B<Implementation Note:>
 
 
@@ -1738,6 +1766,10 @@ This field is required
 The name of the CIM class you want to enumerate the instance names of.
 
 This field is required.
+
+=back
+
+=over 1
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.12 for details
 
@@ -1851,6 +1883,10 @@ Defaults to 0 (False)
 
 An optional array reference containing a list of the specific properties of the enumerated instances you want to get.
 
+=back
+
+=over 1
+
 =item See DSP0200 Version 1.3.1 section 5.3.2.14 for details
 
 =back
@@ -1912,6 +1948,10 @@ This field is optional and may be left blank or explicitly specified as 'NULL'
 The name of a property in the resulting CIM class instances that is the source of the association between the source class or instance and the resulting enumerated instances
 
 This field is optional and may be left blank or explicitly specified as 'NULL'
+
+=back
+
+=over 1
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.15 for details
 
@@ -2005,6 +2045,10 @@ An optional array reference containing a list of the specific properties of the 
 
 =back
 
+=back
+
+=over 1
+
 =item See DSP0200 Version 1.3.1 section 5.3.2.16 for details
 
 =back
@@ -2045,7 +2089,54 @@ A hash or array reference matching a valid keybinding format which describes the
 
 The name of the property you wish to extract.
 
+=back
+
+=over 1
+
+=item B<Implementation Note:>
+
+All examples below were produced using TOG-OpenPegasus with SBLIM on Fedora Linux 16
+
+=over 2
+
+=item Lets say I wat to get just the ElementName property from an instance of Linux_OperatingSystem Class
+
+This is exactly what the GetProperty class is meant for. Assuming the hostname for the box I want the information from is myhost and ive already gotten the instance name via an other method here are the fielda in the name
+
+CSCreationClassName = "Linux_ComputerSystem"
+CSName = "myhost"
+Name = "myhost"
+CreationClassName = "Linux_OperatingSystem"
+
+Here is the query I would run.
+
+    $query->GetProperty('root/cimv2','Linux_OperatingSystem',{CSCreationClassName=>"Linux_ComputerSystem",CSName=>"myhost",Name=>"myhost",CreationClassName=>"Linux_OperatingSystem"},'ElementName');
+
+Notice the instansce name is just a simple hash refference which represents a keybinding the order of the keys themselves is not important just that they are all there and populated with the apropriate information.
+
+Once I post the quety via LCP::Post and parse the rsults via LCP::SimpleParser the result is a data structure which looks like this
+
+    $VAR1 = {
+        'CIM' => {
+            'CIMVERSION' => '2.0',
+            'MESSAGE' => {
+                'SIMPLERSP' => {
+                    'GetProperty' => {
+                        'NAME' => 'GetProperty',
+                        'IRETURNVALUE' => 'Fedora release 16 (Verne)'
+                    }
+                },
+                'ID' => '18267',
+                'PROTOCOLVERSION' => '1.0'
+            },
+            'DTDVERSION' => '2.0'
+        }
+    };
+
+
 =item See DSP0200 Version 1.3.1 section 5.3.2.18 for details
+
+=back
 
 =back
 
@@ -2080,6 +2171,10 @@ The name of the property you wish to modify.
 =item 5 B<VALUE>
 
 The new value for the property.
+
+=back
+
+=over 1
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.19 for details
 
