@@ -46,7 +46,7 @@ sub new{
 	$self->{'Interop'}=$options->{'Interop'};
     }
     elsif(defined $options->{'Interop'}){
-	carp "WARNING: \"$options->{'Interop'}\" does not match the patern for CIM namespace\n";
+	carp "WARNING: \"$options->{'Interop'}\" does not match the pattern for CIM namespace\n";
 	warn "ERROR: Overriding the Interop namespace specified for this session because it failed the format validation check\n";
 	$self->{'Interop'}=$self->{'agent'}->{'Interop'};
     }
@@ -65,9 +65,9 @@ sub listnamespaces($){
     my $query=LCP::Query->new();
     $query->EnumerateInstances($self->{'Interop'},'CIM_Namespace');
     my $post=LCP::Post->new($self,$query);
-    # print $post->get_raw_xml . "\n"; # debuging line
+    # print $post->get_raw_xml . "\n"; # debugging line
     my $parser=LCP::SimpleParser->new($post->get_raw_xml);
-    my $tree=$parser->buildtree; # debuging line 
+    my $tree=$parser->buildtree; # debugging line 
     # print Dumper($tree) . "\n"; 
     if (defined $tree->{'CIM'}->{'MESSAGE'}->{'SIMPLERSP'}->{'EnumerateInstances'}->{'ERROR'}){
         carp "$tree->{'CIM'}->{'MESSAGE'}->{'SIMPLERSP'}->{'EnumerateInstances'}->{'ERROR'}->{'DESCRIPTION'}\n";
@@ -90,12 +90,12 @@ sub listnamespaces($){
 
 1;
 
-__END__
+#__END__
 # Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
-LCP::Session - Lib CIM (Common Information Model) Perl Session managment class
+LCP::Session - Lib CIM (Common Information Model) Perl Session management class
 
 =head1 SYNOPSIS
 
@@ -123,13 +123,13 @@ LCP::Session - Lib CIM (Common Information Model) Perl Session managment class
         print "post executed\n";
         #Parsing the query
         my $parser=LCP::SimpleParser->new($post->get_raw_xml);
-        # returning a multi dimentional hash of the results
+        # returning a multi dimensional hash of the results
         my $tree=$parser->buildtree;
     }
 
 =head1 DESCRIPTION
 
-Right Now this module doesnt do much but is required
+Right Now this module doesn't do much but is required
 latter on it will allow per session modification of connection option
 
 
@@ -140,37 +140,51 @@ This is an OO Class and as such exports nothing.
 
 =head2 Methods
 
+=over 1
+
 =item new
 
-$session=LCP::Session->new($agent,%{ 'Method' => 'M-POST', 'Timeout'=> '180'});
+    $session=LCP::Session->new($agent,%{ 'Method' => 'M-POST', 'Timeout'=> '180'});
 
-$session=LCP::Session->new($agent);
+    $session=LCP::Session->new($agent);
 
-The new method requires one paramiter the accessor to the instance of the LCP::Agent class
-One optional paramiter can also be added a hash containing the options to be used for this session only
+The new method requires one parameter the accessor to the instance of the LCP::Agent class
+One optional parameter can also be added a hash containing the options to be used for this session only
 The options that can be specified in the hash are as follows
 
-1) Method
-Sets the post method for the session to POST, M-POST, or AUTO. currently AUTO only attempts M-Post; however the functionality will be expanded in the future so that if the WBEM server doesnt support M-POST it will attempt to execute the query via a POST.
+=over 2
+
+=item 1 Method
+
+Sets the post method for the session to POST, M-POST, or AUTO. currently AUTO only attempts M-Post; however the functionality will be expanded in the future so that if the WBEM server doesn't support M-POST it will attempt to execute the query via a POST.
 
 Default Method=>'AUTO'
 
-2) Timeout
-Sets how long to wait in seconds for querys posted via the session to return results befor timing out. This option overrides the equivelent option in the Agent instance.
+=item 2 Timeout
+
+Sets how long to wait in seconds for query is posted via the session to return results before timing out. This option overrides the equivalent option in the Agent instance.
+
 Default Timeout=>180
 
-3) Interop
-Sets the interop namespace used for the session for queries to discover the cpabilities of the WBEM server. Some WBEM providers stray from the standard for example most versions of OpenPegasus use 'root/PG_Interop'. This option overrides the equivelent option in the Agent instance.
+=item 3 Interop
+
+Sets the interop namespace used for the session for queries to discover the capabilities of the WBEM server. Some WBEM providers stray from the standard for example most versions of OpenPegasus use 'root/PG_Interop'. This option overrides the equivalent option in the Agent instance.
+
 Default Interop=>'root/interop'
+
+=back
 
 =item listnamespaces
 
-my @namespacearray=$session->listnamespaces
+    my @namespacearray=$session->listnamespaces
 
-my $namespacearrayref=$session->listnamespaces
+    my $namespacearrayref=$session->listnamespaces
 
-The listnamespaces method returns an array or array reference containing a list of all of the namespaces registerd on the WBEM server. This method requiers that the Interop option be set correctly in the Agent instance or the session instanceto work.
+The listnamespaces method returns an array or array reference containing a list of all of the namespaces registered on the WBEM server.
 
+This method requires that the Interop option be set correctly in the Agent instance or the session instance to work.
+
+=back
 
 =head1 SEE ALSO
 

@@ -97,8 +97,8 @@ sub new{
 	$self->{'Interop'}=$options->{'Interop'};
     }
     elsif(defined $options->{'Interop'}){
-	carp "WARNING: \"$options->{'Interop'}\" does not match the patern for CIM namespace setting the namespace to root/interop instead\n";
-	warn "ERROR: Overriding the Interop namespace speccified for this agent because it failed the format validation check\n";
+	carp "WARNING: \"$options->{'Interop'}\" does not match the pattern for CIM namespace setting the namespace to root/interop instead\n";
+	warn "ERROR: Overriding the Interop namespace specified for this agent because it failed the format validation check\n";
 	$self->{'Interop'}='root/interop';
     }
     else{
@@ -112,7 +112,7 @@ sub new{
 1;
 
 
-__END__
+# __END__
 # Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
@@ -145,7 +145,7 @@ LCP::Agent - Lib CIM (Common Information Model) Perl
     print "post executed\n";
     #Parsing the query
     my $parser=LCP::SimpleParser->new($post->get_raw_xml);
-    # returning a multi dimentional hash of the results
+    # returning a multi dimensional hash of the results
     my $tree=$parser->buildtree;
   }
 
@@ -163,37 +163,45 @@ This is an OO Class and as such exports nothing.
 
 =item new
 
-=over 4
-
-$agent=LCP::Agent->new('hostname',%{ 'protocol' =>'https', 'port' => 5989, 'Method'=>'M-POST', username=>'someuser', 'password'=>'somepassword', 'Timeout'=>180, 'useragent' => $optionalUserAgent  });
+    $agent=LCP::Agent->new('hostname',%{ 'protocol' =>'https', 'port' => 5989, 'Method'=>'M-POST', username=>'someuser', 'password'=>'somepassword', 'Timeout'=>180, 'useragent' => $optionalUserAgent  });
 
 This class only has one method however its important to set the default information for several of the other classes.
-There is one required paramiter the hostname or IP address of the WBEM server.
-there are 5 optional peramiters defined in a hash that are as follows
+There is one required parameter the hostname or IP address of the WBEM server.
+there are 5 optional perimeters defined in a hash that are as follows
 
-1) protocol
+=over 2
+
+=item 1 protocol
+
 Protocol is defined as http or https the default if not specified is https
 
-2) port
+=item 2 port
+
 The port number the wbem server is listening on. the default if not specified it 5989 for https and 5988 for http.
 
-3) Method
+=item 3 Method
+
 The post method used may be POST, M-POST, or AUTO. if it is not specified the default is AUTO.
-POST is the standard http post uesd by web servers and most API's that utilize http and https
-M-POST or Method POST is the DMTF prefered method for Common Information Model it utilizes different headers than the standard POST method however it is not supported by all WBEM servers yet and can be buggy in some others.
-AUTO attempts to utilizes M-POST first then fails back to POST if the WBEM server reports it is not supported or if ther is a null responce.
+POST is the standard http post used by web servers and most API's that utilize http and https
+M-POST or Method POST is the DMTF preferred method for Common Information Model it utilizes different headers than the standard POST method however it is not supported by all WBEM servers yet and can be buggy in some others.
+AUTO attempts to utilizes M-POST first then fails back to POST if the WBEM server reports it is not supported or if there is a null response.
 
-Unfortunatly the fail back for AUTO has not been implemented yet; however it will be in the future so users are encuraged to use it in the mean time for future API compatibliity.
-The safest choice is POST. Currently not every WBEM server supports M-POST and even some of the ones that do ocasionally malfunction and as a result cause the AIP to hang for a few seconds befor returning an error or more often a null responce.
+Unfortunately the fail back for AUTO has not been implemented yet; however it will be in the future so users are encouraged to use it in the mean time for future API compatibility.
+The safest choice is POST. Currently not every WBEM server supports M-POST and even some of the ones that do occasionally malfunction and as a result cause the AIP to hang for a few seconds before returning an error or more often a null response.
 
-4) username
-The username to use for authenticarion to the wbem server
+=item 4 username
 
-5) password
-The password to use for authenticarion to the wbem server
+The username to use for authentication to the wbem server
 
-6) Timeout
-How long to wait in seconds for a query to return results befor timing out.
+=item 5 password
+
+The password to use for authentication to the wbem server
+
+=item 6 Timeout
+
+How long to wait in seconds for a query to return results before timing out.
+
+=back
 
 =back
 
