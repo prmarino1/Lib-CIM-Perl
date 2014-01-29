@@ -24,7 +24,7 @@ sub new{
             carp "No XML to parse\n";
             return 0;
         }
-	# there is an issue with the dtds right now so until XML::Parser is patched to fix it im going to skip the dtd
+	# there is an issue with the dtds right now so until XML::Parser is patched to fix it I'm going to skip the dtd
 	#$self->{'twig'}=XML::Twig->new('load_DTD'=>1);
 	$self->{'twig'}=XML::Twig->new();
 	$self->{'twig'}->parse($xml);
@@ -154,10 +154,10 @@ sub property_twig{
         my $property=shift;
         my $propertyhash;
         if ($property->local_name =~ /^(PROPERTY|PROPERTY\.REFERENCE|PROPERTY\.ARRAY|METHOD|PARAMETER)$/o){
-		# print "found property @{[$self->get_field_name($property)]}\n"; # debuging line
+		# print "found property @{[$self->get_field_name($property)]}\n"; # debugging line
 		my $proptree=$self->buildtree($property);
 		$proptree=$proptree->{$self->get_field_name($property)};
-		# print "processing property @{[$self->get_field_name($property)]}\n"; #debuging line
+		# print "processing property @{[$self->get_field_name($property)]}\n"; #debugging line
                 $self->{'twig'}->purge_up_to($property);
 		if (ref $proptree eq 'HASH'){
 			if (defined $proptree->{'ValueMap'} and defined $proptree->{'Values'}) {
@@ -168,7 +168,7 @@ sub property_twig{
                 return $proptree;
         }
         else{
-                return  "Error unknown the field was expaected to be a Property field but was not\n";
+                return  "Error unknown the field was expected to be a Property field but was not\n";
         }
 
 }
@@ -177,7 +177,7 @@ sub property_twig{
 sub property_array_twig{
         my $self=shift;
         my $property_array=shift;
-        # defineing a placeholder for the results
+        # defining a placeholder for the results
         my $resultarray;
         # getting the array of values
         my $valuearray=$property_array->{'first_child'};
@@ -185,7 +185,7 @@ sub property_array_twig{
         if (defined $valuearray){
             $resultarray=$self->cim_value_array($valuearray);
         }
-        # cleaning up the ram used be the property arraythat has already been processed
+        # cleaning up the ram used be the property array that has already been processed
         $self->{'twig'}->purge_up_to($property_array);
         
         return $resultarray;
@@ -247,7 +247,7 @@ sub get_cim_keybinding_value{
         return $value;
     }
     
-    else{carp $property->local_name .' '.  $self->get_field_name($property) .' '. $property_value->local_name. " does not apear to have a value\n";}
+    else{carp $property->local_name .' '.  $self->get_field_name($property) .' '. $property_value->local_name. " does not appear to have a value\n";}
 }
 
 
@@ -268,7 +268,7 @@ sub get_local_namespace_path{
 
 1;
 
-__END__
+#__END__
 # Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
