@@ -6,9 +6,9 @@ use warnings;
 use Carp;
 use LWP::UserAgent;
 
-
+# this is just A placeholder module at this time so It really only does this and defines the version
 require LCP::Agent;  # this should load everything you need
-
+# defining the version number of the module
 our $VERSION = '0.00_01';
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
 
