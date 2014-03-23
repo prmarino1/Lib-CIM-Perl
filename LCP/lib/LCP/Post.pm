@@ -6,6 +6,9 @@ use Carp;
 our $VERSION = '0.00_01';
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
 
+# this was user contributed and will change because it doesn't comply to the overall coding standards
+# the replacement will probably be a notification super class
+
 my $lastErr;
 my $suppressWarnings	= 0;
 
@@ -27,64 +30,114 @@ sub _warn {
     }
 }
 
-sub new {
-    my $class = shift;
-    my $session= shift;
-    my $query= shift;
-    my $self = {};
+# end of the contributed code planed for future change.
 
+
+sub new {
+    # getting the class name
+    my $class = shift;
+    # getting the session handle
+    my $session= shift;
+    # getting the query handle
+    my $query= shift;
+    # creating an empty hash reference which will be blessed latter into the instance of the class
+    my $self = {};
+    # adding the session handle to the instance
     $self->{'Session'}=$session;
+    # adding the query handle to the instance 
     $self->{'query'}=$query;
-        unless(@{$query->{'writer'}->{'query'}} > 1) {
+    # checking if the XML for query has been constructed yet which would indicate that the query has been used before and we can skip some checks
+    unless(@{$query->{'writer'}->{'query'}} > 1) {
+	# ensuring that the post method is defined
         unless(defined $self->{'query'}->{'last_method'} or $session->{'Method'}=~/^(M-POST|AUTO)$/i){
+	    # notifying the user
             &_warn("ERROR: No CIM Method defined for POST operation\n");
+	    # exiting in failure
             return 0;
         }
     }
+    # if the method is set to POST or M-POST take it as is
     if ($session->{'Method'}=~/^(POST|M-POST)$/i){
+	# setting the method to use for the query
         $self->{'method'}=$session->{'Method'};
     }
+    # otherwise if the method been set to AUTO default to M-POST and define POST as a fail back method unfortunately this doesn't work yet but is planned for the future.
     elsif($session->{'Method'}=~/^AUTO$/){
+	# setting the method to M-POST
         $self->{'method'}='M-POST';
+	# setting the fall back method to POST
         $self->{'fallback_method'}='POST';
     }
+    # otherwise warning the user and exit
     else {
+	# notifying the user
         &_warn("$session->{'Method'} is not a valid query method please choose AUTO, M-POST or POST");
+	# exiting in failure
         return 0;
     }
+    # defining an empty variable which will be used latter in a string context to contain the XML for the request.
     $self->{'Request'}=0;
     
+    # this next section is redundant and will go away soon
+    # creating the HTTP request handle if the method is POST
     if ($self->{'method'}=~/^POST$/i){
+	# creating the HTTP request handle in an eval because the module forces the program to die instead of returning an error which is not always desirable
         eval{$self->{'Request'}=HTTP::Request->new('POST' => $self->{'Session'}->{'agent'}->{'uri'});};
         
     }
+    # otherwise creating the HTTP request handle using the method M-POST
     else{
+	# creating the HTTP request handle in an eval because the module forces the program to die instead of returning an error which is not always desirable
         eval{$self->{'Request'}=HTTP::Request->new('M-POST' => $self->{'Session'}->{'agent'}->{'uri'});};
     }
+    # end of redundant section
+    
+    # creating an empty variable which will be used latter to contain the response from the WBEM server.
     $self->{'Result'}=0;
+    
+    # blessing $self as the instance handle for the class
     bless ($self, $class);
+    # if the method is POST set the appropriate HTTP headers 
     if ($self->{'method'}=~/^POST$/i){
+	# setting the HTTP headers
         $self->set_post_headers();
     }
+    # other wise set HTTP the headers for an M-POST request
     elsif($session->{'Method'}=~/^(M-POST|AUTO)$/i){
+	# setting the HTTP headers
         $self->set_mpost_headers();
     }
+    # checking if message id is set in the session 
     unless($self->{'Session'}->{'messageid'}){
+	# if its not notify the user because there is something strange going on but its not a critical error
         &_warn("couldn't find the session messageid\n");
     }
+    # setting the message id in the XML writer handle
     $self->{'query'}->{'writer'}->set_query_id($self->{'Session'}->{'messageid'});
+    # generating the XML
     $self->{'Request'}->content($self->{'query'}->{'writer'}->extractxml());
+    # checking if a user name and password were defined by the user
     if ($self->{'Session'}->{'agent'}->{'password'} and ($self->{'Session'}->{'agent'}->{'username'})){
-		$self->{'Request'}->authorization_basic($self->{'Session'}->{'agent'}->{'username'}, $self->{'Session'}->{'agent'}->{'password'});
+	# setting the authentication data on the HTTP request handle using basic because of mixed possible support for digest-MD5 in the upstream module depending on the version
+	$self->{'Request'}->authorization_basic($self->{'Session'}->{'agent'}->{'username'}, $self->{'Session'}->{'agent'}->{'password'});
     }
+    # incrementing the message ID so the next query get a unique ID
+    # not all CIM libraries enforce this but its intended to be message sequence number which can be very useful in tracking down issues
     $self->{'Session'}->{'messageid'}++;
+    # if the user has defined a valid timeout in seconds set it on the HTTP request handle
     if (defined $self->{'Session'}->{'Timeout'} and $self->{'Session'}->{'Timeout'}=~/^\d+$/){
+	# setting the timeout on the HTTP request handle
 	$self->{'Session'}->{'agent'}->{'agent'}->timeout($self->{'Session'}->{'Timeout'});
     }
+    # executing the request
     $self->{'Result'}=$self->{'Session'}->{'agent'}->{'agent'}->request($self->{'Request'});
+    # checking if a response was received from the WBEM server
+    # this method returns success even if the HTTP request returns an error code with XML
     unless($self->{'Result'}->is_success){
+	# notifying the user if the request failed
         &_warn("The Query Failed\n");
     }
+    # returning blessed instance of the class
     return $self;
 }
 
@@ -95,11 +148,12 @@ sub new {
 #If the M-POST invocation fails with an HTTP status of "405 Method Not Allowed," the client should fail the request.
 
 
-
-
 sub set_post_headers{
+    # getting the instance handle for the class
     my $self=shift;
+    # this is a legacy variable which is no longer needed
     my $cim_method=shift;
+    #
     $self->{'Request'}->content_type('application/xml; charset="utf-8"');
     $self->{'Request'}->header('CIMProtocolVersion' => "1.0");
     $self->{'Request'}->header(CIMOperation => "MethodCall");
