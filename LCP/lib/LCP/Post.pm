@@ -144,63 +144,107 @@ sub new {
 
 
 # post or m-post
+# there is a fallback to post logic which needs to be added at a later time but we need to add more robust error handling.
 #If the M-POST invocation fails with an HTTP status of "501 Not Implemented" or "510 Not Extended," the client should retry the request using the HTTP method "POST" with the appropriate modifications (described in 6.2.2).
 #If the M-POST invocation fails with an HTTP status of "405 Method Not Allowed," the client should fail the request.
 
 
+# this method creates the headers for the POST operations but not M-POST operations
 sub set_post_headers{
     # getting the instance handle for the class
     my $self=shift;
     # this is a legacy variable which is no longer needed
     my $cim_method=shift;
-    #
+    # setting the character set to utf8 in the content type header
     $self->{'Request'}->content_type('application/xml; charset="utf-8"');
+    # setting the CIM protocol version to 1.0 in the headers
+    # this will change latter once we can support multiple versions of the CIM protocol
     $self->{'Request'}->header('CIMProtocolVersion' => "1.0");
+    # setting the CIMOperation header to MethodCall this seems ridiculous based on the current verso on the standard but it is required.
     $self->{'Request'}->header(CIMOperation => "MethodCall");
+    # checking of there is more than one operation in the query
     if (@{$self->{'query'}->{'writer'}->{'query'}} > 1){
+	# if there are multiple queries.
+	# setting the CIMBatch header to a null value indicating that its a batch of queries being posted at once.
         $self->{'Request'}->header(CIMBatch => '');
     }
     else{
+	# if its not a batch operation
+	# setting the CIMMethod to the operation being used in the query
         $self->{'Request'}->header(CIMMethod => $self->{'query'}->{'last_method'});
+	# getting the name space being queried
         my $modified_namespace=$self->{'query'}->{'last_namespace'};
+	# encoding the / to %2F this is needed by some WBEM servers but not all
         $modified_namespace=~s/\//%2F/;
+	# setting the CIMObject field to the encoded namespace
         $self->{'Request'}->header(CIMObject => $modified_namespace);
     }
+    # setting the HOST header to the URI of the WBEM server
     $self->{'Request'}->header(Host => "$self->{'Session'}->{'agent'}->{'host'}:$self->{'Session'}->{'agent'}->{port}");
+    # this may be redundant I am not sure
     $self->{'Request'}->header(charset=>"utf-8");
+    # removing one of the default headers set by LWP which we don't need
     $self->{'Request'}->remove_header('TE');
     #$self->{'Request'}->remove_header('Connection');
     #print"@{[$self->{'request'}->as_string]}\n";
+    
+    # returning success
     return 1;
 }
 
+
+
+# this method sets the headers when the M-POST method is used
 sub set_mpost_headers{
+    # getting the instance handle for the class
     my $self=shift;
+    # setting a random integer
     my $random=int(rand(99));
+    # setting the character set to utf8 in the content type header
     $self->{'Request'}->content_type('application/xml; charset="utf-8"');
+    # setting the HOST header to the URI of the WBEM server
     $self->{'Request'}->header(Host => "$self->{'Session'}->{'agent'}->{'host'}:$self->{'Session'}->{'agent'}->{port}");
+    # this is a long story lol.
+    # essentially this sets the path to the DMTF site where the standard can be looked up
+    # the random number is used to tie the headers together
+    # I'm a little unclear as to why this is needed but it is
     $self->{'Request'}->header('Man' => "http://www.dmtf.org/cim/mapping/http/v1.0;ns=$random");
+    # creating an name for a header CIMProtocolVersion suffixed by the random number then a -
     my $protocolversionstring="$random". '-CIMProtocolVersion';
+    # setting the CIMProtocolVersion header to 1.0 this will change in the future when we have support for multiple versions.
     $self->{'Request'}->header("$protocolversionstring" => "1.0");
+    # creating an name for a header CIMOperation suffixed by the random number then a - 
     my $operationstring="$random". '-CIMOperation';
+    # setting the CIMOperation header to MethodCall this seems ridiculous based on the current verso on the standard but it is required.
     $self->{'Request'}->header("$operationstring" => 'MethodCall');
+    # check if the query contains multiple CIM methods
     if ($self->{'multi'}){
+	# setting the CIMBatch header
         my $batchstring="$random". '-CIMBatch';
         $self->{'Request'}->header("$batchstring" => '');
     }
     else{
+	#setting the CIMMethod header
         my $methodstring="$random". '-CIMMethod';
         $self->{'Request'}->header("$methodstring" => $self->{'query'}->{'last_method'});
+	# setting the CIMObject to the CIM namespace
         my $objectstring="$random". '-CIMObject';
         $self->{'Request'}->header("$objectstring" => $self->{'query'}->{'last_namespace'});
     }
 }
 
+# this probably isn't needed but it makes it easier for programers to use
+# essentially this method is it calls the LWP decoded_content method and returns the XML received from the WBEM server 
 sub get_raw_xml{
+    # getting the instance handle for the class    
     my $self=shift;
+    # calling LWP's decoded_content method and returning the result
     return $self->{'Result'}->decoded_content
 }
 
+# this probably isn't needed but it makes it easier for programers to use
+# essentially this just calls the LWP is_success method and returns 1 if the post was successful and 0 if it wasn't.
+# note this does not give you the results of the query just if it was able to connect and got a result code.
 sub success($){
     my $self=shift;
     if ($self->{'Result'}->is_success){
