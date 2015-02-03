@@ -1,9 +1,14 @@
 package LCP::Query;
+# forcing use of strict this will be dropped in the future si we dont force any onet to use it.
 use strict;
+# enabiling warnings
 use warnings;
+# using carp for warnings
 use Carp;
+# loading the LCP::XMLWriter module
 use LCP::XMLWriter;
 
+# setting the version number of the class
 our $VERSION = '0.00_01';
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
 
@@ -868,6 +873,8 @@ The GetClass method retrieves the structural information about a CIM class, this
 
 The LCP::Query's GetClass method requires 2 fields and has 2 optional fields described as follows.
 
+=head4 Options
+
 =over 1
 
 =item 1 B<Name/Space>
@@ -936,9 +943,7 @@ Defaults to undefined which means the WBEM server will return everything that th
 
 =back
 
-=over 1
-
-=item B<Implementation Note:>
+=head4 B<Implementation Notes:>
 
 All examples below were produced using TOG-OpenPegasus with SBLIM on Fedora Linux
 
@@ -1140,6 +1145,16 @@ Here is how the PowerState property looks after its been parsed by the the LCP::
             };
 
 =back
+
+=head4 Why is this important
+
+=over 2
+
+=item Think of it like a SNMP MIB you can download as needed from the server.
+
+Essentially this is no different than a MIB in SNMP the primary difference is in SNMP there is no mechanism to retrieve the MIB from the device you are querying. In CIM you can download the whole CIM class or just part of it, which contains as much or more information as the equivelent SNMP MIB does.
+The advantage for a monitoring solution is very clear because the monitoring system can simply download the definitions it needs to present data in the appropriate content without the need for the developer to do any real customizations for the device being queried.
+As we will get into latter in this documentation the inheritance structure allows you to write efficient intuitive code which can display information in a administrative console without you as the developer knowing anything about the devices or the API's of the manufacturer of the device.
 
 =item See DSP0200 Version 1.3.1 section 5.3.2.1 for details
 
@@ -1491,25 +1506,31 @@ All examples below were produced using TOG-OpenPegasus with SBLIM on Fedora Linu
 
     $query->EnumerateClasses('root/cimv2');
 
-The results simmilar to running a multireq set of GetClass queries against all 99 of the base classes in the name space.
+The results similar to running a multireq set of GetClass queries against all 99 of the base classes in the name space.
 
 =item If I ran the same query with DeepInheritance enabled
 
     $query->EnumerateClasses('root/cimv2','',{ 'DeepInheritance' = 1});
 
-The results simmilar to running a multireq set of GetClass queries against all 1583 of the classes in the name space.
+The results similar to running a multireq set of GetClass queries against all 1583 of the classes in the name space.
 
-=item If I ran the against the CIM_UnitaryComputerSystem CIM Class
+=item If I ran the against the CIM_FileSystem CIM Class
 
-    $query->EnumerateClasses('root/cimv2','CIM_UnitaryComputerSystem',{ 'DeepInheritance' = 1});
+    $query->EnumerateClasses('root/cimv2','CIM_FileSystem',{ 'DeepInheritance' = 0});
 
-The results simmilar to running GetClass query against the PG_ComputerSystem class because that is the only class that directly or indirectly inherits from the CIM_UnitaryComputerSystem class.
+The results similar to running a multireq set of GetClass queries against the CIM_LocalFileSystem, CIM_DatabaseStorageArea, and CIM_DatabaseStorageArea classes because those is the only class that directly inherit from the CIM_FileSystem class.
+
+=item If I ran the against the CIM_FileSystem CIM Class with DeepInheritance enabled
+
+    $query->EnumerateClasses('root/cimv2','CIM_FileSystem',{ 'DeepInheritance' = 1});
+
+The results similar to running a multireq set of GetClass queries against the Linux_Ext3FileSystem, Linux_ReiserFileSystem, Linux_Ext4FileSystem, CIM_LocalFileSystem, Linux_Ext2FileSystem,CIM_NFS, Linux_NFS, CIM_UnixLocalFileSystem, CIM_RemoteFileSystem, and CIM_DatabaseStorageArea CIM classes because all of those classes directly or indirectly via one or more other classes inherit from the CIM_FileSystem class.
 
 =item If I ran the against the PG_ComputerSystem CIM Class
 
-$query->EnumerateClasses('root/cimv2','PG_ComputerSystem',{ 'DeepInheritance' = 1});
+$query->EnumerateClasses('root/cimv2','Linux_Ext3FileSystem',{ 'DeepInheritance' = 1});
 
-The query would succede however it wouldn't include any results because no other classes inherit from the PG_ComputerSystem class.
+The query would succeed however it wouldn't include any results because no other classes inherit from the Linux_Ext3FileSystem class.
 
 The resulitng XML looks like this
 
@@ -1522,6 +1543,14 @@ The resulitng XML looks like this
 	    </SIMPLERSP>
 	</MESSAGE>
     </CIM>
+
+=item Why is this important
+
+In the cases of certain classes like CIM_Fan this can be used to get the vendor specific details of any type of supported by the WBEM server regardless of the vendor or type of device.
+
+That may not sound on the surface like its very useful but in some very unlikely cases a vendor may have custom status codes which you may need to decode.
+
+In terms of SNMP think of it like an easy way to download a vendor specific MIB's for a specific component from the device directly without needing to know the name of the vendor MIB all you need to know it the parent class name from the appropriate CIM standard such as SMASH, DASH, SMI-S, etc..
 
 All other query modifiers work the same way as they do in a GetClass query.
 
@@ -1643,7 +1672,7 @@ The great thing about this is it works for standard CIM, SMI-S, WMI, WMWare, etc
     $query->EnumerateInstances('name/space','ClassName',{ 'LocalOnly' = 1, 'DeepInheritance' = 1, 'IncludeQualifiers' = 0, 'IncludeClassOrigin' = 0 });
     $query->EnumerateInstances('name/space','ClassName');
 
-The EnumerateInstances method returns the content of every instance of the CIM class specified in the ClassName and all of the sub classes that it inherits fields from within the namespace specified in the name/space field.
+The EnumerateInstances method returns the content of every instance of the CIM class specified in the ClassName and all of the sub classes that it inherit fields from within the namespace specified in the name/space field.
 
 The LCP::Query's EnumerateClassNames method requires 2 fields and has 2 optional fields described as follows.
 
