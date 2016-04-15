@@ -20,7 +20,7 @@ sub new{
           'include_name'=>0
           
         };
-        unless (defined $xml and $xml and $xml!~/^\s*$/m){
+        unless (defined $xml and $xml and $xml!~/^\s*$/s){
             carp "No XML to parse\n";
             return 0;
         }
