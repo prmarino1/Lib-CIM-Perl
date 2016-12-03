@@ -20,7 +20,7 @@ sub new{
           'include_name'=>0
           
         };
-        unless (defined $xml and $xml and $xml!~/^\s*$/m){
+        unless (defined $xml and $xml and $xml!~/^\s*$/s){
             carp "No XML to parse\n";
             return 0;
         }
@@ -211,7 +211,7 @@ sub cim_value{
 sub cim_value_array{
 	my $self=shift;
 	my $property=shift;
-	my $resultarray;
+	my $resultarray = [];
 	my $value=$property->{'first_child'};
         # only continue processing if the content is valid
         if(defined $value){
@@ -222,9 +222,6 @@ sub cim_value_array{
                 # getting the next value
                 $value=$value->{'next_sibling'};
             }
-        }
-        else{
-            carp"invalid value array\n";
         }
         $self->{'twig'}->purge_up_to($property);
 	return $resultarray;
